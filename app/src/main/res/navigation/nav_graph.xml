@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/nav_graph" app:startDestination="@id/projectsFragment">
+
+    <fragment android:id="@+id/projectsFragment"
+              android:name="cz.applifting.humansis.ui.distribution.projects.ProjectsFragment"
+              android:label="ProjectsFragment">
+        <action android:id="@+id/action_projectsFragment_to_distributionsFragment2"
+                app:destination="@id/distributionsFragment"
+                app:exitAnim="@anim/slide_to_left"
+                app:enterAnim="@anim/slide_from_right"
+                app:popExitAnim="@anim/slide_to_right"
+                app:popEnterAnim="@anim/slide_from_left"
+        />
+    </fragment>
+    <fragment android:id="@+id/distributionsFragment"
+              android:name="cz.applifting.humansis.ui.distribution.distributions.DistributionsFragment"
+              android:label="DistributionsFragment"/>
+    <fragment android:id="@+id/placeholder" android:label="other" android:name="androidx.fragment.app.Fragment"/>
+</navigation>
