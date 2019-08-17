@@ -4,17 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
-import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseFragment
 import kotlinx.android.synthetic.main.fragment_projects.*
-import javax.inject.Inject
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019

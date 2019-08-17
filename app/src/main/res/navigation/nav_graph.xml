@@ -18,4 +18,6 @@
               android:name="cz.applifting.humansis.ui.distribution.distributions.DistributionsFragment"
               android:label="DistributionsFragment"/>
     <fragment android:id="@+id/placeholder" android:label="other" android:name="androidx.fragment.app.Fragment"/>
+    <activity android:id="@+id/loginActivity" android:name="cz.applifting.humansis.ui.login.LoginActivity"
+              android:label="LoginActivity"/>
 </navigation>

@@ -7,7 +7,7 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-class DistributionViewModel @Inject constructor() : ViewModel() {
+class DistributionsViewModel @Inject constructor() : ViewModel() {
 
     init {
         Log.d("asdf", "distribution viewmodel create")

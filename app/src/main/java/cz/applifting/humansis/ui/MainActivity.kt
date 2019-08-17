@@ -1,22 +1,17 @@
 package cz.applifting.humansis.ui
 
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import androidx.core.view.GravityCompat
-import androidx.appcompat.app.ActionBarDrawerToggle
+import android.view.Menu
 import android.view.MenuItem
-import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import android.view.Menu
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.R
-import cz.applifting.humansis.ui.distribution.distributions.DistributionsFragment
-import cz.applifting.humansis.ui.distribution.projects.ProjectsFragment
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -38,6 +33,10 @@ class MainActivity : AppCompatActivity() {
             drawerLayout)
         toolbar.setupWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        if (true) {
+            navController.navigate(R.id.loginActivity)
+        }
     }
 
     override fun onBackPressed() {

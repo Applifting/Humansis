@@ -9,4 +9,8 @@
 
     <string name="menu_home">Projects</string>
     <string name="menu_test">Test</string>
+    <string name="beneficiary_managment_system">Beneficiary Managment System</string>
+    <string name="username">Username</string>
+    <string name="password">*******</string>
+    <string name="login">Login</string>
 </resources>
