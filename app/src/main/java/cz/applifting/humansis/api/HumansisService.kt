@@ -1,8 +1,8 @@
 package cz.applifting.humansis.api
 
-import cz.applifting.humansis.model.GetProjectsResponse
 import cz.applifting.humansis.model.GetSaltResponse
 import cz.applifting.humansis.model.LoginReqRes
+import cz.applifting.humansis.model.Project
 import retrofit2.http.*
 
 /**
@@ -17,5 +17,5 @@ interface HumansisService {
     suspend fun postLogin(@Body loginReqRes: LoginReqRes): LoginReqRes
 
     @GET("projects")
-    suspend fun getProjects(@Header("x-wsse") authHeader: String): GetProjectsResponse
+    suspend fun getProjects(@Header("x-wsse") authHeader: String): List<Project>
 }
