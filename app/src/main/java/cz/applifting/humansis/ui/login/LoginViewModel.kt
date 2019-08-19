@@ -1,83 +1,51 @@
 package cz.applifting.humansis.ui.login
 
 import android.util.Log
+import android.view.View
+import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.api.HumansisService
+import cz.applifting.humansis.misc.generateXWSSEHeader
+import cz.applifting.humansis.misc.saltPassword
+import cz.applifting.humansis.model.LoginReqRes
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
-import java.security.MessageDigest
 import javax.inject.Inject
-import kotlin.experimental.and
 
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 17, August, 2019
  */
-class LoginViewModel @Inject constructor(val mService: HumansisService): BaseViewModel() {
+class LoginViewModel @Inject constructor(val mService: HumansisService) : BaseViewModel() {
+
+    val viewState = MutableLiveData<LoginViewState>()
+
+    init {
+        viewState.value = LoginViewState()
+    }
 
     fun login(username: String, password: String): Boolean {
+        viewState.value = LoginViewState(
+            btnLoginVisibility = View.GONE,
+            etPasswordIsEnabled = false,
+            etUsernameIsEnabled = false,
+            pbLoadingVisible = View.VISIBLE
+        )
+
         launch {
             try {
-                val salt = mService.getSalt(username)
-                //val hashedPassword = saltPassword(salt.salt, password)
+                val saltResponse = mService.getSalt(username)
+                val hashedPassword = saltPassword(saltResponse.salt, password)
+                mService.postLogin(LoginReqRes(true, username, null, null, hashedPassword, null, username, null))
 
-                val hashedPassword = saltPassword("salt", "password")
-                Log.d("asdf", hashedPassword)
+                val header = generateXWSSEHeader(username, hashedPassword)
+                mService.getProjects(header)
             } catch (e: Exception) {
                 Log.d("asdf", e.toString())
             }
 
+            viewState.value = LoginViewState()
         }
 
         return true
     }
-
-    private fun saltPassword(salt: String, password: String): String {
-        val salted = "$password{$salt}".toByteArray()
-        var digest = hashSSH512(salted)
-        Log.d("asdf", "salted: $salted")
-        Log.d("asdf", "digest: $digest")
-
-        for (i in 1..10) {
-            val tohash = digest.plus(salted)
-            Log.d("asdf", "${i}: ${tohash}")
-            digest = hashSSH512(tohash)
-            Log.d("asdf", "${i}: ${bytesToString(digest)}")
-        }
-
-        return bytesToString(digest)
-    }
-
-    private fun hashSSH512(input: ByteArray): ByteArray {
-        val bytes = MessageDigest
-            .getInstance("SHA-512")
-            .digest(input)
-
-        return bytes
-    }
-
-    private fun bytesToString(bytes: ByteArray): String {
-        val HEX_CHARS = "0123456789abcdef"
-        val result = StringBuilder(bytes.size * 2)
-
-        bytes.forEach {
-            val i = it.toInt()
-            result.append(HEX_CHARS[i shr 4 and 0x0f])
-            result.append(HEX_CHARS[i and 0x0f])
-        }
-
-        return result.toString()
-    }
-
-    private fun stringToHex(input: String): String {
-        val bytes = input.toByteArray()
-        val hexArray = "0123456789abcdef".toCharArray()
-        val hexChars = CharArray(bytes.size * 2)
-        for (j in bytes.indices) {
-            val v = (bytes[j] and 0xFF.toByte()).toInt()
-            hexChars[j * 2] = hexArray[v ushr 4]
-            hexChars[j * 2 + 1] = hexArray[v and 0x0F]
-        }
-        return String(hexChars)
-    }
-
 }

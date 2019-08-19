@@ -11,7 +11,7 @@ data class LoginReqRes(
     val id: String?,
     val language: String?,
     val password: String,
-    val roles: String?,
+    val roles: List<Role>?,
     val username: String,
     val vendor: String?
 )

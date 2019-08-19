@@ -1,11 +1,9 @@
 package cz.applifting.humansis.api
 
+import cz.applifting.humansis.model.GetProjectsResponse
 import cz.applifting.humansis.model.GetSaltResponse
 import cz.applifting.humansis.model.LoginReqRes
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -18,5 +16,6 @@ interface HumansisService {
     @POST("login")
     suspend fun postLogin(@Body loginReqRes: LoginReqRes): LoginReqRes
 
-
+    @GET("projects")
+    suspend fun getProjects(@Header("x-wsse") authHeader: String): GetProjectsResponse
 }
