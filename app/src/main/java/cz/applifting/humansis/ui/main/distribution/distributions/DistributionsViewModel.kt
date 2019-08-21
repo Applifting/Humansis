@@ -15,11 +15,14 @@ class DistributionsViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val distributionsLD: MutableLiveData<List<Distribution>> = MutableLiveData()
+    val distributionsViewStateLD: MutableLiveData<DistributionsViewState> = MutableLiveData()
 
     fun loadDistributions(projectId: Int) {
         launch {
+            distributionsViewStateLD.value = DistributionsViewState(true)
             val distributions = service.getDistributions(projectId)
             distributionsLD.value = distributions
+            distributionsViewStateLD.value = DistributionsViewState(false)
         }
     }
 }

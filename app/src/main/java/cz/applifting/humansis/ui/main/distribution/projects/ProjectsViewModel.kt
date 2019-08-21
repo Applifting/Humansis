@@ -13,12 +13,16 @@ import javax.inject.Inject
 class ProjectsViewModel @Inject constructor(val service: HumansisService) : BaseViewModel() {
 
     val projectsLD: MutableLiveData<List<Project>> = MutableLiveData()
+    val viewStateLD: MutableLiveData<ProjectsViewState> = MutableLiveData()
 
     fun loadProjects() {
+        viewStateLD.value = ProjectsViewState(true)
+
         launch {
             try {
                 val projects = service.getProjects()
                 projectsLD.value = projects
+                viewStateLD.value = ProjectsViewState(false)
             } catch (e: Exception) { }
         }
     }

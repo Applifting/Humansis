@@ -17,10 +17,14 @@
 
     <fragment android:id="@+id/distributionsFragment"
               android:name="cz.applifting.humansis.ui.main.distribution.distributions.DistributionsFragment"
-            android:label="@string/distributions">
+            android:label="{projectName}">
         <argument
                 android:name="projectId"
                 app:argType="integer" />
+
+        <argument
+                android:name="projectName"
+                app:argType="string" />
     </fragment>
 
     <fragment android:id="@+id/placeholder" android:label="other" android:name="androidx.fragment.app.Fragment"/>

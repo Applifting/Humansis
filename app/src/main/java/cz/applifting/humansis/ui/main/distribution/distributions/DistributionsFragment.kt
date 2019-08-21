@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.BaseFragment
+import cz.applifting.humansis.ui.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_distributions.*
 
 /**
@@ -29,6 +30,7 @@ class DistributionsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        (activity as MainActivity).actionBar?.title = args.projectName
 
         val viewManager = LinearLayoutManager(context)
         val viewAdapter = DistributionsAdapter {
@@ -45,6 +47,12 @@ class DistributionsFragment : BaseFragment() {
         viewModel.distributionsLD.observe(this, Observer {
             viewAdapter.updateDistributions(it)
         })
+
+        viewModel.distributionsViewStateLD.observe(this, Observer {
+            srl_reload.isRefreshing = it.refreshing
+        })
+
+        srl_reload.setOnRefreshListener { viewModel.loadDistributions(args.projectId) }
 
         viewModel.loadDistributions(args.projectId)
     }

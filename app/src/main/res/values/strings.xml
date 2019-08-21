@@ -16,4 +16,5 @@
     <string name="log_out">Log out</string>
     <string name="projects">Projects</string>
     <string name="distributions">Distributions</string>
+    <string name="unnamed_project">Unnamed Project</string>
 </resources>

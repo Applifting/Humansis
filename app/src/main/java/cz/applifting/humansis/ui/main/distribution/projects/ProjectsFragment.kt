@@ -30,7 +30,7 @@ class ProjectsFragment : BaseFragment() {
 
         val viewManager = LinearLayoutManager(context)
         val viewAdapter = ProjectsAdapter {
-            val action = ProjectsFragmentDirections.chooseProject(it.id)
+            val action = ProjectsFragmentDirections.chooseProject(it.id, it.name ?: getString(R.string.unnamed_project))
             this.findNavController().navigate(action)
         }
 
@@ -43,6 +43,14 @@ class ProjectsFragment : BaseFragment() {
         viewModel.projectsLD.observe(this, Observer {
             viewAdapter.updateProjects(it)
         })
+
+        viewModel.viewStateLD.observe(this, Observer {
+            srl_reload.isRefreshing = it.isLoading
+        })
+
+        srl_reload.setOnRefreshListener {
+            viewModel.loadProjects()
+        }
 
         viewModel.loadProjects()
     }
