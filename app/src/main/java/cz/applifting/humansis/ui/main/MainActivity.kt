@@ -47,6 +47,9 @@ class MainActivity : BaseActivity() {
         toolbar.setupWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        // For some reason it does not sync with navController on startup
+        toolbar.title = getString(R.string.projects)
+
         (application as App).appComponent.inject(this)
 
         // Define Observers
@@ -58,7 +61,6 @@ class MainActivity : BaseActivity() {
                 tv_email.text = it.email
             }
         })
-
 
         btn_logout.setOnClickListener {
             viewModel.logout()

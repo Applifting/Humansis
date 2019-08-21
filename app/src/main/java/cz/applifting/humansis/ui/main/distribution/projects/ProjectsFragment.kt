@@ -5,7 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.BaseFragment
@@ -27,17 +28,22 @@ class ProjectsFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        button.setOnClickListener {
-            it.findNavController().navigate(R.id.action_projectsFragment_to_distributionsFragment2)
-        }
-
         val viewManager = LinearLayoutManager(context)
-        val viewAdapter = ProjectsAdapter(viewModel.projects.value ?: listOf())
+        val viewAdapter = ProjectsAdapter {
+            val action = ProjectsFragmentDirections.chooseProject(it.id)
+            this.findNavController().navigate(action)
+        }
 
         rv_projects.apply {
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
         }
+
+        viewModel.projectsLD.observe(this, Observer {
+            viewAdapter.updateProjects(it)
+        })
+
+        viewModel.loadProjects()
     }
 }

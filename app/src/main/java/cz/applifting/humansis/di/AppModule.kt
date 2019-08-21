@@ -6,8 +6,10 @@ import com.commonsware.cwac.saferoom.SafeHelperFactory
 import com.google.gson.GsonBuilder
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.HumansisDB
+import cz.applifting.humansis.managers.AuthManager
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -28,7 +30,7 @@ import retrofit2.create
 class AppModule {
 
     @Provides
-    fun retrofitProvider(baseUrl: String): HumansisService {
+    fun retrofitProvider(baseUrl: String, authManager: AuthManager): HumansisService {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
@@ -36,10 +38,19 @@ class AppModule {
         val client: OkHttpClient = OkHttpClient.Builder()
             .addInterceptor(logging)
             .addInterceptor { chain ->
-                val oldRequest = chain.request()
-                val headers = oldRequest.headers().newBuilder().add("country", "KHM").build()
-                val request = oldRequest.newBuilder().headers(headers).build()
-                chain.proceed(request)
+                runBlocking {
+                    val oldRequest = chain.request()
+
+                    val headersBuilder = oldRequest.headers().newBuilder()
+                        .add("country", "KHM")
+
+                    authManager.getAuthHeader()?.let {
+                        headersBuilder.add("x-wsse", it)
+                    }
+
+                    val request = oldRequest.newBuilder().headers(headersBuilder.build()).build()
+                    chain.proceed(request)
+                }
             }
             .build()
 

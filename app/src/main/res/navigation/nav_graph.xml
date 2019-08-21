@@ -5,19 +5,23 @@
 
     <fragment android:id="@+id/projectsFragment"
               android:name="cz.applifting.humansis.ui.main.distribution.projects.ProjectsFragment"
-              android:label="ProjectsFragment">
-        <action android:id="@+id/action_projectsFragment_to_distributionsFragment2"
+              android:label="@string/projects">
+        <action android:id="@+id/choose_project"
                 app:destination="@id/distributionsFragment"
                 app:exitAnim="@anim/slide_to_left"
                 app:enterAnim="@anim/slide_from_right"
                 app:popExitAnim="@anim/slide_to_right"
-                app:popEnterAnim="@anim/slide_from_left"
-        />
+                app:popEnterAnim="@anim/slide_from_left" >
+        </action>
     </fragment>
 
     <fragment android:id="@+id/distributionsFragment"
               android:name="cz.applifting.humansis.ui.main.distribution.distributions.DistributionsFragment"
-              android:label="DistributionsFragment"/>
+            android:label="@string/distributions">
+        <argument
+                android:name="projectId"
+                app:argType="integer" />
+    </fragment>
 
     <fragment android:id="@+id/placeholder" android:label="other" android:name="androidx.fragment.app.Fragment"/>
 

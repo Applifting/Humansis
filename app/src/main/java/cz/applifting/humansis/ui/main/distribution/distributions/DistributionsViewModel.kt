@@ -1,20 +1,25 @@
 package cz.applifting.humansis.ui.main.distribution.distributions
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.api.HumansisService
+import cz.applifting.humansis.model.api.Distribution
+import cz.applifting.humansis.ui.BaseViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-class DistributionsViewModel @Inject constructor() : ViewModel() {
+class DistributionsViewModel @Inject constructor(
+    private val service: HumansisService
+) : BaseViewModel() {
 
-    init {
-        Log.d("asdf", "distribution viewmodel create")
+    val distributionsLD: MutableLiveData<List<Distribution>> = MutableLiveData()
+
+    fun loadDistributions(projectId: Int) {
+        launch {
+            val distributions = service.getDistributions(projectId)
+            distributionsLD.value = distributions
+        }
     }
-
-    fun hello() {
-        Log.d("asdf", "Hello from distributions")
-    }
-
 }

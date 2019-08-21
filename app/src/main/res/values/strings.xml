@@ -14,4 +14,6 @@
     <string name="password">*******</string>
     <string name="login">Login</string>
     <string name="log_out">Log out</string>
+    <string name="projects">Projects</string>
+    <string name="distributions">Distributions</string>
 </resources>

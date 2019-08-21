@@ -1,32 +1,25 @@
 package cz.applifting.humansis.ui.main.distribution.projects
 
-import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.model.api.Project
+import cz.applifting.humansis.ui.BaseViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-class ProjectsViewModel @Inject constructor(val service: HumansisService) : ViewModel() {
+class ProjectsViewModel @Inject constructor(val service: HumansisService) : BaseViewModel() {
 
-    private val _projects = MutableLiveData(
-        listOf(
-            Project(1,"Project 1")
-        )
-    )
+    val projectsLD: MutableLiveData<List<Project>> = MutableLiveData()
 
-    val projects: LiveData<List<Project>>
-        get() = _projects
-
-    init {
-        Log.d("asdf", "projects viewmodel create")
-    }
-
-    fun hello() {
-
+    fun loadProjects() {
+        launch {
+            try {
+                val projects = service.getProjects()
+                projectsLD.value = projects
+            } catch (e: Exception) { }
+        }
     }
 }
