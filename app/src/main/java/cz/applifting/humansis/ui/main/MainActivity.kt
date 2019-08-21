@@ -1,22 +1,34 @@
-package cz.applifting.humansis.ui
+package cz.applifting.humansis.ui.main
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.R
+import cz.applifting.humansis.ui.App
+import cz.applifting.humansis.ui.BaseActivity
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.nav_header_main.*
+import javax.inject.Inject
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    private val viewModel: MainActivityViewModel by viewModels {
+        viewModelFactory
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,12 +43,31 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(
             setOf(R.id.projectsFragment, R.id.placeholder),
             drawerLayout)
+
         toolbar.setupWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        if (true) {
-            navController.navigate(R.id.loginActivity)
+        (application as App).appComponent.inject(this)
+
+        // Define Observers
+        viewModel.userLD.observe(this, Observer {
+            if (it == null) {
+                navController.navigate(R.id.loginActivity)
+            } else {
+                tv_username.text = it.username
+                tv_email.text = it.email
+            }
+        })
+
+
+        btn_logout.setOnClickListener {
+            viewModel.logout()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getUser()
     }
 
     override fun onBackPressed() {
@@ -45,22 +76,6 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
         }
     }
 }

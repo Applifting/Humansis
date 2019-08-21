@@ -2,6 +2,7 @@ package cz.applifting.humansis.ui.login
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -35,15 +36,28 @@ class LoginActivity : AppCompatActivity() {
         }
 
         viewModel.viewState.observe(this, Observer{ viewState ->
+            if (viewState.finishLoginActivity) finish()
+
             et_username.isEnabled = viewState.etUsernameIsEnabled
             et_password.isEnabled = viewState.etPasswordIsEnabled
             btn_login.visibility = viewState.btnLoginVisibility
             pb_loading.visibility = viewState.pbLoadingVisible
+
+            if (viewState.errorMessage != null) {
+                tv_error.visibility = View.VISIBLE
+                tv_error.text = viewState.errorMessage
+            } else {
+                tv_error.visibility = View.GONE
+            }
         })
 
         if (BuildConfig.DEBUG) {
             et_username.setText("demo@humansis.org")
             et_password.setText("Testing123")
         }
+    }
+
+    override fun onBackPressed() {
+        finishAffinity()
     }
 }

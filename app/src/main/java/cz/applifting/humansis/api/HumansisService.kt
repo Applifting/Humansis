@@ -1,8 +1,8 @@
 package cz.applifting.humansis.api
 
-import cz.applifting.humansis.model.GetSaltResponse
-import cz.applifting.humansis.model.LoginReqRes
-import cz.applifting.humansis.model.Project
+import cz.applifting.humansis.model.api.GetSaltResponse
+import cz.applifting.humansis.model.api.LoginReqRes
+import cz.applifting.humansis.model.api.Project
 import retrofit2.http.*
 
 /**

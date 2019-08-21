@@ -20,7 +20,33 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
+            android:background="@color/colorPrimary"
+            app:itemTextColor="@color/menu_item_color"
+            app:itemIconTint="@color/menu_item_color"
             app:headerLayout="@layout/nav_header_main"
-            app:menu="@menu/activity_main_drawer"/>
+            app:menu="@menu/activity_main_drawer" >
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical">
+
+            <Button
+                    android:id="@+id/btn_logout"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_marginBottom="4dp"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false"
+                    android:textSize="12sp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:drawablePadding="16dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_power_settings_new_white_24dp"
+                    android:text="@string/log_out" />
+        </LinearLayout>
+    </com.google.android.material.navigation.NavigationView >
 
 </androidx.drawerlayout.widget.DrawerLayout>

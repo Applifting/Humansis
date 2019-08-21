@@ -1,12 +1,11 @@
-package cz.applifting.humansis.ui.distribution.projects
+package cz.applifting.humansis.ui.main.distribution.projects
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
-import cz.applifting.humansis.db.Project
+import cz.applifting.humansis.model.api.Project
 import kotlinx.android.synthetic.main.item_project.view.*
 
 

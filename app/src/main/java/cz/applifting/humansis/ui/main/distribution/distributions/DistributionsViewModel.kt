@@ -1,4 +1,4 @@
-package cz.applifting.humansis.ui.distribution.distributions
+package cz.applifting.humansis.ui.main.distribution.distributions
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

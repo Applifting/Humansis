@@ -13,6 +13,9 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        appComponent = DaggerAppComponent.builder().build()
+        appComponent = DaggerAppComponent.builder()
+            .application(this)
+            .baseUrl("https://api-demo.humansis.org/api/wsse/")
+            .build()
     }
 }

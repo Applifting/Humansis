@@ -3,8 +3,9 @@ package cz.applifting.humansis.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import cz.applifting.humansis.misc.ViewModelFactory
-import cz.applifting.humansis.ui.distribution.distributions.DistributionsViewModel
-import cz.applifting.humansis.ui.distribution.projects.ProjectsViewModel
+import cz.applifting.humansis.ui.main.MainActivityViewModel
+import cz.applifting.humansis.ui.main.distribution.distributions.DistributionsViewModel
+import cz.applifting.humansis.ui.main.distribution.projects.ProjectsViewModel
 import cz.applifting.humansis.ui.login.LoginViewModel
 import dagger.Binds
 import dagger.Module
@@ -34,6 +35,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LoginViewModel::class)
     internal abstract fun bindLoginViewModel(viewModel: LoginViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainActivityViewModel::class)
+    internal abstract fun bindMainActivityViewModel(viewModel: MainActivityViewModel): ViewModel
 
     //Add more ViewModels here
 }

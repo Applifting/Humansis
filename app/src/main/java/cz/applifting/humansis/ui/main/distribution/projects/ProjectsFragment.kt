@@ -1,4 +1,4 @@
-package cz.applifting.humansis.ui.distribution.projects
+package cz.applifting.humansis.ui.main.distribution.projects
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -39,7 +39,5 @@ class ProjectsFragment : BaseFragment() {
             layoutManager = viewManager
             adapter = viewAdapter
         }
-
-        viewModel.hello()
     }
 }

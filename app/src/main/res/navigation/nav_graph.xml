@@ -4,7 +4,7 @@
             xmlns:tools="http://schemas.android.com/tools" android:id="@+id/nav_graph" app:startDestination="@id/projectsFragment">
 
     <fragment android:id="@+id/projectsFragment"
-              android:name="cz.applifting.humansis.ui.distribution.projects.ProjectsFragment"
+              android:name="cz.applifting.humansis.ui.main.distribution.projects.ProjectsFragment"
               android:label="ProjectsFragment">
         <action android:id="@+id/action_projectsFragment_to_distributionsFragment2"
                 app:destination="@id/distributionsFragment"
@@ -14,10 +14,13 @@
                 app:popEnterAnim="@anim/slide_from_left"
         />
     </fragment>
+
     <fragment android:id="@+id/distributionsFragment"
-              android:name="cz.applifting.humansis.ui.distribution.distributions.DistributionsFragment"
+              android:name="cz.applifting.humansis.ui.main.distribution.distributions.DistributionsFragment"
               android:label="DistributionsFragment"/>
+
     <fragment android:id="@+id/placeholder" android:label="other" android:name="androidx.fragment.app.Fragment"/>
+
     <activity android:id="@+id/loginActivity" android:name="cz.applifting.humansis.ui.login.LoginActivity"
               android:label="LoginActivity"/>
 </navigation>
