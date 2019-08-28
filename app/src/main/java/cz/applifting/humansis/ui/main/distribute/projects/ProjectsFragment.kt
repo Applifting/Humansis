@@ -1,4 +1,4 @@
-package cz.applifting.humansis.ui.main.distribution.projects
+package cz.applifting.humansis.ui.main.distribute.projects
 
 import android.os.Bundle
 import android.view.LayoutInflater

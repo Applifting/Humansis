@@ -1,4 +1,4 @@
-package cz.applifting.humansis.ui.main.distribution.distributions
+package cz.applifting.humansis.ui.main.distribute.distributions
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
@@ -34,8 +35,8 @@ class DistributionsFragment : BaseFragment() {
 
         val viewManager = LinearLayoutManager(context)
         val viewAdapter = DistributionsAdapter(requireContext()) {
-//            val action = ProjectsFragmentDirections.chooseProject(it.id)
-//            this.findNavController().navigate(action)
+            val action = DistributionsFragmentDirections.chooseDistribution(it.id, it.name)
+            this.findNavController().navigate(action)
         }
 
         rv_distributions.apply {

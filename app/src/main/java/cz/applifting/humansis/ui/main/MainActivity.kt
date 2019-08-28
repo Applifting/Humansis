@@ -41,7 +41,7 @@ class MainActivity : BaseActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.projectsFragment, R.id.placeholder),
+            setOf(R.id.projectsFragment),
             drawerLayout)
 
         toolbar.setupWithNavController(navController, appBarConfiguration)

@@ -1,4 +1,4 @@
-package cz.applifting.humansis.ui.main.distribution.projects
+package cz.applifting.humansis.ui.main.distribute.projects
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019

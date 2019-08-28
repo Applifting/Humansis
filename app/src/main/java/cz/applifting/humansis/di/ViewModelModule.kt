@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import cz.applifting.humansis.misc.ViewModelFactory
 import cz.applifting.humansis.ui.main.MainActivityViewModel
-import cz.applifting.humansis.ui.main.distribution.distributions.DistributionsViewModel
-import cz.applifting.humansis.ui.main.distribution.projects.ProjectsViewModel
+import cz.applifting.humansis.ui.main.distribute.distributions.DistributionsViewModel
+import cz.applifting.humansis.ui.main.distribute.projects.ProjectsViewModel
 import cz.applifting.humansis.ui.login.LoginViewModel
 import dagger.Binds
 import dagger.Module

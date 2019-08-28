@@ -4,7 +4,7 @@
             xmlns:tools="http://schemas.android.com/tools" android:id="@+id/nav_graph" app:startDestination="@id/projectsFragment">
 
     <fragment android:id="@+id/projectsFragment"
-              android:name="cz.applifting.humansis.ui.main.distribution.projects.ProjectsFragment"
+              android:name="cz.applifting.humansis.ui.main.distribute.projects.ProjectsFragment"
               android:label="@string/projects">
         <action android:id="@+id/choose_project"
                 app:destination="@id/distributionsFragment"
@@ -16,7 +16,7 @@
     </fragment>
 
     <fragment android:id="@+id/distributionsFragment"
-              android:name="cz.applifting.humansis.ui.main.distribution.distributions.DistributionsFragment"
+              android:name="cz.applifting.humansis.ui.main.distribute.distributions.DistributionsFragment"
             android:label="{projectName}">
         <argument
                 android:name="projectId"
@@ -25,9 +25,27 @@
         <argument
                 android:name="projectName"
                 app:argType="string" />
+
+        <action android:id="@+id/choose_distribution"
+                app:destination="@id/distributionFragment"
+                app:exitAnim="@anim/slide_to_left"
+                app:enterAnim="@anim/slide_from_right"
+                app:popExitAnim="@anim/slide_to_right"
+                app:popEnterAnim="@anim/slide_from_left" >
+        </action>
     </fragment>
 
-    <fragment android:id="@+id/placeholder" android:label="other" android:name="androidx.fragment.app.Fragment"/>
+    <fragment android:id="@+id/distributionFragment"
+            android:name="cz.applifting.humansis.ui.main.distribute.distribution.DistributionFragment"
+            android:label="{distributionName}">
+        <argument
+                android:name="distributionId"
+                app:argType="integer" />
+
+        <argument
+                android:name="distributionName"
+                app:argType="string" />
+    </fragment>
 
     <activity android:id="@+id/loginActivity" android:name="cz.applifting.humansis.ui.login.LoginActivity"
               android:label="LoginActivity"/>

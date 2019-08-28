@@ -1,4 +1,4 @@
-package cz.applifting.humansis.ui.main.distribution.projects
+package cz.applifting.humansis.ui.main.distribute.projects
 
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.api.HumansisService
