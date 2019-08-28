@@ -10,7 +10,7 @@
     <color name="lightGrey">#C5C5C5</color>
 
     <color name="textColor">#161616</color>
-    <color name="disabledTextColor">#888888</color>
+    <color name="darkGreyColor">#888888</color>
 
     <color name="error">#FF0F0F</color>
 </resources>

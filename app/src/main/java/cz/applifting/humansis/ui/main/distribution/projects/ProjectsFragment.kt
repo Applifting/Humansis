@@ -29,7 +29,7 @@ class ProjectsFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
 
         val viewManager = LinearLayoutManager(context)
-        val viewAdapter = ProjectsAdapter {
+        val viewAdapter = ProjectsAdapter(requireContext()) {
             val action = ProjectsFragmentDirections.chooseProject(it.id, it.name ?: getString(R.string.unnamed_project))
             this.findNavController().navigate(action)
         }
@@ -40,7 +40,7 @@ class ProjectsFragment : BaseFragment() {
             adapter = viewAdapter
         }
 
-        viewModel.projectsLD.observe(this, Observer {
+        viewModel.projectsLD.observe(viewLifecycleOwner, Observer {
             viewAdapter.updateProjects(it)
         })
 

@@ -1,6 +1,7 @@
 package cz.applifting.humansis.model.api
 
 import com.google.gson.annotations.SerializedName
+import cz.applifting.humansis.model.Target
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
@@ -12,11 +13,11 @@ data class Distribution (
     @SerializedName("date_distribution") val dateDistribution : String?,
     val location : Any?,
     val project : Project,
-    @SerializedName("selection_criteria") val selection_criteria : List<Any>?,
+    @SerializedName("selection_criteria") val selection_criteria : List<SelectionCriteria>?,
     val archived : Boolean,
     val validated : Boolean,
-    val type : Int,
-    val commodities : List<Any?>?,
+    val type : Target,
+    val commodities : List<Commodity>,
     @SerializedName("distribution_beneficiaries") val distributionBeneficiaries : List<Any>?,
     val completed : Boolean
 )

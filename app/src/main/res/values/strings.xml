@@ -17,4 +17,8 @@
     <string name="projects">Projects</string>
     <string name="distributions">Distributions</string>
     <string name="unnamed_project">Unnamed Project</string>
+    <string name="date_of_distribution">Date Of Distribution: %1$s</string>
+    <string name="beneficiaries">Beneficiaries: %1$d</string>
+    <string name="commodity">Commodity: </string>
+    <string name="households">Households: %1$d</string>
 </resources>

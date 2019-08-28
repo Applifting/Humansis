@@ -7,15 +7,15 @@ import com.google.gson.annotations.SerializedName
  */
 data class Project(
     val id: Int,
-    val name: String? = null,
-    @SerializedName("start_date") val startDate: String? = null,
-    @SerializedName("end_date") val endDate: String? = null,
-    val number_of_households: Int? = null,
-    val target: Int? = null,
-    val notes: String? = null,
-    val iso3: String? = null,
-    val donors: List<Any>? = null,
-    val sectors: List<Any>? = null,
+    val name: String?,
+    @SerializedName("start_date") val startDate: String?,
+    @SerializedName("end_date") val endDate: String?,
+    @SerializedName("number_of_households") val numberOfHouseholds: Int?,
+    val target: Int?,
+    val notes: String?,
+    val iso3: String?,
+    val donors: List<Any>?,
+    val sectors: List<Any>?,
     val archived: Boolean = false,
-    val distributions: List<Any>? = null
+    val distributions: List<Any>?
 )

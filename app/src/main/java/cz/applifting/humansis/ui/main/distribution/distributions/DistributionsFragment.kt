@@ -33,9 +33,9 @@ class DistributionsFragment : BaseFragment() {
         (activity as MainActivity).actionBar?.title = args.projectName
 
         val viewManager = LinearLayoutManager(context)
-        val viewAdapter = DistributionsAdapter {
-            //val action = ProjectsFragmentDirections.chooseProject(it.id)
-            //this.findNavController().navigate(action)
+        val viewAdapter = DistributionsAdapter(requireContext()) {
+//            val action = ProjectsFragmentDirections.chooseProject(it.id)
+//            this.findNavController().navigate(action)
         }
 
         rv_distributions.apply {
@@ -44,11 +44,11 @@ class DistributionsFragment : BaseFragment() {
             adapter = viewAdapter
         }
 
-        viewModel.distributionsLD.observe(this, Observer {
+        viewModel.distributionsLD.observe(viewLifecycleOwner, Observer {
             viewAdapter.updateDistributions(it)
         })
 
-        viewModel.distributionsViewStateLD.observe(this, Observer {
+        viewModel.distributionsViewStateLD.observe(viewLifecycleOwner, Observer {
             srl_reload.isRefreshing = it.refreshing
         })
 
