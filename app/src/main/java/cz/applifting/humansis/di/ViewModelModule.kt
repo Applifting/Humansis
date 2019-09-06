@@ -7,6 +7,7 @@ import cz.applifting.humansis.ui.main.MainActivityViewModel
 import cz.applifting.humansis.ui.main.distribute.distributions.DistributionsViewModel
 import cz.applifting.humansis.ui.main.distribute.projects.ProjectsViewModel
 import cz.applifting.humansis.ui.login.LoginViewModel
+import cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -40,6 +41,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MainActivityViewModel::class)
     internal abstract fun bindMainActivityViewModel(viewModel: MainActivityViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BeneficiariesViewModel::class)
+    internal abstract fun bindBeneficieriesViewModel(viewModel: BeneficiariesViewModel): ViewModel
 
     //Add more ViewModels here
 }

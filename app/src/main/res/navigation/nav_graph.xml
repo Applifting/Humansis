@@ -25,14 +25,14 @@
         <argument
                 android:name="projectName"
                 app:argType="string" />
-
-        <action android:id="@+id/choose_distribution"
-                app:destination="@id/distributionFragment"
+        <action
+                android:id="@+id/action_distributionsFragment_to_beneficiariesFragment"
+                app:destination="@id/beneficiariesFragment"
                 app:exitAnim="@anim/slide_to_left"
                 app:enterAnim="@anim/slide_from_right"
                 app:popExitAnim="@anim/slide_to_right"
-                app:popEnterAnim="@anim/slide_from_left" >
-        </action>
+                app:popEnterAnim="@anim/slide_from_left" />
+
     </fragment>
 
     <fragment android:id="@+id/distributionFragment"
@@ -45,6 +45,19 @@
         <argument
                 android:name="distributionName"
                 app:argType="string" />
+    </fragment>
+
+    <fragment android:id="@+id/beneficiariesFragment"
+              android:name="cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesFragment"
+              android:label="{distributionName}">
+        <argument
+                android:name="distributionId"
+                app:argType="integer" />
+
+        <argument
+                android:name="distributionName"
+                app:argType="string" />
+
     </fragment>
 
     <activity android:id="@+id/loginActivity" android:name="cz.applifting.humansis.ui.login.LoginActivity"

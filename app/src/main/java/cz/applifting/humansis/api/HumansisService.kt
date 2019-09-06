@@ -1,9 +1,6 @@
 package cz.applifting.humansis.api
 
-import cz.applifting.humansis.model.api.Distribution
-import cz.applifting.humansis.model.api.GetSaltResponse
-import cz.applifting.humansis.model.api.LoginReqRes
-import cz.applifting.humansis.model.api.Project
+import cz.applifting.humansis.model.api.*
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -25,4 +22,7 @@ interface HumansisService {
 
     @GET("distributions/projects/{projectId}")
     suspend fun getDistributions(@Path("projectId") projectId: Int): List<Distribution>
+
+    @GET("distributions/{distributionId}/beneficiaries")
+    suspend fun getDistributionBeneficiaries(@Path("distributionId") distributionId: Int): List<DistributionBeneficiary>
 }

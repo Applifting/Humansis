@@ -21,4 +21,9 @@
     <string name="beneficiaries">Beneficiaries: %1$d</string>
     <string name="commodity">Commodity: </string>
     <string name="households">Households: %1$d</string>
+    <string name="beneficiaries_title">Beneficiaries</string>
+    <string name="beneficiary_id">ID: %1$d</string>
+    <string name="beneficiaries_reached">%1$d of %2$d beneficiaries reached</string>
+    <string name="beneficiary_name">%1$s %2$s</string>
+
 </resources>

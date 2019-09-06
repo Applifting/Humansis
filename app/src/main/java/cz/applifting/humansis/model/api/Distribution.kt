@@ -18,6 +18,6 @@ data class Distribution (
     val validated : Boolean,
     val type : Target,
     val commodities : List<Commodity>,
-    @SerializedName("distribution_beneficiaries") val distributionBeneficiaries : List<Any>?,
+    @SerializedName("distribution_beneficiaries") val distributionBeneficiaries : List<Beneficiary>?,
     val completed : Boolean
 )
