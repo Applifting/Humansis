@@ -3,10 +3,7 @@ package cz.applifting.humansis.ui.main.distribute.beneficiaries
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -50,9 +47,14 @@ class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> U
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
             view.tv_id.text = view.context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
-            view.tv_name.text = view.context.getString(R.string.beneficiary_name, beneficiaryLocal.givenName,beneficiaryLocal.familyName)
+            view.tv_name.text = view.context.getString(
+                R.string.beneficiary_name,
+                beneficiaryLocal.givenName,
+                beneficiaryLocal.familyName
+            )
 
-            val color = if (beneficiaryLocal.distributed) R.color.distributed else R.color.notDistributed
+            val color =
+                if (beneficiaryLocal.distributed) R.color.distributed else R.color.notDistributed
             view.iv_distribution_state.tintedDrawable(R.drawable.ic_distribution_state, color)
         }
     }
