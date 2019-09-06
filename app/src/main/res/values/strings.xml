@@ -25,5 +25,7 @@
     <string name="beneficiary_id">ID: %1$d</string>
     <string name="beneficiaries_reached">%1$d of %2$d beneficiaries reached</string>
     <string name="beneficiary_name">%1$s %2$s</string>
+    <string name="sort_alphabetically">Sort alphabetically</string>
+    <string name="search_beneficiary_hint">Enter name</string>
 
 </resources>

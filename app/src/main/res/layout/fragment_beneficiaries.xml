@@ -30,6 +30,29 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_beneficiaries_reached" />
 
+    <EditText
+            android:id="@+id/et_search"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:inputType="text"
+            android:hint="@string/search_beneficiary_hint"
+            app:layout_constraintEnd_toStartOf="@+id/btn_sort"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pb_beneficiaries_reached" />
+
+    <ImageButton
+            android:id="@+id/btn_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:srcCompat="@drawable/ic_sort_by_alpha"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@string/sort_alphabetically"
+            app:layout_constraintTop_toBottomOf="@+id/pb_beneficiaries_reached" />
+
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_beneficiaries"
             android:layout_width="match_parent"
@@ -38,7 +61,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pb_beneficiaries_reached">
+            app:layout_constraintTop_toBottomOf="@+id/et_search">
 
     </androidx.recyclerview.widget.RecyclerView>
 

@@ -1,9 +1,12 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiaries
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
@@ -52,7 +55,7 @@ class BeneficiariesFragment : BaseFragment() {
             adapter = viewAdapter
         }
 
-        viewModel.beneficiariesLD.observe(viewLifecycleOwner, Observer {
+        viewModel.searchResults.observe(viewLifecycleOwner, Observer {
             viewAdapter.update(it)
         })
 
@@ -60,6 +63,8 @@ class BeneficiariesFragment : BaseFragment() {
             pb_loading.visible(it.refreshing)
             tv_beneficiaries_reached.visible(!it.refreshing)
             pb_beneficiaries_reached.visible(!it.refreshing)
+            et_search.visible(!it.refreshing)
+            btn_sort.visible(!it.refreshing)
         })
 
         viewModel.statsLD.observe(viewLifecycleOwner, Observer {
@@ -69,6 +74,27 @@ class BeneficiariesFragment : BaseFragment() {
             pb_beneficiaries_reached.progress = reachedBeneficiaries * 100 / totalBeneficiaries
         })
 
+        context?.let {
+            val searchDrawable = ContextCompat.getDrawable(it, R.drawable.ic_search)
+            et_search.setCompoundDrawablesWithIntrinsicBounds(searchDrawable, null, null, null)
+        }
+
+        et_search.addTextChangedListener(object:TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.search(s.toString())
+            }
+
+        })
+
+        btn_sort.setOnClickListener { viewModel.sortBeneficiaries() }
 
         viewModel.loadBeneficiaries(args.distributionId)
 
