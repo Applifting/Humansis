@@ -38,7 +38,8 @@ class BeneficiariesFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as MainActivity).supportActionBar?.title = args.distributionName
-        (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
+        (activity as MainActivity).supportActionBar?.subtitle =
+            getString(R.string.beneficiaries_title)
 
         val viewManager = LinearLayoutManager(context)
         val viewAdapter = BeneficiariesAdapter { beneficiary ->
@@ -61,9 +62,13 @@ class BeneficiariesFragment : BaseFragment() {
             pb_beneficiaries_reached.visible(!it.refreshing)
         })
 
-        // todo set values from BE
-        tv_beneficiaries_reached.text = getString(R.string.beneficiaries_reached, 1_000_000, 1_500_000)
-        pb_beneficiaries_reached.progress = 1_000_000*100/1_500_000
+        viewModel.statsLD.observe(viewLifecycleOwner, Observer {
+            val (reachedBeneficiaries, totalBeneficiaries) = it
+            tv_beneficiaries_reached.text =
+                getString(R.string.beneficiaries_reached, reachedBeneficiaries, totalBeneficiaries)
+            pb_beneficiaries_reached.progress = reachedBeneficiaries * 100 / totalBeneficiaries
+        })
+
 
         viewModel.loadBeneficiaries(args.distributionId)
 
