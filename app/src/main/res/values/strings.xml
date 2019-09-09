@@ -15,7 +15,6 @@
     <string name="login">Login</string>
     <string name="log_out">Log out</string>
     <string name="projects">Projects</string>
-    <string name="distributions">Distributions</string>
     <string name="unnamed_project">Unnamed Project</string>
     <string name="date_of_distribution">Date Of Distribution: %1$s</string>
     <string name="beneficiaries">Beneficiaries: %1$d</string>
@@ -27,5 +26,6 @@
     <string name="beneficiary_name">%1$s %2$s</string>
     <string name="sort_alphabetically">Sort alphabetically</string>
     <string name="search_beneficiary_hint">Enter name</string>
+    <string name="distributions">Distributions</string>
 
 </resources>

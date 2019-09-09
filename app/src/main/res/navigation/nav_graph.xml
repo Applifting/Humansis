@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools" android:id="@+id/nav_graph" app:startDestination="@id/projectsFragment">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/nav_graph"
+        app:startDestination="@id/projectsFragment">
 
-    <fragment android:id="@+id/projectsFragment"
-              android:name="cz.applifting.humansis.ui.main.distribute.projects.ProjectsFragment"
-              android:label="@string/projects">
-        <action android:id="@+id/choose_project"
+    <fragment
+            android:id="@+id/projectsFragment"
+            android:name="cz.applifting.humansis.ui.main.distribute.projects.ProjectsFragment">
+        <action
+                android:id="@+id/choose_project"
                 app:destination="@id/distributionsFragment"
-                app:exitAnim="@anim/slide_to_left"
                 app:enterAnim="@anim/slide_from_right"
-                app:popExitAnim="@anim/slide_to_right"
-                app:popEnterAnim="@anim/slide_from_left" >
-        </action>
+                app:exitAnim="@anim/slide_to_left"
+                app:popEnterAnim="@anim/slide_from_left"
+                app:popExitAnim="@anim/slide_to_right" />
     </fragment>
 
-    <fragment android:id="@+id/distributionsFragment"
-              android:name="cz.applifting.humansis.ui.main.distribute.distributions.DistributionsFragment"
-            android:label="{projectName}">
+    <fragment
+            android:id="@+id/distributionsFragment"
+            android:name="cz.applifting.humansis.ui.main.distribute.distributions.DistributionsFragment">
         <argument
                 android:name="projectId"
                 app:argType="integer" />
@@ -28,28 +30,16 @@
         <action
                 android:id="@+id/action_distributionsFragment_to_beneficiariesFragment"
                 app:destination="@id/beneficiariesFragment"
-                app:exitAnim="@anim/slide_to_left"
                 app:enterAnim="@anim/slide_from_right"
-                app:popExitAnim="@anim/slide_to_right"
-                app:popEnterAnim="@anim/slide_from_left" />
+                app:exitAnim="@anim/slide_to_left"
+                app:popEnterAnim="@anim/slide_from_left"
+                app:popExitAnim="@anim/slide_to_right" />
 
     </fragment>
 
-    <fragment android:id="@+id/distributionFragment"
-            android:name="cz.applifting.humansis.ui.main.distribute.distribution.DistributionFragment"
-            android:label="{distributionName}">
-        <argument
-                android:name="distributionId"
-                app:argType="integer" />
-
-        <argument
-                android:name="distributionName"
-                app:argType="string" />
-    </fragment>
-
-    <fragment android:id="@+id/beneficiariesFragment"
-              android:name="cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesFragment"
-              android:label="{distributionName}">
+    <fragment
+            android:id="@+id/beneficiariesFragment"
+            android:name="cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesFragment">
         <argument
                 android:name="distributionId"
                 app:argType="integer" />
@@ -60,6 +50,8 @@
 
     </fragment>
 
-    <activity android:id="@+id/loginActivity" android:name="cz.applifting.humansis.ui.login.LoginActivity"
-              android:label="LoginActivity"/>
+    <activity
+            android:id="@+id/loginActivity"
+            android:name="cz.applifting.humansis.ui.login.LoginActivity"
+            android:label="LoginActivity" />
 </navigation>

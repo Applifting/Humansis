@@ -47,9 +47,6 @@ class MainActivity : BaseActivity() {
         toolbar.setupWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // For some reason it does not sync with navController on startup
-        toolbar.title = getString(R.string.projects)
-
         (application as App).appComponent.inject(this)
 
         // Define Observers

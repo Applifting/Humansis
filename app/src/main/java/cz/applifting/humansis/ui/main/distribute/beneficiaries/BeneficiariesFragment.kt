@@ -41,8 +41,7 @@ class BeneficiariesFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as MainActivity).supportActionBar?.title = args.distributionName
-        (activity as MainActivity).supportActionBar?.subtitle =
-            getString(R.string.beneficiaries_title)
+        (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
         val viewManager = LinearLayoutManager(context)
         val viewAdapter = BeneficiariesAdapter { beneficiary ->
@@ -79,7 +78,7 @@ class BeneficiariesFragment : BaseFragment() {
             et_search.setCompoundDrawablesWithIntrinsicBounds(searchDrawable, null, null, null)
         }
 
-        et_search.addTextChangedListener(object:TextWatcher{
+        et_search.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
 
             }

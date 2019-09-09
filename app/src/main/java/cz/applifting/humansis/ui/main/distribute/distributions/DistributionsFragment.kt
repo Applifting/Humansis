@@ -31,7 +31,8 @@ class DistributionsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as MainActivity).actionBar?.title = args.projectName
+        (activity as MainActivity).supportActionBar?.title = args.projectName
+        (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.distributions)
 
         val viewManager = LinearLayoutManager(context)
         val viewAdapter = DistributionsAdapter(requireContext()) {
