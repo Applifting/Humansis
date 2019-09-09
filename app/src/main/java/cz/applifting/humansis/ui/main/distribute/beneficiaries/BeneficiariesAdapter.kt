@@ -3,6 +3,7 @@ package cz.applifting.humansis.ui.main.distribute.beneficiaries
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tintedDrawable
@@ -38,9 +39,19 @@ class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> U
 
     override fun getItemCount(): Int = beneficiaries.size
 
-    internal fun update(newDistributionBeneficiaryLocals: List<BeneficiaryLocal>) {
-        beneficiaries = newDistributionBeneficiaryLocals.toMutableList()
-        notifyDataSetChanged()
+    internal fun update(newBeneficiaries: List<BeneficiaryLocal>) {
+
+        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                newBeneficiaries[newItemPosition].id == beneficiaries[oldItemPosition].id
+
+            override fun getOldListSize(): Int = beneficiaries.size
+            override fun getNewListSize(): Int = newBeneficiaries.size
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                beneficiaries[oldItemPosition] == newBeneficiaries[newItemPosition]
+        })
+        beneficiaries = newBeneficiaries.toMutableList()
+        diffResult.dispatchUpdatesTo(this)
     }
 
     class BeneficiaryViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
