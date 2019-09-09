@@ -12,7 +12,7 @@ import cz.applifting.humansis.model.db.ProjectLocal
 @Dao
 interface ProjectsDao {
     @Query("SELECT * FROM projects")
-    suspend fun retrieveAll(): List<ProjectLocal>?
+    suspend fun getAll(): List<ProjectLocal>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(projects: List<ProjectLocal>)

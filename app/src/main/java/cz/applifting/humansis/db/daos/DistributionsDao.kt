@@ -12,10 +12,10 @@ import cz.applifting.humansis.model.db.DistributionLocal
 @Dao
 interface DistributionsDao {
     @Query("SELECT * FROM distributions")
-    suspend fun retrieveAll(): List<DistributionLocal>?
+    suspend fun getAll(): List<DistributionLocal>?
 
     @Query("SELECT * FROM distributions WHERE projectId = :projectId")
-    suspend fun retrieveByProject(projectId: Int): List<DistributionLocal>?
+    suspend fun getByProject(projectId: Int): List<DistributionLocal>?
 
     @Query("DELETE FROM distributions WHERE projectId = :projectId")
     suspend fun deleteByProject(projectId: Int)

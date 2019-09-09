@@ -29,6 +29,6 @@ class ProjectsRepository @Inject constructor(val service: HumansisService, val d
     }
 
     suspend fun getProjectsOffline(): List<ProjectLocal> {
-        return db.projectsDao().retrieveAll() ?: listOf()
+        return db.projectsDao().getAll() ?: listOf()
     }
 }

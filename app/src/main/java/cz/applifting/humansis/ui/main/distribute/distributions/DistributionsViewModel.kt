@@ -20,7 +20,6 @@ class DistributionsViewModel @Inject constructor(
 
     fun loadDistributions(projectId: Int, download: Boolean) {
 
-
         launch {
             listStateLD.value = ListComponentState(isRefreshing = download, isRetrieving = !download)
 
@@ -40,7 +39,7 @@ class DistributionsViewModel @Inject constructor(
         distributions.map { distribution ->
             val beneficiaries = mutableListOf<BeneficiaryLocal>()
 
-            val distributionBeneficiaries = service.getDistributionBeneficiaries(distribution.id)
+            val distributionBeneficiaries = service.getByDistribution(distribution.id)
 
             distributionBeneficiaries.map { distributionBeneficiary ->
 
@@ -64,7 +63,7 @@ class DistributionsViewModel @Inject constructor(
 
             }
 
-            humansisDB.beneficiaryDao().insertAll(beneficiaries)
+            humansisDB.beneficiariesDao().insertAll(beneficiaries)
         }
     }*/
 }

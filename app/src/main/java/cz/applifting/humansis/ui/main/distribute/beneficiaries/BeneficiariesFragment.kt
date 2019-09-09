@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
@@ -43,34 +42,33 @@ class BeneficiariesFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.title = args.distributionName
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
-        val viewManager = LinearLayoutManager(context)
+
         val viewAdapter = BeneficiariesAdapter { beneficiary ->
             // todo implement on click logic
         }
 
-        rv_beneficiaries.apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = viewAdapter
+        lc_beneficiaries.init(viewAdapter)
+        lc_beneficiaries.setOnRefreshListener {
+            viewModel.loadBeneficiaries(args.distributionId, true)
         }
+
 
         viewModel.searchResults.observe(viewLifecycleOwner, Observer {
             viewAdapter.update(it)
         })
 
         viewModel.beneficiariesViewStateLD.observe(viewLifecycleOwner, Observer {
-            pb_loading.visible(it.refreshing)
-            tv_beneficiaries_reached.visible(!it.refreshing)
-            pb_beneficiaries_reached.visible(!it.refreshing)
-            et_search.visible(!it.refreshing)
-            btn_sort.visible(!it.refreshing)
+            lc_beneficiaries.setState(it)
+            showControls(!it.isRetrieving)
         })
 
         viewModel.statsLD.observe(viewLifecycleOwner, Observer {
             val (reachedBeneficiaries, totalBeneficiaries) = it
-            tv_beneficiaries_reached.text =
-                getString(R.string.beneficiaries_reached, reachedBeneficiaries, totalBeneficiaries)
-            pb_beneficiaries_reached.progress = reachedBeneficiaries * 100 / totalBeneficiaries
+            tv_beneficiaries_reached.text = getString(R.string.beneficiaries_reached, reachedBeneficiaries, totalBeneficiaries)
+
+            if (totalBeneficiaries != 0) {
+                pb_beneficiaries_reached.progress = reachedBeneficiaries * 100 / totalBeneficiaries
+            }
         })
 
         context?.let {
@@ -95,7 +93,14 @@ class BeneficiariesFragment : BaseFragment() {
 
         btn_sort.setOnClickListener { viewModel.sortBeneficiaries() }
 
-        viewModel.loadBeneficiaries(args.distributionId)
+        viewModel.loadBeneficiaries(args.distributionId, false)
 
+    }
+
+    private fun showControls(show: Boolean) {
+        tv_beneficiaries_reached.visible(show)
+        pb_beneficiaries_reached.visible(show)
+        et_search.visible(show)
+        btn_sort.visible(show)
     }
 }

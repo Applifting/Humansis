@@ -25,7 +25,7 @@ import cz.applifting.humansis.model.db.User
 @TypeConverters(StringListConverter::class, TargetConverter::class)
 abstract class HumansisDB : RoomDatabase() {
     abstract fun userDao(): UserDao
-    abstract fun beneficiaryDao(): BeneficiaryDao
+    abstract fun beneficiariesDao(): BeneficiaryDao
     abstract fun projectsDao(): ProjectsDao
     abstract fun distributionsDao(): DistributionsDao
 }

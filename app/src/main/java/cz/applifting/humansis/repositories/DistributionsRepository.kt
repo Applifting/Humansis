@@ -40,7 +40,7 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
     }
 
     suspend fun getDistributionsOffline(projectId: Int): List<DistributionLocal> {
-        return db.distributionsDao().retrieveByProject(projectId) ?: listOf()
+        return db.distributionsDao().getByProject(projectId) ?: listOf()
     }
 
 
