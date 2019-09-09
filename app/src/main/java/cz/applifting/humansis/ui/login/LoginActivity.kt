@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
 
         if (BuildConfig.DEBUG) {
             et_username.setText("demo@humansis.org")
-            et_password.setText("Testing123")
+            et_password.setText("Tester123")
         }
     }
 

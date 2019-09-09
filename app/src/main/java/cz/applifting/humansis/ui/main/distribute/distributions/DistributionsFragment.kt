@@ -35,7 +35,7 @@ class DistributionsFragment : BaseFragment() {
 
         val viewManager = LinearLayoutManager(context)
         val viewAdapter = DistributionsAdapter(requireContext()) {
-            val action = DistributionsFragmentDirections.chooseDistribution(it.id, it.name)
+            val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(it.id, it.name)
             this.findNavController().navigate(action)
         }
 

@@ -13,4 +13,7 @@
     <color name="darkGreyColor">#888888</color>
 
     <color name="error">#FF0F0F</color>
+
+    <color name="distributed">#75aff1</color>
+    <color name="notDistributed">#d46d35</color>
 </resources>
