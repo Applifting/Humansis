@@ -27,8 +27,8 @@ class BeneficiariesViewModel @Inject constructor(private val humansisDB: Humansi
     internal val searchResults = MediatorLiveData<List<BeneficiaryLocal>>()
 
     init {
-        searchResults.addSource(beneficiariesLD) {
-            searchResults.value = it.sortedBy { beneficiary -> beneficiary.familyName }
+        searchResults.addSource(beneficiariesLD) { list ->
+            searchResults.value = list.sort()
         }
     }
 
@@ -51,21 +51,26 @@ class BeneficiariesViewModel @Inject constructor(private val humansisDB: Humansi
 
         val query = input.toLowerCase(Locale.getDefault())
 
+        //todo find out what is expected behaviour for filtering and sorting
         searchResults.value = it.filter { beneficiary ->
 
             val familyName = beneficiary.familyName?.toLowerCase(Locale.getDefault()) ?: ""
             val givenName = beneficiary.givenName?.toLowerCase(Locale.getDefault()) ?: ""
 
             familyName.startsWith(query) || givenName.startsWith(query)
-        }
+        }.sort()
 
     }
 
     /**
-     * Sorts currently displayed beneficiaries by family name.
+     * Sorts currently displayed beneficiaries by family name, undistributed puts first.
      */
-    internal fun sortBeneficiaries() = searchResults.value?.let {
-        searchResults.value = it.sortedBy { beneficiary -> beneficiary.familyName }
+    internal fun sortBeneficiaries() = searchResults.value?.let { list ->
+        searchResults.value = list.sort()
+    }
+
+    private fun List<BeneficiaryLocal>.sort(): List<BeneficiaryLocal> {
+        return this.sortedWith(compareBy({ it.distributed }, { it.familyName }))
     }
 
 }
