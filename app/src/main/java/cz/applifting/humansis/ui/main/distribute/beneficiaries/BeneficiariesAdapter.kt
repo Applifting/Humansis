@@ -32,9 +32,10 @@ class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> U
 
     override fun onBindViewHolder(holder: BeneficiaryViewHolder, position: Int) {
         val distributionBeneficiary = beneficiaries[position]
-        holder.bind(distributionBeneficiary)
-        holder.view.setOnClickListener { onItemClick(distributionBeneficiary) }
-
+        holder.apply {
+            bind(distributionBeneficiary)
+            view.setOnClickListener { onItemClick(distributionBeneficiary) }
+        }
     }
 
     override fun getItemCount(): Int = beneficiaries.size
@@ -57,16 +58,19 @@ class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> U
     class BeneficiaryViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
-            view.tv_id.text = view.context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
-            view.tv_name.text = view.context.getString(
-                R.string.beneficiary_name,
-                beneficiaryLocal.givenName,
-                beneficiaryLocal.familyName
-            )
+            view.apply {
+                tv_id.text = context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
+                tv_name.text = context.getString(
+                    R.string.beneficiary_name,
+                    beneficiaryLocal.givenName,
+                    beneficiaryLocal.familyName
+                )
 
-            val color =
-                if (beneficiaryLocal.distributed) R.color.distributed else R.color.notDistributed
-            view.iv_distribution_state.tintedDrawable(R.drawable.ic_distribution_state, color)
+                val color =
+                    if (beneficiaryLocal.distributed) R.color.distributed else R.color.notDistributed
+                iv_distribution_state.tintedDrawable(R.drawable.ic_distribution_state, color)
+            }
+
         }
     }
 
