@@ -35,11 +35,9 @@ class BeneficiariesViewModel @Inject constructor(private val humansisDB: Humansi
     fun loadBeneficiaries(distributionId: Int) {
         launch {
             beneficiariesViewStateLD.value = BeneficiariesViewState(true)
-            val beneficiaries =
-                humansisDB.beneficiaryDao().getDistributionBeneficiaries(distributionId)
+            val beneficiaries = humansisDB.beneficiaryDao().getDistributionBeneficiaries(distributionId)
             beneficiariesLD.value = beneficiaries
-            statsLD.value =
-                Pair(beneficiaries?.count { it.distributed } ?: 0, beneficiaries?.size ?: 0)
+            statsLD.value = Pair(beneficiaries?.count { it.distributed } ?: 0, beneficiaries?.size ?: 0)
             beneficiariesViewStateLD.value = BeneficiariesViewState(false)
         }
     }

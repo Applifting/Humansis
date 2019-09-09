@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.main.MainActivity
@@ -31,29 +30,19 @@ class ProjectsFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.title = getString(R.string.app_name)
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.projects)
 
-        val viewManager = LinearLayoutManager(context)
-        val viewAdapter = ProjectsAdapter(requireContext()) {
+        val adapter = ProjectsAdapter(requireContext()) {
             val action = ProjectsFragmentDirections.chooseProject(it.id, it.name ?: getString(R.string.unnamed_project))
             this.findNavController().navigate(action)
         }
 
-        rv_projects.apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = viewAdapter
-        }
+        lc_projects.init(adapter)
+        lc_projects.setOnRefreshListener {  viewModel.loadProjects(true) }
 
         viewModel.projectsLD.observe(viewLifecycleOwner, Observer {
-            viewAdapter.updateProjects(it)
+            adapter.updateProjects(it)
         })
 
-        viewModel.viewStateLD.observe(this, Observer {
-            srl_reload.isRefreshing = it.isLoading
-        })
-
-        srl_reload.setOnRefreshListener {
-            viewModel.loadProjects()
-        }
+        viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_projects::setState))
 
         viewModel.loadProjects()
     }

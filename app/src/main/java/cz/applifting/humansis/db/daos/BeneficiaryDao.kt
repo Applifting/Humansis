@@ -9,7 +9,7 @@ import cz.applifting.humansis.model.db.BeneficiaryLocal
 @Dao
 interface BeneficiaryDao {
     @Query("SELECT * FROM beneficiaries where distributionId = :distributionId")
-    suspend fun getDistributionBeneficiaries(distributionId:Int): List<BeneficiaryLocal>?
+    suspend fun getDistributionBeneficiaries(distributionId: Int): List<BeneficiaryLocal>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(beneficiaryLocal: List<BeneficiaryLocal>)

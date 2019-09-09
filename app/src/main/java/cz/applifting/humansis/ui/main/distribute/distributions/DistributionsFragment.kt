@@ -8,7 +8,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.main.MainActivity
@@ -34,28 +33,21 @@ class DistributionsFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.title = args.projectName
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.distributions)
 
-        val viewManager = LinearLayoutManager(context)
         val viewAdapter = DistributionsAdapter(requireContext()) {
             val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(it.id, it.name)
             this.findNavController().navigate(action)
         }
 
-        rv_distributions.apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = viewAdapter
-        }
+        lc_distributions.init(viewAdapter)
+        lc_distributions.setOnRefreshListener { viewModel.loadDistributions(args.projectId, true) }
 
         viewModel.distributionsLD.observe(viewLifecycleOwner, Observer {
             viewAdapter.updateDistributions(it)
         })
 
-        viewModel.distributionsViewStateLD.observe(viewLifecycleOwner, Observer {
-            srl_reload.isRefreshing = it.refreshing
-        })
+        viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_distributions::setState))
+        viewModel.loadDistributions(args.projectId, false)
 
-        srl_reload.setOnRefreshListener { viewModel.loadDistributions(args.projectId) }
 
-        viewModel.loadDistributions(args.projectId)
     }
 }

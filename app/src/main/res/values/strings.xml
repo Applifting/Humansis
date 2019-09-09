@@ -27,5 +27,6 @@
     <string name="sort_alphabetically">Sort alphabetically</string>
     <string name="search_beneficiary_hint">Enter name</string>
     <string name="distributions">Distributions</string>
+    <string name="unknown">Unknown</string>
 
 </resources>
