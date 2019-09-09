@@ -74,6 +74,8 @@ class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> U
 
                 beneficiaryLocal.vulnerabilities.map {
 
+                    ll_vulnerabilities_holder.removeAllViews()
+
                     getVulnerabilityDrawable(it)?.let { drawable ->
                         val vulnerabilityImage = ImageView(context)
                         vulnerabilityImage.simpleDrawable(drawable)
