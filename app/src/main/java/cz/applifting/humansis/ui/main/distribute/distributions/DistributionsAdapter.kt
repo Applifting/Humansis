@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.item_project.view.tv_name
  */
 class DistributionsAdapter(
     private val context: Context,
-    val onItemClick: (distribution: DistributionLocal) -> Unit
+    private val onItemClick: (distribution: DistributionLocal) -> Unit
 ) : RecyclerView.Adapter<DistributionsAdapter.DistributionViewHolder>() {
 
     private val distributions: MutableList<DistributionLocal> = mutableListOf()
@@ -35,42 +35,9 @@ class DistributionsAdapter(
 
     override fun getItemCount(): Int = distributions.size
 
-
-    // TODO fix kotlin binding
     override fun onBindViewHolder(holder: DistributionViewHolder, position: Int) {
         val distribution = distributions[position]
-
-        // Set text fields
-        holder.layout.tv_name.text = distribution.name
-                holder.layout.tv_date.text = context.getString(R.string.date_of_distribution, distribution.dateOfDistribution)
-                holder.layout.tv_beneficieries_cnt.text = context.getString(R.string.beneficiaries, distribution.numberOfBeneficiaries)
-
-        // Set commodities
-        holder.layout.iv_cash.visibility = View.GONE
-        holder.layout.iv_food.visibility = View.GONE
-        holder.layout.iv_loan.visibility = View.GONE
-
-        for (commodity in distribution.commodities) {
-            when (commodity) {
-                CommodityType.CASH.name -> holder.layout.iv_cash.visibility = View.VISIBLE
-                CommodityType.FOOD.name -> holder.layout.iv_food.visibility = View.VISIBLE
-                CommodityType.LOAN.name -> holder.layout.iv_loan.visibility = View.VISIBLE
-//              CommodityType.RTE_KIT -> TODO()
-////            CommodityType.PAPER_VOUCHER -> TODO()
-////            null -> TODO()
-                else -> holder.layout.iv_loan.visibility = View.VISIBLE
-            }
-        }
-
-        // Set target
-        val targetImage =
-            if (distribution.target == Target.INDIVIDUAL) {
-                context.getDrawable(R.drawable.ic_person_black_24dp)
-            } else {
-                context.getDrawable(R.drawable.ic_home_black_24dp)
-            }
-        holder.layout.iv_target.setImageDrawable(targetImage)
-        holder.layout.setOnClickListener { onItemClick(distributions[position]) }
+        holder.bind(distribution)
     }
 
     fun updateDistributions(newDistributions: List<DistributionLocal>) {
@@ -89,5 +56,48 @@ class DistributionsAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    class DistributionViewHolder(val layout: ConstraintLayout) : RecyclerView.ViewHolder(layout)
+    inner class DistributionViewHolder(val layout: ConstraintLayout) : RecyclerView.ViewHolder(layout) {
+        val tvName = layout.tv_name
+        val tvDate = layout.tv_date
+        val tvBeneficieriesCnt = layout.tv_beneficieries_cnt
+        val ivCash = layout.iv_cash
+        val ivFood = layout.iv_food
+        val ivLoan = layout.iv_loan
+        val ivTarget = layout.iv_target
+
+        fun bind(distribution: DistributionLocal) {
+            // Set text fields
+            tvName.text = distribution.name
+            tvDate.text = context.getString(R.string.date_of_distribution, distribution.dateOfDistribution)
+            tvBeneficieriesCnt.text = context.getString(R.string.beneficiaries, distribution.numberOfBeneficiaries)
+
+            // Set commodities
+            ivCash.visibility = View.GONE
+            ivFood.visibility = View.GONE
+            ivLoan.visibility = View.GONE
+
+            for (commodity in distribution.commodities) {
+                when (commodity) {
+                    CommodityType.CASH.name -> ivCash.visibility = View.VISIBLE
+                    CommodityType.FOOD.name -> ivFood.visibility = View.VISIBLE
+                    CommodityType.LOAN.name -> ivLoan.visibility = View.VISIBLE
+    //              CommodityType.RTE_KIT -> TODO()
+    ////            CommodityType.PAPER_VOUCHER -> TODO()
+    ////            null -> TODO()
+                    else -> ivLoan.visibility = View.VISIBLE
+                }
+            }
+
+            // Set target
+            val targetImage =
+                if (distribution.target == Target.INDIVIDUAL) {
+                    context.getDrawable(R.drawable.ic_person_black_24dp)
+                } else {
+                    context.getDrawable(R.drawable.ic_home_black_24dp)
+                }
+            ivTarget.setImageDrawable(targetImage)
+            layout.setOnClickListener { onItemClick(distributions[position]) }
+
+        }
+    }
 }

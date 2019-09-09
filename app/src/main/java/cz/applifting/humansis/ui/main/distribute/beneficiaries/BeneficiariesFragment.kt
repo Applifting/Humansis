@@ -43,7 +43,7 @@ class BeneficiariesFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
 
-        val viewAdapter = BeneficiariesAdapter { beneficiary ->
+        val viewAdapter = BeneficiariesAdapter(requireContext()) { beneficiary ->
             // todo implement on click logic
         }
 

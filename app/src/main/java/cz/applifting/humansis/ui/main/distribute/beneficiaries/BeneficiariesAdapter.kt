@@ -1,5 +1,6 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiaries
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,8 +19,10 @@ import kotlinx.android.synthetic.main.item_beneficiary.view.*
  * @since 5. 9. 2019
  */
 
-class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> Unit) :
-    RecyclerView.Adapter<BeneficiariesAdapter.BeneficiaryViewHolder>() {
+class BeneficiariesAdapter(
+    private val context: Context,
+    val onItemClick: (beneficiary: BeneficiaryLocal) -> Unit
+) : RecyclerView.Adapter<BeneficiariesAdapter.BeneficiaryViewHolder>() {
 
     private var beneficiaries = listOf<BeneficiaryLocal>()
 
@@ -34,16 +37,12 @@ class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> U
 
     override fun onBindViewHolder(holder: BeneficiaryViewHolder, position: Int) {
         val distributionBeneficiary = beneficiaries[position]
-        holder.apply {
-            bind(distributionBeneficiary)
-            view.setOnClickListener { onItemClick(distributionBeneficiary) }
-        }
+        holder.bind(distributionBeneficiary)
     }
 
     override fun getItemCount(): Int = beneficiaries.size
 
     internal fun update(newBeneficiaries: List<BeneficiaryLocal>) {
-
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
                 newBeneficiaries[newItemPosition].id == beneficiaries[oldItemPosition].id
@@ -57,32 +56,36 @@ class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> U
         diffResult.dispatchUpdatesTo(this)
     }
 
-    class BeneficiaryViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class BeneficiaryViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+
+        val tvId = view.tv_id
+        val tvName = view.tv_name
+        val ivDistributionState = view.iv_distribution_state
+        val llVulnerabilitiesHolder = view.ll_vulnerabilities_holder
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
-            view.apply {
-                tv_id.text = context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
-                tv_name.text = context.getString(
-                    R.string.beneficiary_name,
-                    beneficiaryLocal.givenName,
-                    beneficiaryLocal.familyName
-                )
 
-                val color =
-                    if (beneficiaryLocal.distributed) R.color.distributed else R.color.notDistributed
-                iv_distribution_state.tintedDrawable(R.drawable.ic_distribution_state, color)
+            tvId.text = context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
+            tvName.text = context.getString(
+                R.string.beneficiary_name,
+                beneficiaryLocal.givenName,
+                beneficiaryLocal.familyName
+            )
 
-                beneficiaryLocal.vulnerabilities.map {
+            val color = if (beneficiaryLocal.distributed) R.color.distributed else R.color.notDistributed
+            ivDistributionState.tintedDrawable(R.drawable.ic_distribution_state, color)
 
-                    ll_vulnerabilities_holder.removeAllViews()
+            beneficiaryLocal.vulnerabilities.forEach {
+                llVulnerabilitiesHolder.removeAllViews()
 
-                    getVulnerabilityDrawable(it)?.let { drawable ->
-                        val vulnerabilityImage = ImageView(context)
-                        vulnerabilityImage.simpleDrawable(drawable)
-                        ll_vulnerabilities_holder.addView(vulnerabilityImage)
-                    }
+                getVulnerabilityDrawable(it)?.let { drawable ->
+                    val vulnerabilityImage = ImageView(context)
+                    vulnerabilityImage.simpleDrawable(drawable)
+                    llVulnerabilitiesHolder.addView(vulnerabilityImage)
                 }
             }
+
+            view.setOnClickListener { onItemClick(beneficiaryLocal) }
         }
 
         private fun getVulnerabilityDrawable(vulnerability: String): Int? {

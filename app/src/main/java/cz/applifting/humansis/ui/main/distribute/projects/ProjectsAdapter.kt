@@ -14,7 +14,9 @@ import kotlinx.android.synthetic.main.item_project.view.*
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-class ProjectsAdapter(val context: Context, val onItemClick: (project: ProjectLocal) -> Unit) : RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>(){
+class ProjectsAdapter(
+    private val context: Context,
+    private val onItemClick: (project: ProjectLocal) -> Unit) : RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>(){
 
     private val projects: MutableList<ProjectLocal> = mutableListOf()
 
@@ -25,14 +27,8 @@ class ProjectsAdapter(val context: Context, val onItemClick: (project: ProjectLo
 
     override fun getItemCount(): Int = projects.size
 
-    // TODO probably needs a fix - https://proandroiddev.com/kotlin-android-extensions-using-view-binding-the-right-way-707cd0c9e648
-
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
-        val project = projects[position]
-
-        holder.layout.tv_name.text = project.name
-        holder.layout.tv_households.text = context.getString(R.string.households, project.numberOfHouseholds)
-        holder.layout.setOnClickListener { onItemClick(project) }
+        holder.bind(projects[position])
     }
 
     fun updateProjects(newProjects: List<ProjectLocal>) {
@@ -48,5 +44,15 @@ class ProjectsAdapter(val context: Context, val onItemClick: (project: ProjectLo
         diffResult.dispatchUpdatesTo(this)
     }
 
-    class ProjectViewHolder(val layout: ConstraintLayout): RecyclerView.ViewHolder(layout)
+    inner class ProjectViewHolder(val layout: ConstraintLayout): RecyclerView.ViewHolder(layout) {
+
+        val tvName = layout.tv_name
+        val tvHouseHolds = layout.tv_households
+
+        fun bind(project: ProjectLocal) {
+            tvName.text = project.name
+            tvHouseHolds.text = context.getString(R.string.households, project.numberOfHouseholds)
+            layout.setOnClickListener { onItemClick(project) }
+        }
+    }
 }
