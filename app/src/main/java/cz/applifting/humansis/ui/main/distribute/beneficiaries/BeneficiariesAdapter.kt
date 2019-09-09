@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.item_beneficiary.view.*
 class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> Unit) :
     RecyclerView.Adapter<BeneficiariesAdapter.BeneficiaryViewHolder>() {
 
-    private var beneficiaries = mutableListOf<BeneficiaryLocal>()
+    private var beneficiaries = listOf<BeneficiaryLocal>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeneficiaryViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
@@ -50,7 +50,7 @@ class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> U
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
                 beneficiaries[oldItemPosition] == newBeneficiaries[newItemPosition]
         })
-        beneficiaries = newBeneficiaries.toMutableList()
+        beneficiaries = newBeneficiaries
         diffResult.dispatchUpdatesTo(this)
     }
 
