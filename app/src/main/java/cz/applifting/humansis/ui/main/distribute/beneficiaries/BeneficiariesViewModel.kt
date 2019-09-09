@@ -51,6 +51,11 @@ class BeneficiariesViewModel @Inject constructor(private val humansisDB: Humansi
 
         val query = input.toLowerCase(Locale.getDefault())
 
+        if (query.isEmpty()) {
+            searchResults.value = it.sort()
+            return@let
+        }
+
         //todo find out what is expected behaviour for filtering and sorting
         searchResults.value = it.filter { beneficiary ->
 
