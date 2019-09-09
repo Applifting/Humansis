@@ -3,9 +3,11 @@ package cz.applifting.humansis.ui.main.distribute.beneficiaries
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
@@ -69,8 +71,25 @@ class BeneficiariesAdapter(val onItemClick: (beneficiary: BeneficiaryLocal) -> U
                 val color =
                     if (beneficiaryLocal.distributed) R.color.distributed else R.color.notDistributed
                 iv_distribution_state.tintedDrawable(R.drawable.ic_distribution_state, color)
-            }
 
+                beneficiaryLocal.vulnerabilities.map {
+
+                    getVulnerabilityDrawable(it)?.let { drawable ->
+                        val vulnerabilityImage = ImageView(context)
+                        vulnerabilityImage.simpleDrawable(drawable)
+                        ll_vulnerabilities_holder.addView(vulnerabilityImage)
+                    }
+                }
+            }
+        }
+
+        private fun getVulnerabilityDrawable(vulnerability: String): Int? {
+            return when (vulnerability) {
+                "disabled" -> R.drawable.ic_vulnerability_disabled
+                "lactating" -> R.drawable.ic_vulnerability_lactating
+                "pregnant" -> R.drawable.ic_vulnerability_pregnant
+                else -> null
+            }
         }
     }
 

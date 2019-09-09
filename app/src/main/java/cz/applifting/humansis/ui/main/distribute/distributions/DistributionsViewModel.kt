@@ -37,14 +37,25 @@ class DistributionsViewModel @Inject constructor(
             val distributionBeneficiaries = service.getDistributionBeneficiaries(distribution.id)
 
             distributionBeneficiaries.map { distributionBeneficiary ->
+
+                val vulnerabilities = distributionBeneficiary.beneficiary.vulnerabilities
+                val vulnerabilitiesLocal = mutableListOf<String>()
+
+                vulnerabilities.map {
+                    vulnerabilitiesLocal.add(it.vulnerabilityName)
+                }
+
                 // todo find out mapping for distributed flag
                 val beneficiaryLocal = BeneficiaryLocal(
                     distributionBeneficiary.id,
                     distributionBeneficiary.beneficiary.givenName,
                     distributionBeneficiary.beneficiary.familyName,
                     distribution.id,
-                    distributionBeneficiary.beneficiary.distributed)
+                    distributionBeneficiary.beneficiary.distributed,
+                    vulnerabilitiesLocal
+                )
                 beneficiaries.add(beneficiaryLocal)
+
             }
 
             humansisDB.beneficiaryDao().insertAll(beneficiaries)

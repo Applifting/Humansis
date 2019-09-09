@@ -12,5 +12,6 @@ data class Beneficiary(
     @SerializedName("id") val id: Int,
     @SerializedName("local_given_name") val givenName: String?,
     @SerializedName("local_family_name") val familyName: String?,
-    @SerializedName("status") val distributed: Boolean
+    @SerializedName("status") val distributed: Boolean,
+    @SerializedName("vulnerability_criteria") val vulnerabilities: List<Vulnerability>
 )
