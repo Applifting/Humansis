@@ -26,7 +26,7 @@ class BeneficiaryViewModel @Inject constructor(private val humansisDB: HumansisD
         launch {
             val confirmedBeneficiary = it.copy(distributed = true)
             beneficiaryLD.value = confirmedBeneficiary
-            humansisDB.beneficiaryDao().update(confirmedBeneficiary)
+            humansisDB.beneficiariesDao().update(confirmedBeneficiary)
             beneficiaryViewStateLD.value = BeneficiaryViewState(distributed = true)
         }
 
@@ -35,7 +35,7 @@ class BeneficiaryViewModel @Inject constructor(private val humansisDB: HumansisD
     internal fun loadBeneficiary(beneficiaryId: Int) {
         launch {
             beneficiaryViewStateLD.value = BeneficiaryViewState(true)
-            val beneficiary = humansisDB.beneficiaryDao().findById(beneficiaryId)
+            val beneficiary = humansisDB.beneficiariesDao().findById(beneficiaryId)
             beneficiaryLD.value = beneficiary
             beneficiaryViewStateLD.value = BeneficiaryViewState(false, beneficiary.distributed)
         }
