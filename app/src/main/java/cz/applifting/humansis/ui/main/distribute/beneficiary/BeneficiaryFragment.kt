@@ -2,7 +2,6 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Button
 import android.widget.FrameLayout
 import androidx.annotation.Nullable
 import androidx.fragment.app.viewModels
@@ -48,18 +47,21 @@ class BeneficiaryFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.title = getString(R.string.assign_booklet)
         (activity as MainActivity).supportActionBar?.subtitle = args.beneficiaryName
 
-        viewModel.beneficiaryViewStateLD.observe(viewLifecycleOwner, Observer {
-            pb_loading.visible(it.refreshing)
-            tv_status.visible(!it.refreshing)
-            tv_beneficiary.visible(!it.refreshing)
-            tv_distribution.visible(!it.refreshing)
-            tv_project.visible(!it.refreshing)
-            tv_status.setValue(getString(if (it.distributed) R.string.distributed else R.string.not_distributed))
-            tv_status.setStatus(it.distributed)
+        viewModel.distributedLD.observe(viewLifecycleOwner, Observer {
+            tv_status.setValue(getString(if (it) R.string.distributed else R.string.not_distributed))
+            tv_status.setStatus(it)
             tv_beneficiary.setValue(args.beneficiaryName)
             tv_distribution.setValue(args.distributionName)
             tv_project.setValue(args.projectName)
             (activity as MainActivity).invalidateOptionsMenu()
+        })
+
+        viewModel.refreshingLD.observe(viewLifecycleOwner, Observer {
+            pb_loading.visible(it)
+            tv_status.visible(!it)
+            tv_beneficiary.visible(!it)
+            tv_distribution.visible(!it)
+            tv_project.visible(!it)
         })
 
         viewModel.loadBeneficiary(args.beneficiaryId)
@@ -69,7 +71,7 @@ class BeneficiaryFragment : BaseFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_beneficiary, menu)
         val confimAction = menu.findItem(R.id.action_confirm_distribution)
-        confimAction?.isVisible = if (args.distributionStatus) !args.distributionStatus else !viewModel.distributed
+        confimAction?.isVisible = if (args.distributionStatus) !args.distributionStatus else !(viewModel.distributedLD.value ?: false)
         super.onCreateOptionsMenu(menu, inflater)
     }
 

@@ -5,7 +5,6 @@ import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.api.Vulnerability
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import retrofit2.HttpException
 import javax.inject.Inject
 
 /**
@@ -32,7 +31,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
             db.beneficiariesDao().insertAll(result)
 
             result
-        } catch (e: HttpException) {
+        } catch (e: Throwable) {
             null
         }
     }
@@ -41,6 +40,13 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return db.beneficiariesDao().getByDistribution(distributionId) ?: listOf()
     }
 
+    suspend fun getBeneficiaryOffline(beneficiaryId: Int): BeneficiaryLocal {
+        return db.beneficiariesDao().findById(beneficiaryId)
+    }
+
+    suspend fun updateBeneficiaryOffline(beneficiary: BeneficiaryLocal) {
+        return db.beneficiariesDao().update(beneficiary)
+    }
 
     private fun parseVulnerabilities(vulnerability: List<Vulnerability>): List<String> {
         return vulnerability.map { it.vulnerabilityName }
