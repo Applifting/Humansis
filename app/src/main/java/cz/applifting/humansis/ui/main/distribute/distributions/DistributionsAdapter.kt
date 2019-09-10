@@ -1,6 +1,5 @@
 package cz.applifting.humansis.ui.main.distribute.distributions
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,6 @@ import kotlinx.android.synthetic.main.item_project.view.tv_name
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
  */
 class DistributionsAdapter(
-    private val context: Context,
     private val onItemClick: (distribution: DistributionLocal) -> Unit
 ) : RecyclerView.Adapter<DistributionsAdapter.DistributionViewHolder>() {
 
@@ -64,6 +62,7 @@ class DistributionsAdapter(
         val ivFood = layout.iv_food
         val ivLoan = layout.iv_loan
         val ivTarget = layout.iv_target
+        val context = layout.context
 
         fun bind(distribution: DistributionLocal) {
             // Set text fields
