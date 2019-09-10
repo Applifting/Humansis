@@ -11,7 +11,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
@@ -44,8 +43,6 @@ class BeneficiariesFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.title = args.distributionName
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
-
-        val viewManager = LinearLayoutManager(context)
         val viewAdapter = BeneficiariesAdapter { beneficiary ->
             val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragment(
                 beneficiary.id,
@@ -103,7 +100,7 @@ class BeneficiariesFragment : BaseFragment() {
 
         btn_sort.setOnClickListener { viewModel.sortBeneficiaries() }
 
-        viewModel.loadBeneficiaries(args.distributionId, false)
+        viewModel.loadBeneficiaries(args.distributionId, true)
 
     }
 
