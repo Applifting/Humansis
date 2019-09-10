@@ -9,7 +9,7 @@
 
     <string name="menu_home">Projects</string>
     <string name="menu_test">Test</string>
-    <string name="beneficiary_managment_system">Beneficiary Managment System</string>
+    <string name="beneficiary_managment_system">Beneficiary Management System</string>
     <string name="username">Username</string>
     <string name="password">*******</string>
     <string name="login">Login</string>
@@ -28,5 +28,14 @@
     <string name="search_beneficiary_hint">Enter name</string>
     <string name="distributions">Distributions</string>
     <string name="unknown">Unknown</string>
+    <string name="assign_booklet">Assign booklet</string>
+    <string name="status">Status</string>
+    <string name="distributed">Distributed</string>
+    <string name="not_distributed">Not Distributed</string>
+    <string name="beneficiary">Beneficiary</string>
+    <string name="distribution">Distribution</string>
+    <string name="project">Project</string>
+    <string name="confirm_distribution">Confirm</string>
+    <string name="distribution_confirmation_message">%1$s successfully confirmed</string>
 
 </resources>

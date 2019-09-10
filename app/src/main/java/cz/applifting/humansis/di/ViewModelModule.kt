@@ -8,6 +8,7 @@ import cz.applifting.humansis.ui.main.distribute.distributions.DistributionsView
 import cz.applifting.humansis.ui.main.distribute.projects.ProjectsViewModel
 import cz.applifting.humansis.ui.login.LoginViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesViewModel
+import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -45,7 +46,12 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(BeneficiariesViewModel::class)
-    internal abstract fun bindBeneficieriesViewModel(viewModel: BeneficiariesViewModel): ViewModel
+    internal abstract fun bindBeneficiariesViewModel(viewModel: BeneficiariesViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BeneficiaryViewModel::class)
+    internal abstract fun bindBeneficiaryViewModel(viewModel: BeneficiaryViewModel): ViewModel
 
     //Add more ViewModels here
 }

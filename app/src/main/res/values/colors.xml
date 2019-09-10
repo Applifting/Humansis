@@ -16,4 +16,5 @@
 
     <color name="distributed">#75aff1</color>
     <color name="notDistributed">#d46d35</color>
+    <color name="white">#FFFFFF</color>
 </resources>

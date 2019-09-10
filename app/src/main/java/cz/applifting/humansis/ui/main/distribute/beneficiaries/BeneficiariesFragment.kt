@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
@@ -42,9 +43,15 @@ class BeneficiariesFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.title = args.distributionName
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
-
         val viewAdapter = BeneficiariesAdapter { beneficiary ->
-            // todo implement on click logic
+            val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragment(
+                beneficiary.id,
+                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
+                args.distributionName,
+                args.projectName,
+                beneficiary.distributed
+            )
+            this.findNavController().navigate(action)
         }
 
         lc_beneficiaries.init(viewAdapter)
@@ -93,7 +100,7 @@ class BeneficiariesFragment : BaseFragment() {
 
         btn_sort.setOnClickListener { viewModel.sortBeneficiaries() }
 
-        viewModel.loadBeneficiaries(args.distributionId, false)
+        viewModel.loadBeneficiaries(args.distributionId, true)
 
     }
 

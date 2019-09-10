@@ -64,8 +64,8 @@ class BeneficiariesAdapter(
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
-            tvId.text = context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
-            tvName.text = context.getString(
+            tvId.text = view.context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
+            tvName.text = view.context.getString(
                 R.string.beneficiary_name,
                 beneficiaryLocal.givenName,
                 beneficiaryLocal.familyName
@@ -78,7 +78,7 @@ class BeneficiariesAdapter(
                 llVulnerabilitiesHolder.removeAllViews()
 
                 getVulnerabilityDrawable(it)?.let { drawable ->
-                    val vulnerabilityImage = ImageView(context)
+                    val vulnerabilityImage = ImageView(view.context)
                     vulnerabilityImage.simpleDrawable(drawable)
                     llVulnerabilitiesHolder.addView(vulnerabilityImage)
                 }

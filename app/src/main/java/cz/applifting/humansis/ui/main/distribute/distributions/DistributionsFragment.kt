@@ -34,7 +34,7 @@ class DistributionsFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.distributions)
 
         val viewAdapter = DistributionsAdapter {
-            val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(it.id, it.name)
+            val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(it.id, it.name, args.projectName)
             this.findNavController().navigate(action)
         }
 
@@ -46,7 +46,7 @@ class DistributionsFragment : BaseFragment() {
         })
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_distributions::setState))
-        viewModel.loadDistributions(args.projectId, false)
+        viewModel.loadDistributions(args.projectId, true)
 
 
     }
