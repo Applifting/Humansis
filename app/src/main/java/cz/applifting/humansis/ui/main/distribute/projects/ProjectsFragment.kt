@@ -30,7 +30,7 @@ class ProjectsFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.title = getString(R.string.app_name)
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.projects)
 
-        val adapter = ProjectsAdapter(requireContext()) {
+        val adapter = ProjectsAdapter {
             val action = ProjectsFragmentDirections.chooseProject(it.id, it.name ?: getString(R.string.unnamed_project))
             this.findNavController().navigate(action)
         }

@@ -1,6 +1,5 @@
 package cz.applifting.humansis.ui.main.distribute.projects
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -15,8 +14,8 @@ import kotlinx.android.synthetic.main.item_project.view.*
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
 class ProjectsAdapter(
-    private val context: Context,
-    private val onItemClick: (project: ProjectLocal) -> Unit) : RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>(){
+    private val onItemClick: (project: ProjectLocal) -> Unit
+) : RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>() {
 
     private val projects: MutableList<ProjectLocal> = mutableListOf()
 
@@ -45,7 +44,7 @@ class ProjectsAdapter(
     }
 
     inner class ProjectViewHolder(val layout: ConstraintLayout): RecyclerView.ViewHolder(layout) {
-
+        val context = layout.context
         val tvName = layout.tv_name
         val tvHouseHolds = layout.tv_households
 

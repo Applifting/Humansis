@@ -60,6 +60,7 @@ class BeneficiariesAdapter(
         val tvName = view.tv_name
         val ivDistributionState = view.iv_distribution_state
         val llVulnerabilitiesHolder = view.ll_vulnerabilities_holder
+        val context = view.context
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
