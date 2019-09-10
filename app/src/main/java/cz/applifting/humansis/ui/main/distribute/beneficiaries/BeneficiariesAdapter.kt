@@ -1,6 +1,5 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiaries
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import kotlinx.android.synthetic.main.item_beneficiary.view.*
  */
 
 class BeneficiariesAdapter(
-    private val context: Context,
     val onItemClick: (beneficiary: BeneficiaryLocal) -> Unit
 ) : RecyclerView.Adapter<BeneficiariesAdapter.BeneficiaryViewHolder>() {
 
@@ -62,6 +60,7 @@ class BeneficiariesAdapter(
         val tvName = view.tv_name
         val ivDistributionState = view.iv_distribution_state
         val llVulnerabilitiesHolder = view.ll_vulnerabilities_holder
+        val context = view.context
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 

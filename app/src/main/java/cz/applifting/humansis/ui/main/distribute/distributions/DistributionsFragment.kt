@@ -33,7 +33,7 @@ class DistributionsFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.title = args.projectName
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.distributions)
 
-        val viewAdapter = DistributionsAdapter(requireContext()) {
+        val viewAdapter = DistributionsAdapter {
             val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(it.id, it.name)
             this.findNavController().navigate(action)
         }
