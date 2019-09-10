@@ -35,5 +35,7 @@
     <string name="beneficiary">Beneficiary</string>
     <string name="distribution">Distribution</string>
     <string name="project">Project</string>
+    <string name="confirm_distribution">Confirm</string>
+    <string name="distribution_confirmation_message">%1$s successfully confirmed</string>
 
 </resources>

@@ -63,6 +63,9 @@
             android:name="cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryFragment"
             android:label="{beneficiaryName}">
         <argument
+                android:name="beneficiaryId"
+                app:argType="integer" />
+        <argument
                 android:name="beneficiaryName"
                 app:argType="string" />
         <argument

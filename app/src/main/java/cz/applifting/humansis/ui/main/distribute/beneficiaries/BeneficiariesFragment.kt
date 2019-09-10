@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
@@ -43,8 +45,16 @@ class BeneficiariesFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
 
-        val viewAdapter = BeneficiariesAdapter(requireContext()) { beneficiary ->
-            // todo implement on click logic
+        val viewManager = LinearLayoutManager(context)
+        val viewAdapter = BeneficiariesAdapter { beneficiary ->
+            val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragment(
+                beneficiary.id,
+                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
+                args.distributionName,
+                args.projectName,
+                beneficiary.distributed
+            )
+            this.findNavController().navigate(action)
         }
 
         lc_beneficiaries.init(viewAdapter)
