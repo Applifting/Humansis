@@ -26,9 +26,8 @@ class MainActivity : BaseActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val viewModel: MainActivityViewModel by viewModels {
-        viewModelFactory
-    }
+    private val viewModel: MainActivityViewModel by viewModels { viewModelFactory }
+    private val sharedViewModel: SharedViewModel by viewModels { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +61,8 @@ class MainActivity : BaseActivity() {
         btn_logout.setOnClickListener {
             viewModel.logout()
         }
+
+        sharedViewModel.tryDownloadingAll()
     }
 
     override fun onResume() {

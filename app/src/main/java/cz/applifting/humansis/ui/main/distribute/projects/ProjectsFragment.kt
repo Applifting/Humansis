@@ -17,9 +17,7 @@ import kotlinx.android.synthetic.main.fragment_projects.*
  */
 class ProjectsFragment : BaseFragment() {
 
-    private val viewModel: ProjectsViewModel by viewModels {
-        this.viewModelFactory
-    }
+    private val viewModel: ProjectsViewModel by viewModels { this.viewModelFactory }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_projects, container, false)
@@ -31,7 +29,7 @@ class ProjectsFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.projects)
 
         val adapter = ProjectsAdapter {
-            val action = ProjectsFragmentDirections.chooseProject(it.id, it.name ?: getString(R.string.unnamed_project))
+            val action = ProjectsFragmentDirections.chooseProject(it.id, it.name)
             this.findNavController().navigate(action)
         }
 
@@ -43,7 +41,16 @@ class ProjectsFragment : BaseFragment() {
         })
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_projects::setState))
+        sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.showRefreshing()
+            } else {
+                viewModel.loadProjects()
+            }
+        })
 
-        viewModel.loadProjects()
+        if (sharedViewModel.downloadingLD.value == false) {
+            viewModel.loadProjects()
+        }
     }
 }

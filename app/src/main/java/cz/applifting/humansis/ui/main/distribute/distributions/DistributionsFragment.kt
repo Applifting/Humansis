@@ -46,8 +46,18 @@ class DistributionsFragment : BaseFragment() {
         })
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_distributions::setState))
-        viewModel.loadDistributions(args.projectId, true)
 
+        sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.showRefreshing()
+            } else {
+                viewModel.loadDistributions(args.projectId)
+            }
+        })
+
+        if (sharedViewModel.downloadingLD.value == false) {
+            viewModel.loadDistributions(args.projectId)
+        }
 
     }
 }

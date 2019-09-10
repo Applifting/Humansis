@@ -78,6 +78,20 @@ class BeneficiariesFragment : BaseFragment() {
             }
         })
 
+        viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
+
+        sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.showRefreshing()
+            } else {
+                viewModel.loadBeneficiaries(args.distributionId)
+            }
+        })
+
+        if (sharedViewModel.downloadingLD.value == false) {
+            viewModel.loadBeneficiaries(args.distributionId)
+        }
+
         context?.let {
             val searchDrawable = ContextCompat.getDrawable(it, R.drawable.ic_search)
             et_search.setCompoundDrawablesWithIntrinsicBounds(searchDrawable, null, null, null)
@@ -99,9 +113,6 @@ class BeneficiariesFragment : BaseFragment() {
         })
 
         btn_sort.setOnClickListener { viewModel.sortBeneficiaries() }
-
-        viewModel.loadBeneficiaries(args.distributionId, true)
-
     }
 
     private fun showControls(show: Boolean) {
