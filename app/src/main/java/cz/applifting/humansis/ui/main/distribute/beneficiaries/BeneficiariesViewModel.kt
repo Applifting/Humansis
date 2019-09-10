@@ -2,9 +2,10 @@ package cz.applifting.humansis.ui.main.distribute.beneficiaries
 
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.db.BeneficiaryLocal
+import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.ui.BaseViewModel
+import cz.applifting.humansis.ui.components.ListComponentState
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -15,15 +16,11 @@ import javax.inject.Inject
  */
 
 // todo do not inject db or service, use repository pattern
-class BeneficiariesViewModel @Inject constructor(private val humansisDB: HumansisDB) :
-    BaseViewModel() {
+class BeneficiariesViewModel @Inject constructor(private val beneficieriesRepository: BeneficieriesRepository) : BaseViewModel() {
 
     private val beneficiariesLD = MutableLiveData<List<BeneficiaryLocal>>()
-    internal val beneficiariesViewStateLD: MutableLiveData<BeneficiariesViewState> =
-        MutableLiveData()
-
+    internal val beneficiariesViewStateLD: MutableLiveData<ListComponentState> = MutableLiveData()
     internal val statsLD: MutableLiveData<Pair<Int, Int>> = MutableLiveData()
-
     internal val searchResults = MediatorLiveData<List<BeneficiaryLocal>>()
 
     init {
@@ -32,15 +29,19 @@ class BeneficiariesViewModel @Inject constructor(private val humansisDB: Humansi
         }
     }
 
-    fun loadBeneficiaries(distributionId: Int) {
+    fun loadBeneficiaries(distributionId: Int, download: Boolean) {
         launch {
-            beneficiariesViewStateLD.value = BeneficiariesViewState(true)
-            val beneficiaries =
-                humansisDB.beneficiaryDao().getDistributionBeneficiaries(distributionId)
+            beneficiariesViewStateLD.value = ListComponentState(isRefreshing = download, isRetrieving = !download)
+
+            val beneficiaries = if (download) {
+                beneficieriesRepository.getBeneficieriesOnline(distributionId)
+            } else {
+                beneficieriesRepository.getDistributionsOffline(distributionId)
+            }
+
             beneficiariesLD.value = beneficiaries
-            statsLD.value =
-                Pair(beneficiaries?.count { it.distributed } ?: 0, beneficiaries?.size ?: 0)
-            beneficiariesViewStateLD.value = BeneficiariesViewState(false)
+            statsLD.value = Pair(beneficiaries?.count { it.distributed } ?: 0, beneficiaries?.size ?: 0)
+            beneficiariesViewStateLD.value = ListComponentState()
         }
     }
 

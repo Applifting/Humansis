@@ -9,7 +9,6 @@ import com.google.gson.reflect.TypeToken
  *
  */
 class StringListConverter {
-
     @TypeConverter
     fun toList(value: String): List<String> {
         val listType = object : TypeToken<List<String>>() {}.type

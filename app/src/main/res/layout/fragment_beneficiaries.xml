@@ -53,25 +53,14 @@
             android:contentDescription="@string/sort_alphabetically"
             app:layout_constraintTop_toBottomOf="@+id/pb_beneficiaries_reached" />
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_beneficiaries"
-            android:layout_width="match_parent"
+    <cz.applifting.humansis.ui.components.ListComponent
+            android:id="@+id/lc_beneficiaries"
+            android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_search">
-
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <ProgressBar
-            android:id="@+id/pb_loading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/et_search" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
