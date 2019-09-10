@@ -1,6 +1,5 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiaries
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import kotlinx.android.synthetic.main.item_beneficiary.view.*
  */
 
 class BeneficiariesAdapter(
-    private val context: Context,
     val onItemClick: (beneficiary: BeneficiaryLocal) -> Unit
 ) : RecyclerView.Adapter<BeneficiariesAdapter.BeneficiaryViewHolder>() {
 
@@ -65,8 +63,8 @@ class BeneficiariesAdapter(
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
-            tvId.text = context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
-            tvName.text = context.getString(
+            tvId.text = view.context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
+            tvName.text = view.context.getString(
                 R.string.beneficiary_name,
                 beneficiaryLocal.givenName,
                 beneficiaryLocal.familyName
@@ -79,7 +77,7 @@ class BeneficiariesAdapter(
                 llVulnerabilitiesHolder.removeAllViews()
 
                 getVulnerabilityDrawable(it)?.let { drawable ->
-                    val vulnerabilityImage = ImageView(context)
+                    val vulnerabilityImage = ImageView(view.context)
                     vulnerabilityImage.simpleDrawable(drawable)
                     llVulnerabilitiesHolder.addView(vulnerabilityImage)
                 }
