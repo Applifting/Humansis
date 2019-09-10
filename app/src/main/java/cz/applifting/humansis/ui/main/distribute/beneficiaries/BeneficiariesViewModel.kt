@@ -14,8 +14,6 @@ import javax.inject.Inject
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
  * @since 5. 9. 2019
  */
-
-// todo do not inject db or service, use repository pattern
 class BeneficiariesViewModel @Inject constructor(private val beneficieriesRepository: BeneficieriesRepository) : BaseListViewModel() {
 
     private val beneficiariesLD = MutableLiveData<List<BeneficiaryLocal>>()
@@ -31,7 +29,11 @@ class BeneficiariesViewModel @Inject constructor(private val beneficieriesReposi
 
     fun loadBeneficiaries(distributionId: Int, download: Boolean = false) {
         launch {
-            beneficiariesViewStateLD.value = ListComponentState(isRefreshing = download, isRetrieving = !download)
+            if (download) {
+                showRefreshing()
+            } else {
+                showRetrieving()
+            }
 
             val beneficiaries = if (download) {
                 beneficieriesRepository.getBeneficieriesOnline(distributionId)
@@ -41,7 +43,7 @@ class BeneficiariesViewModel @Inject constructor(private val beneficieriesReposi
 
             beneficiariesLD.value = beneficiaries
             statsLD.value = Pair(beneficiaries?.count { it.distributed } ?: 0, beneficiaries?.size ?: 0)
-            beneficiariesViewStateLD.value = ListComponentState()
+            finishLoading(beneficiaries)
         }
     }
 

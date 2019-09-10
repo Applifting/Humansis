@@ -1,6 +1,5 @@
 package cz.applifting.humansis.ui.main
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
@@ -25,7 +24,6 @@ class SharedViewModel @Inject constructor(
         // TODO when should we download all?
         launch {
             try {
-                Log.d("asdf", "downloading all")
                 downloadingLD.value = true
                 projectsRepository
                     .getProjectsOnline()

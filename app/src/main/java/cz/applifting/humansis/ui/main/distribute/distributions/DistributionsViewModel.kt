@@ -3,7 +3,6 @@ package cz.applifting.humansis.ui.main.distribute.distributions
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.repositories.DistributionsRepository
-import cz.applifting.humansis.ui.components.listComponent.ListComponentState
 import cz.applifting.humansis.ui.main.BaseListViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,9 +17,12 @@ class DistributionsViewModel @Inject constructor(
     val distributionsLD: MutableLiveData<List<DistributionLocal>> = MutableLiveData()
 
     fun loadDistributions(projectId: Int, download: Boolean = false) {
-
         launch {
-            listStateLD.value = ListComponentState(isRefreshing = download, isRetrieving = !download)
+            if (download) {
+                showRefreshing()
+            } else {
+                showRetrieving()
+            }
 
             val distributions = if (download) {
                 distributionsRepository.getDistributionsOnline(projectId)
@@ -29,7 +31,7 @@ class DistributionsViewModel @Inject constructor(
             }
 
             distributionsLD.value = distributions
-            listStateLD.value = ListComponentState()
+            finishLoading(distributions)
         }
     }
 }
