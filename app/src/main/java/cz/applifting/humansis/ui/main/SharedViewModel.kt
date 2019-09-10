@@ -6,6 +6,7 @@ import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.BaseViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,12 +30,11 @@ class SharedViewModel @Inject constructor(
                 projectsRepository
                     .getProjectsOnline()
                     .orEmpty()
-                    .flatMap {
-                        distributionsRepository.getDistributionsOnline(it.id) ?: listOf()
-                    }
-                    .flatMap {
-                        beneficieriesRepository.getBeneficieriesOnline(it.id) ?: listOf()
-                    }
+                    .map { async {  distributionsRepository.getDistributionsOnline(it.id) } }
+                    .flatMap { it.await() ?: listOf() }
+                    .map { async { beneficieriesRepository.getBeneficieriesOnline(it.id) } }
+                    .map { it.await() }
+
             } catch (e: Throwable) {
 
             } finally {
