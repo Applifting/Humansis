@@ -3,7 +3,9 @@ package cz.applifting.humansis.ui.components
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
@@ -11,13 +13,11 @@ import kotlinx.android.synthetic.main.titled_text_view.view.*
 
 class TitledTextView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : LinearLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     init {
 
         LayoutInflater.from(context).inflate(R.layout.titled_text_view, this, true)
-
-        orientation = VERTICAL
 
         attrs?.let {
             val typedArray = context.obtainStyledAttributes(it, R.styleable.TitledTextView, 0, 0)
@@ -44,6 +44,12 @@ class TitledTextView @JvmOverloads constructor(
         val color = if (distributed) R.color.distributed else R.color.notDistributed
         iv_status.tintedDrawable(R.drawable.ic_distribution_state, color)
         iv_status.visible(true)
+    }
+
+    fun setAction(actionTitle:String,onClickListener: OnClickListener) {
+        btn_action.text = actionTitle
+        btn_action.setOnClickListener(onClickListener)
+        btn_action.visible(true)
     }
 
 }

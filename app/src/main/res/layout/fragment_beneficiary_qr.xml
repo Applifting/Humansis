@@ -4,6 +4,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+    <me.dm7.barcodescanner.zxing.ZXingScannerView
+            android:id="@+id/qr_scanner"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
     <cz.applifting.humansis.ui.components.TitledTextView
             android:id="@+id/tv_status"
             android:layout_width="match_parent"
@@ -13,7 +21,7 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/qr_scanner"
             app:titled_text_view_title="@string/status" />
 
     <cz.applifting.humansis.ui.components.TitledTextView
@@ -60,17 +68,5 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-    <cz.applifting.humansis.ui.components.TitledTextView
-            android:id="@+id/tv_booklet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_project"
-            app:titled_text_view_title="@string/booklet_id" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

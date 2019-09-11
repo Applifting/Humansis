@@ -44,6 +44,6 @@ class ProjectsFragment : BaseFragment() {
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_projects::setState))
 
-        viewModel.loadProjects()
+        viewModel.loadProjects(true)
     }
 }

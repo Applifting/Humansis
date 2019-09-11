@@ -37,5 +37,7 @@
     <string name="project">Project</string>
     <string name="confirm_distribution">Confirm</string>
     <string name="distribution_confirmation_message">%1$s successfully confirmed</string>
+    <string name="rescan_qr">Rescan QR</string>
+    <string name="booklet_id">Booklet ID</string>
 
 </resources>
