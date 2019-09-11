@@ -9,10 +9,12 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_beneficiaries.*
@@ -44,21 +46,13 @@ class BeneficiariesFragment : BaseFragment() {
         (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
         val viewAdapter = BeneficiariesAdapter { beneficiary ->
-            val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragment(
-                beneficiary.id,
-                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
-                args.distributionName,
-                args.projectName,
-                beneficiary.distributed
-            )
-            this.findNavController().navigate(action)
+            this.findNavController().navigate(chooseDirection(beneficiary))
         }
 
         lc_beneficiaries.init(viewAdapter)
         lc_beneficiaries.setOnRefreshListener {
             viewModel.loadBeneficiaries(args.distributionId, true)
         }
-
 
         viewModel.searchResults.observe(viewLifecycleOwner, Observer {
             viewAdapter.update(it)
@@ -109,5 +103,27 @@ class BeneficiariesFragment : BaseFragment() {
         pb_beneficiaries_reached.visible(show)
         et_search.visible(show)
         btn_sort.visible(show)
+    }
+
+    private fun chooseDirection(beneficiary: BeneficiaryLocal): NavDirections {
+
+        //todo find differentiation, possible booklets not empty
+        return if (beneficiary.familyName == "Bis") {
+            BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragment(
+                beneficiary.id,
+                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
+                args.distributionName,
+                args.projectName,
+                beneficiary.distributed
+            )
+        } else {
+            BeneficiariesFragmentDirections.actionBeneficiariesFragmentToQrBeneficiaryFragment(
+                beneficiary.id,
+                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
+                args.distributionName,
+                args.projectName,
+                beneficiary.distributed
+            )
+        }
     }
 }

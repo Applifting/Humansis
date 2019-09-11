@@ -51,8 +51,15 @@
                 app:argType="string" />
 
         <action
-                android:id="@+id/action_beneficiariesFragment_to_beneficiaryFragment"
+                android:id="@+id/action_beneficiariesFragment_to_qrBeneficiaryFragment"
                 app:destination="@id/qrBeneficiaryFragment"
+                app:exitAnim="@anim/slide_to_left"
+                app:enterAnim="@anim/slide_from_right"
+                app:popExitAnim="@anim/slide_to_right"
+                app:popEnterAnim="@anim/slide_from_left" />
+        <action
+                android:id="@+id/action_beneficiariesFragment_to_beneficiaryFragment"
+                app:destination="@id/beneficiaryFragment"
                 app:exitAnim="@anim/slide_to_left"
                 app:enterAnim="@anim/slide_from_right"
                 app:popExitAnim="@anim/slide_to_right"
@@ -77,6 +84,12 @@
         <argument
                 android:name="distributionStatus"
                 app:argType="boolean" />
+        <argument
+                android:name="bookletId"
+                app:argType="string"
+                android:defaultValue="@null"
+                app:nullable="true"
+                />
     </fragment>
 
     <fragment android:id="@+id/qrBeneficiaryFragment"

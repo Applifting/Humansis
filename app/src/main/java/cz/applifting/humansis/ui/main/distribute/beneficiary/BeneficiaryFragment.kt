@@ -53,8 +53,12 @@ class BeneficiaryFragment : BaseFragment() {
             tv_beneficiary.setValue(args.beneficiaryName)
             tv_distribution.setValue(args.distributionName)
             tv_project.setValue(args.projectName)
-            tv_booklet.setValue("474684858")
-            tv_booklet.setAction(getString(R.string.rescan_qr), View.OnClickListener { })
+
+            args.bookletId?.let {
+                tv_booklet.setValue(args.bookletId!!)
+                tv_booklet.setAction(getString(R.string.rescan_qr), View.OnClickListener { })
+            }
+
             (activity as MainActivity).invalidateOptionsMenu()
         })
 
@@ -64,7 +68,7 @@ class BeneficiaryFragment : BaseFragment() {
             tv_beneficiary.visible(!it)
             tv_distribution.visible(!it)
             tv_project.visible(!it)
-            tv_booklet.visible(!it)
+            tv_booklet.visible(!it && args.bookletId != null)
         })
 
         viewModel.loadBeneficiary(args.beneficiaryId)

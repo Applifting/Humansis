@@ -15,7 +15,6 @@ import androidx.navigation.fragment.navArgs
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
-import cz.applifting.humansis.extensions.shortToast
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.main.MainActivity
@@ -41,8 +40,9 @@ class QRBookletFragment : BaseFragment(), ZXingScannerView.ResultHandler {
     }
 
     override fun handleResult(rawResult: Result?) {
-        rawResult?.toString()?.shortToast(activity as MainActivity)
-        goToBeneficiaryFragment()
+        rawResult?.toString()?.let {
+            goToBeneficiaryFragment(it)
+        }
     }
 
     val args: QRBookletFragmentArgs by navArgs()
@@ -106,13 +106,14 @@ class QRBookletFragment : BaseFragment(), ZXingScannerView.ResultHandler {
         qr_scanner.stopCamera()
     }
 
-    private fun goToBeneficiaryFragment() {
+    private fun goToBeneficiaryFragment(bookletId: String) {
         val action = QRBookletFragmentDirections.actionQrBeneficiaryFragmentToBeneficiaryFragment(
             args.beneficiaryId,
             args.beneficiaryName,
             args.distributionName,
             args.projectName,
-            args.distributionStatus
+            args.distributionStatus,
+            bookletId
         )
         this.findNavController().navigate(action)
     }
