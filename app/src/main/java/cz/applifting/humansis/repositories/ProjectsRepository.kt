@@ -7,10 +7,12 @@ import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.db.ProjectLocal
 import retrofit2.HttpException
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
+@Singleton
 class ProjectsRepository @Inject constructor(val service: HumansisService, val db: HumansisDB, val context: Application) {
 
     suspend fun getProjectsOnline(): List<ProjectLocal>? {

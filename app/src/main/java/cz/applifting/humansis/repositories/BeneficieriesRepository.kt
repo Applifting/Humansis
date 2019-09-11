@@ -1,16 +1,24 @@
 package cz.applifting.humansis.repositories
 
 import android.app.Application
+import android.util.Log
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.api.Vulnerability
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
+@Singleton
 class BeneficieriesRepository @Inject constructor(val service: HumansisService, val db: HumansisDB, val context: Application) {
+
+
+    init {
+        Log.d("asdf", "repo created")
+    }
 
     suspend fun getBeneficieriesOnline(distributionId: Int): List<BeneficiaryLocal>? {
         return try {
