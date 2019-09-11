@@ -29,7 +29,7 @@ suspend fun saltPassword(salt: String, password: String): String {
         val salted = "$password{$salt}".toByteArray()
         var digest = hashSHA512(salted)
 
-        for (i in 1..5000) {
+        for (i in 1..4999) {
             digest = hashSHA512(digest.plus(salted))
         }
 
@@ -82,7 +82,7 @@ fun encryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Contex
     keyStore.load(null)
 
     if (!keyStore.containsAlias(keyAlias)) {
-        throw HumansisError("Key with '$keyAlias' alias has to be generated first.")
+        generateKeyStoreRSAKey(keyAlias, context)
     }
 
     val keyEntry = keyStore.getEntry(keyAlias, null) as KeyStore.PrivateKeyEntry
@@ -90,18 +90,24 @@ fun encryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Contex
     return encrypt(keyEntry.certificate.publicKey, secret)
 }
 
-fun decryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Context): ByteArray {
+fun decryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String): ByteArray {
     val keyStore = KeyStore.getInstance("AndroidKeyStore")
     keyStore.load(null)
 
-    if (keyStore.containsAlias(keyAlias)) {
-        generateKeyStoreRSAKey(keyAlias, context)
+    if (!keyStore.containsAlias(keyAlias)) {
+        throw HumansisError("Key with '$keyAlias' alias has to be generated first.")
     }
 
-    val keyEntry = keyStore.getEntry(keyAlias, null) as KeyStore.PrivateKeyEntry
+    //val keyEntry = keyStore.getEntry(keyAlias, null) as KeyStore.PrivateKeyEntry
 
-    return decrypt(keyEntry.privateKey, secret)
+    val privateKey = keyStore.getKey(keyAlias, null) as PrivateKey
+
+    return decrypt(privateKey, secret)
 }
+
+fun base64encode(value: ByteArray): String = Base64.encodeToString(value, Base64.DEFAULT)
+
+fun base64decode(value: String): ByteArray = Base64.decode(value, Base64.DEFAULT)
 
 private fun encrypt(publicKey: PublicKey, secret: ByteArray): ByteArray {
     val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
@@ -111,7 +117,7 @@ private fun encrypt(publicKey: PublicKey, secret: ByteArray): ByteArray {
 
 private fun decrypt(privateKey: PrivateKey, secret: ByteArray): ByteArray {
     val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
-    cipher.init(Cipher.DECRYPT_MODE, privateKey)
+    cipher.init(Cipher.DECRYPT_MODE, privateKey, cipher.parameters)
     return cipher.doFinal(secret)
 }
 

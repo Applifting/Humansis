@@ -4,8 +4,10 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.managers.AuthManager
+import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.misc.saltPassword
 import cz.applifting.humansis.model.api.LoginReqRes
+import cz.applifting.humansis.model.db.User
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,15 +21,16 @@ class LoginViewModel @Inject constructor(
     private val authManager: AuthManager
 ) : BaseViewModel() {
 
-    val viewState = MutableLiveData<LoginViewState>()
+    val viewStateLD = MutableLiveData<LoginViewState>()
+    val loginLD = MutableLiveData<User>()
 
     init {
-        viewState.value = LoginViewState()
+        viewStateLD.value = LoginViewState()
     }
 
     fun login(username: String, password: String) {
         launch {
-            viewState.value = LoginViewState(
+            viewStateLD.value = LoginViewState(
                 btnLoginVisibility = View.GONE,
                 etPasswordIsEnabled = false,
                 etUsernameIsEnabled = false,
@@ -50,11 +53,10 @@ class LoginViewModel @Inject constructor(
                     )
                 )
 
-                authManager.login(userResponse)
-
-                viewState.value = LoginViewState(finishLoginActivity = true)
-            } catch (e: Exception) {
-                viewState.value = LoginViewState(errorMessage = e.message)
+                val user = authManager.login(userResponse, password.toByteArray())
+                loginLD.value = user
+            } catch (e: HumansisError) {
+                viewStateLD.value = LoginViewState(errorMessage = e.message)
             }
         }
     }

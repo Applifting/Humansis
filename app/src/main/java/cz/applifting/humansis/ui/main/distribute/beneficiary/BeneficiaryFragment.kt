@@ -11,7 +11,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.shortToast
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
-import cz.applifting.humansis.ui.main.MainFragment
+import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.menu_confirm_button.view.*
 
@@ -81,7 +81,7 @@ class BeneficiaryFragment : BaseFragment() {
         val confirmBtn = rootView.btn_confirm_distribution
         confirmBtn?.setOnClickListener {
             viewModel.confirm()
-            getString(R.string.distribution_confirmation_message, args.beneficiaryName).shortToast(activity as MainFragment)
+            getString(R.string.distribution_confirmation_message, args.beneficiaryName).shortToast(activity as HumansisActivity)
         }
         return super.onPrepareOptionsMenu(menu)
     }

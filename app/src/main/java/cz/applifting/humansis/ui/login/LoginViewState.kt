@@ -10,6 +10,5 @@ data class LoginViewState(
     val etPasswordIsEnabled: Boolean = true,
     val etUsernameIsEnabled: Boolean = true,
     val pbLoadingVisible: Int = View.GONE,
-    val errorMessage: String? = null,
-    val finishLoginActivity: Boolean = false
+    val errorMessage: String? = null
 )

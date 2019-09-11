@@ -3,12 +3,15 @@ package cz.applifting.humansis.managers
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.misc.*
 import cz.applifting.humansis.model.api.LoginReqRes
 import cz.applifting.humansis.model.db.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -21,28 +24,38 @@ class AuthManager @Inject constructor(private val dbProvider: DbProvider, privat
     val db: HumansisDB by lazy { dbProvider.get() }
 
     @SuppressLint("CommitPrefEdits")
-    suspend fun login(userResponse: LoginReqRes) {
+    suspend fun login(userResponse: LoginReqRes, originalPass: ByteArray): User {
         // Initialize db and save the DB password in shared prefs
-
-        val dbPass = hashSHA512(userResponse.password.toByteArray().plus(DB_SALT.toByteArray()))
+        val dbPass = hashSHA512(originalPass.plus(DB_SALT.toByteArray()))
         val encryptedPassword = encryptUsingKeyStoreKey(dbPass, DB_KEY_ALIAS, context)
+        val encodedPass = base64encode(encryptedPassword)
+
+        Log.d("asdfenc", encodedPass)
 
         with(sp.edit()) {
-            putString(DB_SP_KEY, String(encryptedPassword))
+            putString(DB_SP_KEY, encodedPass)
             suspendCommit()
         }
 
         dbProvider.init(dbPass)
 
         // Clear password immediately
-        for (i in 0..dbPass.size) {
+        for (i in dbPass.indices) {
             dbPass[i] = 0
         }
 
         val db = dbProvider.get()
+
+        // TODO: For easier debugging, might delete later
+        withContext(Dispatchers.IO) {
+            db.clearAllTables()
+        }
+
         val id = userResponse.id?.toInt() ?: throw HumansisError("User id in response missing")
         val user = User(id, userResponse.username, userResponse.email, userResponse.password)
         db.userDao().insert(user)
+
+        return user
     }
 
     suspend fun logout() {
@@ -59,7 +72,10 @@ class AuthManager @Inject constructor(private val dbProvider: DbProvider, privat
     fun tryInitDB(): Boolean {
         if (dbProvider.isInitialized()) return true
         val encryptedPassword = sp.getString(DB_SP_KEY, null) ?: return false
-        val decryptedPassword = decryptUsingKeyStoreKey(encryptedPassword.toByteArray(), DB_KEY_ALIAS, context)
+        Log.d("asdfret", encryptedPassword)
+        val decryptedPassword = decryptUsingKeyStoreKey(base64decode(encryptedPassword), DB_KEY_ALIAS)
+
+
         dbProvider.init(decryptedPassword)
 
         return true
