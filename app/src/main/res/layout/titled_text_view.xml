@@ -16,30 +16,31 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/status" />
 
-    <ImageView
-            android:id="@+id/iv_status"
-            android:layout_width="12dp"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/status"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title"
-            app:srcCompat="@drawable/ic_distribution_state" />
+        <ImageView
+                android:id="@+id/iv_status"
+                android:layout_width="12dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/status"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/tv_value"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title"
+                app:srcCompat="@drawable/ic_distribution_state" />
 
-    <TextView
-            android:id="@+id/tv_value"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:textColor="@color/textColor"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_action"
-            app:layout_constraintStart_toStartOf="@id/iv_status"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title"
-            tools:text="@string/not_distributed" />
+        <TextView
+                android:id="@+id/tv_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:textColor="@color/textColor"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_action"
+                app:layout_constraintStart_toEndOf="@+id/iv_status"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title"
+                tools:text="@string/not_distributed" />
 
     <Button
             android:id="@+id/btn_action"
@@ -54,5 +55,4 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_title">
 
     </Button>
-
 </merge>
