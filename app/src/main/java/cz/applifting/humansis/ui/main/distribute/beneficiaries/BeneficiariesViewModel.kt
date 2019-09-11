@@ -15,7 +15,6 @@ import javax.inject.Inject
  * @since 5. 9. 2019
  */
 
-// todo do not inject db or service, use repository pattern
 class BeneficiariesViewModel @Inject constructor(private val beneficieriesRepository: BeneficieriesRepository) : BaseViewModel() {
 
     private val beneficiariesLD = MutableLiveData<List<BeneficiaryLocal>>()
