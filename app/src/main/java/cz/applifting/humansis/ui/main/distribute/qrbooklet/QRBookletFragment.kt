@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -70,7 +70,6 @@ class QRBookletFragment : BaseFragment(), ZXingScannerView.ResultHandler {
             tv_beneficiary.setValue(args.beneficiaryName)
             tv_distribution.setValue(args.distributionName)
             tv_project.setValue(args.projectName)
-            (activity as MainActivity).invalidateOptionsMenu()
         })
 
         viewModel.refreshingLD.observe(viewLifecycleOwner, Observer {
@@ -88,15 +87,21 @@ class QRBookletFragment : BaseFragment(), ZXingScannerView.ResultHandler {
     override fun onResume() {
         super.onResume()
 
-        if (isCameraPermissionGranted()) {
+        // todo decide what to do if the permission is not granted permanently
+        if (!isCameraPermissionGranted()) {
+            if (shouldShowExplanation()) {
+                showExplanationDialog()
+            } else {
+                requestCameraPermission()
+            }
+
+        } else {
             qr_scanner.setResultHandler(this)
             qr_scanner.startCamera()
             qr_scanner.setAutoFocus(true)
             qr_scanner.setFormats(mutableListOf(BarcodeFormat.QR_CODE))
             // for HUAWEI phones, according to docs
             qr_scanner.setAspectTolerance(0.5f)
-        } else {
-            requestCameraPermission()
         }
 
     }
@@ -115,35 +120,42 @@ class QRBookletFragment : BaseFragment(), ZXingScannerView.ResultHandler {
             args.distributionStatus,
             bookletId
         )
-        this.findNavController().navigate(action)
+        findNavController().navigate(action)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
 
         if (CAMERA_REQUEST_CODE == requestCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-
+                // permission granted, we can scan a qr code
             } else {
-                val showRationale = ActivityCompat.shouldShowRequestPermissionRationale(activity as MainActivity, Manifest.permission.CAMERA)
-                if (showRationale) {
-
-                } else {
-
-                }
+                // permission not granted, go to previous screen
+                findNavController().navigateUp()
             }
         }
 
     }
 
     private fun requestCameraPermission() {
-        ActivityCompat.requestPermissions(
-            activity as MainActivity, arrayOf(Manifest.permission.CAMERA),
-            CAMERA_REQUEST_CODE
-        )
+        requestPermissions(arrayOf(Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
     }
 
     private fun isCameraPermissionGranted(): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.M || (activity as MainActivity).checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     }
+
+    private fun shouldShowExplanation(): Boolean {
+        return shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+    }
+
+    private fun showExplanationDialog() {
+        val builder = AlertDialog.Builder(activity as MainActivity)
+        builder.setTitle(getString(R.string.camera_permission_dialog_title))
+        builder.setMessage(getString(R.string.camera_permission_dialog_message))
+        builder.setPositiveButton(getString(R.string.camera_permission_dialog_positive_btn_label)) { _, _ -> requestCameraPermission() }
+        builder.setNegativeButton(getString(R.string.camera_permission_dialog_negative_btn_label)) { _, _ -> findNavController().navigateUp() }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
 }
