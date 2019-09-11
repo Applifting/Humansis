@@ -43,5 +43,6 @@
     <string name="camera_permission_dialog_message">If you want to scan a QR code you need to grant a camera permission.</string>
     <string name="camera_permission_dialog_positive_btn_label">OK</string>
     <string name="camera_permission_dialog_negative_btn_label">Not now</string>
+    <string name="scan_qr_code">Scan QR code</string>
 
 </resources>
