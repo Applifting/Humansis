@@ -25,12 +25,6 @@ fun ImageView.tintedDrawable(@DrawableRes drawableRes: Int, @ColorRes colorRes: 
 }
 
 fun ImageView.simpleDrawable(@DrawableRes drawableRes: Int) {
-    val vectorDrawable = VectorDrawableCompat.create(
-        this.context.resources,
-        drawableRes,
-        null
-    )
-
-    val drawable = DrawableCompat.wrap(vectorDrawable!!)
+    val drawable = this.context.getDrawable(drawableRes)
     this.setImageDrawable(drawable)
 }
