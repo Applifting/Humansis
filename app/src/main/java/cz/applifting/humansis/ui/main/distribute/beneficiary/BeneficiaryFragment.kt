@@ -6,6 +6,7 @@ import android.widget.FrameLayout
 import androidx.annotation.Nullable
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.shortToast
@@ -56,7 +57,9 @@ class BeneficiaryFragment : BaseFragment() {
 
             args.bookletId?.let {
                 tv_booklet.setValue(args.bookletId!!)
-                tv_booklet.setAction(getString(R.string.rescan_qr), View.OnClickListener { })
+                tv_booklet.setAction(getString(R.string.rescan_qr), View.OnClickListener {
+                    findNavController().navigateUp()
+                })
             }
 
             (activity as MainActivity).invalidateOptionsMenu()
