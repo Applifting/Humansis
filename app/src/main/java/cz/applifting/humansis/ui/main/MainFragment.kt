@@ -1,49 +1,46 @@
 package cz.applifting.humansis.ui.main
 
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.widget.Toolbar
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.App
-import cz.applifting.humansis.ui.BaseActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import cz.applifting.humansis.ui.BaseFragment
+import cz.applifting.humansis.ui.HumansisActivity
+import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
-import javax.inject.Inject
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-class MainActivity : BaseActivity() {
+class MainFragment : BaseFragment() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: MainViewModel by viewModels { viewModelFactory }
 
-    private val viewModel: MainActivityViewModel by viewModels { viewModelFactory }
-    private val sharedViewModel: SharedViewModel by viewModels { viewModelFactory }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_main, container, false)
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
-
-        val navController = findNavController(R.id.nav_host_fragment)
         val appBarConfiguration = AppBarConfiguration(
             setOf(R.id.projectsFragment),
-            drawerLayout)
+            drawer_layout
+        )
 
-        toolbar.setupWithNavController(navController, appBarConfiguration)
+        val navController = (activity as HumansisActivity).navController
+
+        tb_toolbar.setupWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         (application as App).appComponent.inject(this)

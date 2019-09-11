@@ -79,8 +79,5 @@
                 app:argType="boolean" />
     </fragment>
 
-    <activity
-            android:id="@+id/loginActivity"
-            android:name="cz.applifting.humansis.ui.login.LoginActivity"
-            android:label="LoginActivity" />
+
 </navigation>

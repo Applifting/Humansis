@@ -1,25 +1,21 @@
 package cz.applifting.humansis.di
 
-import android.app.Application
-import androidx.room.Room
-import com.commonsware.cwac.saferoom.SafeHelperFactory
+import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import cz.applifting.humansis.api.HumansisService
-import cz.applifting.humansis.db.HumansisDB
+import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.managers.AuthManager
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
-
-
-
-
-
+import javax.inject.Singleton
 
 
 /**
@@ -30,6 +26,7 @@ import retrofit2.create
 class AppModule {
 
     @Provides
+    @Reusable
     fun retrofitProvider(baseUrl: String, authManager: AuthManager): HumansisService {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -62,16 +59,14 @@ class AppModule {
     }
 
     @Provides
-    fun dbProvider(applicationContext: Application): HumansisDB {
-        // TODO load this password from keychain
-        val factory = SafeHelperFactory(charArrayOf('p','a','s','s','w','o','r','d'))
+    @Singleton
+    fun dbProviderProvider(context: Context): DbProvider {
+        return DbProvider(context)
+    }
 
-        return Room.databaseBuilder(
-            applicationContext,
-            HumansisDB::class.java, "humansis-db"
-        )
-            .openHelperFactory(factory)
-            .fallbackToDestructiveMigration()
-            .build()
+    @Provides
+    @Singleton
+    fun spProvider(context: Context): SharedPreferences {
+        return context.getSharedPreferences("HumansisSP", Context.MODE_PRIVATE)
     }
 }

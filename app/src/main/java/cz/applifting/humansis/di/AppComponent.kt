@@ -1,9 +1,10 @@
 package cz.applifting.humansis.di
 
-import android.app.Application
+import android.content.Context
 import cz.applifting.humansis.ui.BaseFragment
-import cz.applifting.humansis.ui.main.MainActivity
 import cz.applifting.humansis.ui.login.LoginActivity
+import cz.applifting.humansis.ui.main.MainFragment
+import cz.applifting.humansis.ui.splash.SplashActivity
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -21,13 +22,15 @@ interface AppComponent {
 
     fun inject(loginActivity: LoginActivity)
 
-    fun inject(mainActivity: MainActivity)
+    fun inject(mainActivity: MainFragment)
+
+    fun inject(splashActivity: SplashActivity)
 
     @Component.Builder
     interface Builder {
 
         @BindsInstance
-        fun application(applicationContext: Application): Builder
+        fun context(context: Context): Builder
 
         @BindsInstance
         fun baseUrl(baseUrl: String): Builder

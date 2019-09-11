@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import cz.applifting.humansis.ui.main.MainActivity
+import cz.applifting.humansis.ui.main.MainFragment
 import cz.applifting.humansis.ui.main.SharedViewModel
 import javax.inject.Inject
 
@@ -22,6 +22,6 @@ open class BaseFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity?.application as App).appComponent.inject(this)
-        sharedViewModel = ViewModelProviders.of(activity as MainActivity, viewModelFactory)[SharedViewModel::class.java]
+        sharedViewModel = ViewModelProviders.of(activity as MainFragment, viewModelFactory)[SharedViewModel::class.java]
     }
 }

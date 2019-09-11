@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.BaseFragment
-import cz.applifting.humansis.ui.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_projects.*
 
 /**
@@ -25,8 +24,8 @@ class ProjectsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as MainActivity).supportActionBar?.title = getString(R.string.app_name)
-        (activity as MainActivity).supportActionBar?.subtitle = getString(R.string.projects)
+//        (activity as MainFragment).supportActionBar?.title = getString(R.string.app_name)
+//        (activity as MainFragment).supportActionBar?.subtitle = getString(R.string.projects)
 
         val adapter = ProjectsAdapter {
             val action = ProjectsFragmentDirections.chooseProject(it.id, it.name)

@@ -1,25 +1,40 @@
 package cz.applifting.humansis.misc
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.security.KeyPairGeneratorSpec
 import android.util.Base64
-import java.security.MessageDigest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.math.BigInteger
+import java.security.*
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.crypto.Cipher
+import javax.security.auth.x500.X500Principal
 import kotlin.random.Random
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 19, August, 2019
  */
 
-fun saltPassword(salt: String, password: String): String {
-    val salted = "$password{$salt}".toByteArray()
-    var digest = hashSHA512(salted)
+const val DB_SALT = "JWJDs187P0Z7g248djf0oN78eZtn1f4eaf"
+const val DB_KEY_ALIAS = "HumansisDBKey"
+const val DB_SP_KEY = "humansis-db"
 
-    for (i in 1..4999) {
-        digest = hashSHA512(digest.plus(salted))
+// TODO measure these functions and check which - if not all - should be done on background thread
+
+suspend fun saltPassword(salt: String, password: String): String {
+    return withContext(Dispatchers.Default) {
+        val salted = "$password{$salt}".toByteArray()
+        var digest = hashSHA512(salted)
+
+        for (i in 1..5000) {
+            digest = hashSHA512(digest.plus(salted))
+        }
+
+        Base64.encodeToString(digest, Base64.NO_WRAP)
     }
-
-    return Base64.encodeToString(digest, Base64.NO_WRAP)
 }
 
 @SuppressLint("SimpleDateFormat")
@@ -41,6 +56,12 @@ fun generateDigest(saltedPassword: String, nonce: String, created: String): Stri
     return hashSHA1(mix)
 }
 
+fun hashSHA512(input: ByteArray): ByteArray {
+    return MessageDigest
+        .getInstance("SHA-512")
+        .digest(input)
+}
+
 private fun generateNonce(): String {
     val nonceChars = "0123456789abcdef"
     val nonce = StringBuilder()
@@ -56,8 +77,64 @@ private fun hashSHA1(s: String): String {
     return Base64.encodeToString(MessageDigest.getInstance("SHA-1").digest(s.toByteArray()), Base64.NO_WRAP)
 }
 
-private fun hashSHA512(input: ByteArray): ByteArray {
-    return MessageDigest
-        .getInstance("SHA-512")
-        .digest(input)
+fun encryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Context): ByteArray {
+    val keyStore = KeyStore.getInstance("AndroidKeyStore")
+    keyStore.load(null)
+
+    if (!keyStore.containsAlias(keyAlias)) {
+        throw HumansisError("Key with '$keyAlias' alias has to be generated first.")
+    }
+
+    val keyEntry = keyStore.getEntry(keyAlias, null) as KeyStore.PrivateKeyEntry
+
+    return encrypt(keyEntry.certificate.publicKey, secret)
+}
+
+fun decryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Context): ByteArray {
+    val keyStore = KeyStore.getInstance("AndroidKeyStore")
+    keyStore.load(null)
+
+    if (keyStore.containsAlias(keyAlias)) {
+        generateKeyStoreRSAKey(keyAlias, context)
+    }
+
+    val keyEntry = keyStore.getEntry(keyAlias, null) as KeyStore.PrivateKeyEntry
+
+    return decrypt(keyEntry.privateKey, secret)
+}
+
+private fun encrypt(publicKey: PublicKey, secret: ByteArray): ByteArray {
+    val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+    cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+    return cipher.doFinal(secret)
+}
+
+private fun decrypt(privateKey: PrivateKey, secret: ByteArray): ByteArray {
+    val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+    cipher.init(Cipher.DECRYPT_MODE, privateKey)
+    return cipher.doFinal(secret)
+}
+
+private fun generateKeyStoreRSAKey(keyAlias: String, context: Context) {
+    val kpg = KeyPairGenerator.getInstance(
+        "RSA", "AndroidKeyStore"
+    )
+
+    val startDate = Calendar.getInstance()
+    val endDate = Calendar.getInstance()
+    endDate.add(Calendar.YEAR, 30)
+
+    // Using deprecated method to support API below 23
+    val keyGeneratorSpec = KeyPairGeneratorSpec
+        .Builder(context)
+        .setAlias(keyAlias)
+        .setSubject(X500Principal("CN=$keyAlias"))
+        .setSerialNumber(BigInteger.TEN)
+        .setStartDate(startDate.time)
+        .setEndDate(endDate.time)
+        .build()
+
+    kpg.initialize(keyGeneratorSpec)
+
+    val keys = kpg.genKeyPair()
 }
