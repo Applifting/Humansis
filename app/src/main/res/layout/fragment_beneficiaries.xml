@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="@color/colorPrimaryDark">
 
-    <TextView
-            android:id="@+id/tv_beneficiaries_reached"
+    <cz.applifting.humansis.ui.components.ReachedBeneficiariesComponent
+            android:id="@+id/cmp_reached_beneficiaries"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -15,12 +14,10 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="100000 of 150000 beneficiaries reached" />
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ProgressBar
-            android:id="@+id/pb_beneficiaries_reached"
-            style="?android:attr/progressBarStyleHorizontal"
+    <cz.applifting.humansis.ui.components.SearchBeneficiaryComponent
+            android:id="@+id/cmp_search_beneficiary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -28,30 +25,7 @@
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_beneficiaries_reached" />
-
-    <EditText
-            android:id="@+id/et_search"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:inputType="text"
-            android:hint="@string/search_beneficiary_hint"
-            app:layout_constraintEnd_toStartOf="@+id/btn_sort"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pb_beneficiaries_reached" />
-
-    <ImageButton
-            android:id="@+id/btn_sort"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            app:srcCompat="@drawable/ic_sort_by_alpha"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="@string/sort_alphabetically"
-            app:layout_constraintTop_toBottomOf="@+id/pb_beneficiaries_reached" />
+            app:layout_constraintTop_toBottomOf="@+id/cmp_reached_beneficiaries" />
 
     <cz.applifting.humansis.ui.components.listComponent.ListComponent
             android:id="@+id/lc_beneficiaries"
@@ -61,6 +35,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_search" />
+            app:layout_constraintTop_toBottomOf="@+id/cmp_search_beneficiary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

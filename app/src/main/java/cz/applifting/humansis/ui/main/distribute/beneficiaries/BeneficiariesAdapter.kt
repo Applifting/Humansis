@@ -88,10 +88,15 @@ class BeneficiariesAdapter(
         }
 
         private fun getVulnerabilityDrawable(vulnerability: String): Int? {
+            // values from https://api-demo.humansis.org/api/wsse/vulnerability_criteria
             return when (vulnerability) {
                 "disabled" -> R.drawable.ic_vulnerability_disabled
+                //todo solo parent icon
+                "soloParent" -> R.drawable.ic_vulnerability_disabled
                 "lactating" -> R.drawable.ic_vulnerability_lactating
                 "pregnant" -> R.drawable.ic_vulnerability_pregnant
+                //todo nutritional issues icon
+                "nutritionalIssues" -> R.drawable.ic_vulnerability_disabled
                 else -> null
             }
         }
