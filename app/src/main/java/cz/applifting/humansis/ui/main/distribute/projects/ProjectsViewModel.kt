@@ -1,7 +1,8 @@
 package cz.applifting.humansis.ui.main.distribute.projects
 
 import androidx.lifecycle.MutableLiveData
-import cz.applifting.humansis.model.db.ProjectLocal
+import cz.applifting.humansis.model.ui.ProjectModel
+import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.main.BaseListViewModel
 import kotlinx.coroutines.launch
@@ -10,9 +11,9 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-class ProjectsViewModel @Inject constructor(val projectsRepository: ProjectsRepository) : BaseListViewModel() {
+class ProjectsViewModel @Inject constructor(val projectsRepository: ProjectsRepository, val distributionsRepository: DistributionsRepository) : BaseListViewModel() {
 
-    val projectsLD: MutableLiveData<List<ProjectLocal>> = MutableLiveData()
+    val projectsLD: MutableLiveData<List<ProjectModel>> = MutableLiveData()
 
     fun loadProjects(download: Boolean = false) {
         launch {
@@ -23,7 +24,15 @@ class ProjectsViewModel @Inject constructor(val projectsRepository: ProjectsRepo
             }
 
             val projects = if (download) projectsRepository.getProjectsOnline() else projectsRepository.getProjectsOffline()
-            projectsLD.value = projects
+
+            val projectsModel = projects?.map {
+                //todo find better solution to count uncompleted distributions
+                val uncompleteDistributions = distributionsRepository.getUncompletedDistributions(it.id)
+                val projectModel = ProjectModel(it.id, it.name, it.numberOfHouseholds, uncompleteDistributions.isEmpty())
+                projectModel
+            }
+
+            projectsLD.value = projectsModel
 
             finishLoading(projects)
         }

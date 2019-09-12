@@ -9,7 +9,7 @@ interface BeneficiaryDao {
     suspend fun getByDistribution(distributionId: Int): List<BeneficiaryLocal>?
 
     @Query("SELECT * FROM beneficiaries where id = :beneficiaryId")
-    suspend fun findById(beneficiaryId:Int): BeneficiaryLocal
+    suspend fun findById(beneficiaryId: Int): BeneficiaryLocal
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(beneficiariesLocal: List<BeneficiaryLocal>)
@@ -22,4 +22,7 @@ interface BeneficiaryDao {
 
     @Query("DELETE FROM beneficiaries")
     suspend fun deleteAll()
+
+    @Query("SELECT COUNT(id) FROM beneficiaries WHERE distributionId = :distributionId AND distributed = 1")
+    suspend fun countReachedBeneficiaries(distributionId: Int): Int
 }

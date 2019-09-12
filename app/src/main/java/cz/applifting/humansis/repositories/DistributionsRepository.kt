@@ -31,7 +31,8 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
                         parseCommodities(it.commodities),
                         it.dateDistribution ?: context.getString(R.string.unknown),
                         projectId,
-                        it.type
+                        it.type,
+                        it.completed
                     )
                 }
 
@@ -48,6 +49,9 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
         return db.distributionsDao().getByProject(projectId) ?: listOf()
     }
 
+    suspend fun getUncompletedDistributions(projectId: Int): List<DistributionLocal> {
+        return db.distributionsDao().findUncompletedDistributions(projectId) ?: listOf()
+    }
 
     private fun parseCommodities(commodities: List<Commodity>): List<String> {
         return commodities.map {

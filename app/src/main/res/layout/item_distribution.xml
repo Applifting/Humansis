@@ -1,103 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:background="?attr/selectableItemBackground">
+        app:cardCornerRadius="@dimen/default_card_radius">
 
-    <ImageView
-            android:id="@+id/iv_target"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_name"
-            app:layout_constraintVertical_bias="0.050000012"
-            app:srcCompat="@drawable/ic_home_black_24dp" />
-
-    <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_weight="1"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@id/iv_target"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="I am a cool distribution" />
-
-    <TextView
-            android:id="@+id/tv_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="12sp"
-            app:layout_constraintStart_toEndOf="@id/iv_target"
-            app:layout_constraintTop_toBottomOf="@+id/tv_name"
-            tools:text="Date: lsadjfadsf" />
-
-    <TextView
-            android:id="@+id/tv_beneficieries_cnt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="12sp"
-            app:layout_constraintStart_toEndOf="@id/iv_target"
-            app:layout_constraintTop_toBottomOf="@+id/tv_date"
-            tools:text="Beneficieries: 100" />
-
-    <TextView
-            android:id="@+id/tv_commodities"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/commodity"
-            android:textSize="12sp"
-            app:layout_constraintStart_toEndOf="@id/iv_target"
-            app:layout_constraintTop_toBottomOf="@+id/tv_beneficieries_cnt" />
-
-    <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
+            android:background="?attr/selectableItemBackground"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_commodities"
-            app:layout_constraintStart_toEndOf="@+id/tv_commodities"
-            app:layout_constraintTop_toTopOf="@+id/tv_commodities">
+            android:padding="16dp">
 
         <ImageView
-                android:id="@+id/iv_loan"
+                android:id="@+id/iv_status"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_name"
+                app:layout_constraintVertical_bias="0.050000012"
+                app:srcCompat="@drawable/ic_distribution_state" />
+
+        <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toStartOf="@+id/iv_target"
+                app:layout_constraintStart_toEndOf="@id/iv_status"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="I am a cool distribution" />
+
+        <TextView
+                android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:srcCompat="@drawable/ic_account_balance_wallet_black_24dp" />
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@id/iv_status"
+                app:layout_constraintTop_toBottomOf="@+id/tv_name"
+                tools:text="Date: lsadjfadsf" />
+
+        <TextView
+                android:id="@+id/tv_beneficieries_cnt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@id/iv_status"
+                app:layout_constraintTop_toBottomOf="@+id/tv_date"
+                tools:text="Beneficieries: 100" />
+
+        <TextView
+                android:id="@+id/tv_commodities"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/commodity"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@id/iv_status"
+                app:layout_constraintTop_toBottomOf="@+id/tv_beneficieries_cnt" />
+
+        <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_commodities"
+                app:layout_constraintStart_toEndOf="@+id/tv_commodities"
+                app:layout_constraintTop_toTopOf="@+id/tv_commodities">
+
+            <ImageView
+                    android:id="@+id/iv_loan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:tint="@color/black"
+                    app:srcCompat="@drawable/ic_account_balance_wallet_black_24dp" />
+
+            <ImageView
+                    android:id="@+id/iv_food"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:tint="@color/black"
+                    app:srcCompat="@drawable/ic_local_dining_black_24dp" />
+
+            <ImageView
+                    android:id="@+id/iv_cash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:tint="@color/black"
+                    app:srcCompat="@drawable/ic_attach_money_black_24dp" />
+        </LinearLayout>
+
+        <ProgressBar
+                android:id="@+id/pb_distribution_progress"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:progressTint="@color/orange"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/linearLayout" />
 
         <ImageView
-                android:id="@+id/iv_food"
+                android:id="@+id/iv_target"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:srcCompat="@drawable/ic_local_dining_black_24dp" />
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="center_vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_status"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/iv_status"
+                app:srcCompat="@drawable/ic_home_black_24dp" />
 
-        <ImageView
-                android:id="@+id/iv_cash"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:srcCompat="@drawable/ic_attach_money_black_24dp" />
-    </LinearLayout>
-
-    <ImageView
-            android:id="@+id/iv_chevron"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="center_vertical"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_target"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/iv_target"
-            app:srcCompat="@drawable/ic_chevron_right_black_24dp" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
