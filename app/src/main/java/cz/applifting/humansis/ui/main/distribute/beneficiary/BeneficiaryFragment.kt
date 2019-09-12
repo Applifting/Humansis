@@ -45,8 +45,8 @@ class BeneficiaryFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-//        (activity as MainFragment).supportActionBar?.title = getString(R.string.assign_booklet)
-//        (activity as MainFragment).supportActionBar?.subtitle = args.beneficiaryName
+        (activity as HumansisActivity).supportActionBar?.title = getString(R.string.assign_booklet)
+        (activity as HumansisActivity).supportActionBar?.subtitle = args.beneficiaryName
 
         viewModel.distributedLD.observe(viewLifecycleOwner, Observer {
             tv_status.setValue(getString(if (it) R.string.distributed else R.string.not_distributed))

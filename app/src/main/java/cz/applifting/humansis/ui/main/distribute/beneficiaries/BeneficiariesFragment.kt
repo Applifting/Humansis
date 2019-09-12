@@ -13,6 +13,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
+import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 
 /**
@@ -38,8 +39,8 @@ class BeneficiariesFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-//        (activity as MainFragment).supportActionBar?.title = args.distributionName
-//        (activity as MainFragment).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
+        (activity as HumansisActivity).supportActionBar?.title = args.distributionName
+        (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
         val viewAdapter = BeneficiariesAdapter { beneficiary ->
             this.findNavController().navigate(chooseDirection(beneficiary))

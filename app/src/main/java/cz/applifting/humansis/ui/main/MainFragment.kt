@@ -13,6 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import cz.applifting.humansis.R
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
+import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
@@ -38,6 +39,8 @@ class MainFragment : BaseFragment() {
 
         val fragmentContainer = view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError("Cannot find nav host in main")
         val navController = Navigation.findNavController(fragmentContainer)
+
+        (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
 
         tb_toolbar.setupWithNavController(navController, appBarConfiguration)
         nav_view.setupWithNavController(navController)

@@ -10,6 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.BaseFragment
+import cz.applifting.humansis.ui.HumansisActivity
+import cz.applifting.humansis.ui.main.MainFragment
 import kotlinx.android.synthetic.main.fragment_distributions.*
 
 /**
@@ -29,8 +31,8 @@ class DistributionsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-//        (activity as MainFragment).supportActionBar?.title = args.projectName
-//        (activity as MainFragment).supportActionBar?.subtitle = getString(R.string.distributions)
+        (activity as HumansisActivity).supportActionBar?.title = args.projectName
+        (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.distributions)
 
         val viewAdapter = DistributionsAdapter {
             val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(it.id, it.name, args.projectName)
