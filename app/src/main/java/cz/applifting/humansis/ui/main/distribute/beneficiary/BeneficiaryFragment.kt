@@ -6,6 +6,7 @@ import android.widget.FrameLayout
 import androidx.annotation.Nullable
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.shortToast
@@ -54,6 +55,15 @@ class BeneficiaryFragment : BaseFragment() {
             tv_distribution.setValue(args.distributionName)
             tv_project.setValue(args.projectName)
 //            (activity as MainFragment).invalidateOptionsMenu()
+
+            args.bookletId?.let {
+                tv_booklet.setValue(args.bookletId!!)
+                tv_booklet.setAction(getString(R.string.rescan_qr), View.OnClickListener {
+                    findNavController().navigateUp()
+                })
+            }
+
+            (activity as HumansisActivity).invalidateOptionsMenu()
         })
 
         viewModel.refreshingLD.observe(viewLifecycleOwner, Observer {
@@ -62,6 +72,7 @@ class BeneficiaryFragment : BaseFragment() {
             tv_beneficiary.visible(!it)
             tv_distribution.visible(!it)
             tv_project.visible(!it)
+            tv_booklet.visible(!it && args.bookletId != null)
         })
 
         viewModel.loadBeneficiary(args.beneficiaryId)

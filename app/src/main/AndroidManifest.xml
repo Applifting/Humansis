@@ -4,6 +4,7 @@
         package="cz.applifting.humansis">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
             android:name=".ui.App"
