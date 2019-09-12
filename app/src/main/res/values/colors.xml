@@ -17,4 +17,7 @@
     <color name="distributed">#75aff1</color>
     <color name="notDistributed">#d46d35</color>
     <color name="white">#FFFFFF</color>
+
+    <color name="darkGrey">#2E2E2E</color>
+    <color name="orange">#E3661F</color>
 </resources>

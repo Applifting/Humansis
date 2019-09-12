@@ -44,5 +44,6 @@
     <string name="camera_permission_dialog_positive_btn_label">OK</string>
     <string name="camera_permission_dialog_negative_btn_label">Not now</string>
     <string name="scan_qr_code">Scan QR code</string>
+    <string name="search">Search</string>
 
 </resources>

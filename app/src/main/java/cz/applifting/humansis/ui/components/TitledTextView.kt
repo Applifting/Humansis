@@ -11,9 +11,7 @@ import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
 import kotlinx.android.synthetic.main.titled_text_view.view.*
 
-class TitledTextView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+class TitledTextView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
 
     init {
 
