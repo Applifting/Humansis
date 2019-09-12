@@ -1,6 +1,7 @@
 package cz.applifting.humansis.ui.components.listComponent
 
 import android.content.Context
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -24,6 +25,7 @@ class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(con
             setHasFixedSize(true)
             layoutManager = viewManager
             adapter = viewAdapter
+            addItemDecoration(VerticalMarginItemDecoration())
         }
     }
 
@@ -42,6 +44,22 @@ class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(con
 
     fun setOnRefreshListener(listener: () -> Unit) {
         swrl_swipe_to_refresh.setOnRefreshListener(listener)
+    }
+
+    inner class VerticalMarginItemDecoration() : RecyclerView.ItemDecoration() {
+        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+
+            val margin = context.resources.getDimension(R.dimen.list_items_vertical_margin).toInt()
+
+            with(outRect) {
+                if (parent.getChildAdapterPosition(view) == 0) {
+                    top = margin
+                }
+                left =  margin
+                right = margin
+                bottom = margin
+            }
+        }
     }
 
 }

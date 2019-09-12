@@ -3,6 +3,7 @@ package cz.applifting.humansis.model.db
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import cz.applifting.humansis.model.Target
 
@@ -17,7 +18,7 @@ import cz.applifting.humansis.model.Target
         childColumns = arrayOf("projectId"),
         onDelete = CASCADE
     )]
-    )
+)
 data class DistributionLocal(
     @PrimaryKey val id: Int,
     val name: String,
@@ -25,5 +26,6 @@ data class DistributionLocal(
     val commodities: List<String>,
     val dateOfDistribution: String,
     val projectId: Int,
-    val target: Target
+    val target: Target,
+    val completed: Boolean
 )

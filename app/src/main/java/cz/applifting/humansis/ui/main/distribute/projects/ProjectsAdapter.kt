@@ -2,11 +2,13 @@ package cz.applifting.humansis.ui.main.distribute.projects
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
-import cz.applifting.humansis.model.db.ProjectLocal
+import cz.applifting.humansis.model.ui.ProjectModel
 import kotlinx.android.synthetic.main.item_project.view.*
 
 
@@ -14,13 +16,13 @@ import kotlinx.android.synthetic.main.item_project.view.*
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
 class ProjectsAdapter(
-    private val onItemClick: (project: ProjectLocal) -> Unit
+    private val onItemClick: (project: ProjectModel) -> Unit
 ) : RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>() {
 
-    private val projects: MutableList<ProjectLocal> = mutableListOf()
+    private val projects: MutableList<ProjectModel> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false) as ConstraintLayout
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false) as CardView
         return ProjectViewHolder(view)
     }
 
@@ -30,7 +32,7 @@ class ProjectsAdapter(
         holder.bind(projects[position])
     }
 
-    fun updateProjects(newProjects: List<ProjectLocal>) {
+    fun updateProjects(newProjects: List<ProjectModel>) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = newProjects[newItemPosition].id == projects[oldItemPosition].id
             override fun getOldListSize(): Int = projects.size
@@ -43,15 +45,17 @@ class ProjectsAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-    inner class ProjectViewHolder(val layout: ConstraintLayout): RecyclerView.ViewHolder(layout) {
+    inner class ProjectViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
         val context = layout.context
         val tvName = layout.tv_name
         val tvHouseHolds = layout.tv_households
+        val flCompleted = layout.fl_completed
 
-        fun bind(project: ProjectLocal) {
+        fun bind(project: ProjectModel) {
             tvName.text = project.name
             tvHouseHolds.text = context.getString(R.string.households, project.numberOfHouseholds)
             layout.setOnClickListener { onItemClick(project) }
+            flCompleted.setBackgroundColor(ContextCompat.getColor(context, if (project.completed) R.color.distributed else R.color.notDistributed))
         }
     }
 }

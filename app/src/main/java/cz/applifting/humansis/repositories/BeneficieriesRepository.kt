@@ -57,4 +57,8 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return vulnerability.map { it.vulnerabilityName }
     }
 
+    suspend fun countReachedBeneficiariesOffline(distributionId: Int): Int {
+        return db.beneficiariesDao().countReachedBeneficiaries(distributionId)
+    }
+
 }

@@ -19,7 +19,7 @@ import cz.applifting.humansis.model.db.User
  */
 @Database(
     entities = [User::class, BeneficiaryLocal::class, ProjectLocal::class, DistributionLocal::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(StringListConverter::class, TargetConverter::class)
