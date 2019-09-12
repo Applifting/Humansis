@@ -42,17 +42,14 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     }
 
     suspend fun getBeneficieriesOffline(distributionId: Int): List<BeneficiaryLocal> {
-        val db = dbProvider.get()
         return db.beneficiariesDao().getByDistribution(distributionId) ?: listOf()
     }
 
     suspend fun getBeneficiaryOffline(beneficiaryId: Int): BeneficiaryLocal {
-        val db = dbProvider.get()
         return db.beneficiariesDao().findById(beneficiaryId)
     }
 
     suspend fun updateBeneficiaryOffline(beneficiary: BeneficiaryLocal) {
-        val db = dbProvider.get()
         return db.beneficiariesDao().update(beneficiary)
     }
 
