@@ -39,11 +39,6 @@ class AuthManager @Inject constructor(private val dbProvider: DbProvider, privat
 
         dbProvider.init(dbPass)
 
-        // Clear password immediately
-        for (i in dbPass.indices) {
-            dbPass[i] = 0
-        }
-
         val db = dbProvider.get()
 
         // TODO: For easier debugging, might delete later

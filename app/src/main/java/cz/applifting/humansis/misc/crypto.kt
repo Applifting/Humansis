@@ -18,6 +18,7 @@ import kotlin.random.Random
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 19, August, 2019
  */
 
+// TODO generate salt and save it securely
 const val DB_SALT = "JWJDs187P0Z7g248djf0oN78eZtn1f4eaf"
 const val DB_KEY_ALIAS = "HumansisDBKey"
 const val DB_SP_KEY = "humansis-db"
@@ -62,21 +63,6 @@ fun hashSHA512(input: ByteArray): ByteArray {
         .digest(input)
 }
 
-private fun generateNonce(): String {
-    val nonceChars = "0123456789abcdef"
-    val nonce = StringBuilder()
-
-    for (i in 0..15) {
-        nonce.append(nonceChars[Random.nextInt(nonceChars.length)])
-    }
-
-    return nonce.toString()
-}
-
-private fun hashSHA1(s: String): String {
-    return Base64.encodeToString(MessageDigest.getInstance("SHA-1").digest(s.toByteArray()), Base64.NO_WRAP)
-}
-
 fun encryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Context): ByteArray {
     val keyStore = KeyStore.getInstance("AndroidKeyStore")
     keyStore.load(null)
@@ -105,9 +91,25 @@ fun decryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String): ByteArray {
     return decrypt(privateKey, secret)
 }
 
-fun base64encode(value: ByteArray): String = Base64.encodeToString(value, Base64.DEFAULT)
+fun base64encode(value: ByteArray): String = Base64.encodeToString(value, Base64.NO_WRAP)
 
-fun base64decode(value: String): ByteArray = Base64.decode(value, Base64.DEFAULT)
+fun base64decode(value: String): ByteArray = Base64.decode(value, Base64.NO_WRAP)
+
+private fun generateNonce(): String {
+    val nonceChars = "0123456789abcdef"
+    val nonce = StringBuilder()
+
+    for (i in 0..15) {
+        nonce.append(nonceChars[Random.nextInt(nonceChars.length)])
+    }
+
+    return nonce.toString()
+}
+
+private fun hashSHA1(s: String): String {
+    return Base64.encodeToString(MessageDigest.getInstance("SHA-1").digest(s.toByteArray()), Base64.NO_WRAP)
+}
+
 
 private fun encrypt(publicKey: PublicKey, secret: ByteArray): ByteArray {
     val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
