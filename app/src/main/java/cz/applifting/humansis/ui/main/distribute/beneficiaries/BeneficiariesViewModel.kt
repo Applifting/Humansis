@@ -4,8 +4,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
-import cz.applifting.humansis.ui.BaseViewModel
-import cz.applifting.humansis.ui.components.ListComponentState
+import cz.applifting.humansis.ui.components.listComponent.ListComponentState
+import cz.applifting.humansis.ui.main.BaseListViewModel
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -14,9 +14,7 @@ import javax.inject.Inject
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
  * @since 5. 9. 2019
  */
-
-// todo do not inject db or service, use repository pattern
-class BeneficiariesViewModel @Inject constructor(private val beneficieriesRepository: BeneficieriesRepository) : BaseViewModel() {
+class BeneficiariesViewModel @Inject constructor(private val beneficieriesRepository: BeneficieriesRepository) : BaseListViewModel() {
 
     private val beneficiariesLD = MutableLiveData<List<BeneficiaryLocal>>()
     internal val beneficiariesViewStateLD: MutableLiveData<ListComponentState> = MutableLiveData()
@@ -29,19 +27,23 @@ class BeneficiariesViewModel @Inject constructor(private val beneficieriesReposi
         }
     }
 
-    fun loadBeneficiaries(distributionId: Int, download: Boolean) {
+    fun loadBeneficiaries(distributionId: Int, download: Boolean = false) {
         launch {
-            beneficiariesViewStateLD.value = ListComponentState(isRefreshing = download, isRetrieving = !download)
+            if (download) {
+                showRefreshing()
+            } else {
+                showRetrieving()
+            }
 
             val beneficiaries = if (download) {
                 beneficieriesRepository.getBeneficieriesOnline(distributionId)
             } else {
-                beneficieriesRepository.getDistributionsOffline(distributionId)
+                beneficieriesRepository.getBeneficieriesOffline(distributionId)
             }
 
             beneficiariesLD.value = beneficiaries
             statsLD.value = Pair(beneficiaries?.count { it.distributed } ?: 0, beneficiaries?.size ?: 0)
-            beneficiariesViewStateLD.value = ListComponentState()
+            finishLoading(beneficiaries)
         }
     }
 

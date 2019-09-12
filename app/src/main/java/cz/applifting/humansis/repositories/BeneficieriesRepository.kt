@@ -1,16 +1,21 @@
 package cz.applifting.humansis.repositories
 
-import android.app.Application
+import android.content.Context
 import cz.applifting.humansis.api.HumansisService
+import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.api.Vulnerability
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
-class BeneficieriesRepository @Inject constructor(val service: HumansisService, val db: HumansisDB, val context: Application) {
+@Singleton
+class BeneficieriesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
+
+    val db: HumansisDB by lazy { dbProvider.get() }
 
     suspend fun getBeneficieriesOnline(distributionId: Int): List<BeneficiaryLocal>? {
         return try {
@@ -36,7 +41,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         }
     }
 
-    suspend fun getDistributionsOffline(distributionId: Int): List<BeneficiaryLocal> {
+    suspend fun getBeneficieriesOffline(distributionId: Int): List<BeneficiaryLocal> {
         return db.beneficiariesDao().getByDistribution(distributionId) ?: listOf()
     }
 

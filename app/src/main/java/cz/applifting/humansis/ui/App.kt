@@ -14,8 +14,12 @@ class App: Application() {
         super.onCreate()
 
         appComponent = DaggerAppComponent.builder()
-            .application(this)
+            .context(this)
             .baseUrl("https://api-demo.humansis.org/api/wsse/")
             .build()
+    }
+
+    fun addUserDependecies() {
+
     }
 }

@@ -11,17 +11,11 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
  */
-class MainActivityViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val authManager: AuthManager
 ) : BaseViewModel() {
 
     val userLD = MutableLiveData<User>()
-
-    fun getUser() {
-        launch {
-            userLD.value = authManager.retrieveUser()
-        }
-    }
 
     fun logout() {
         launch(Dispatchers.IO) {

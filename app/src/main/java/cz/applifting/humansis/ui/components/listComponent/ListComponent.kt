@@ -1,4 +1,4 @@
-package cz.applifting.humansis.ui.components
+package cz.applifting.humansis.ui.components.listComponent
 
 import android.content.Context
 import android.util.AttributeSet
@@ -30,6 +30,14 @@ class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(con
     fun setState(state: ListComponentState) {
         pb_loading.visible(state.isRetrieving)
         swrl_swipe_to_refresh.isRefreshing = state.isRefreshing
+
+        if (state.text != null) {
+            tv_info.text = state.text
+            tv_info.visible(true)
+        } else {
+            tv_info.visible(false)
+        }
+
     }
 
     fun setOnRefreshListener(listener: () -> Unit) {

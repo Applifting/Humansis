@@ -28,5 +28,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+            android:id="@+id/tv_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nothing here."
+            app:layout_constraintBottom_toBottomOf="@+id/swrl_swipe_to_refresh"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/swrl_swipe_to_refresh" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 

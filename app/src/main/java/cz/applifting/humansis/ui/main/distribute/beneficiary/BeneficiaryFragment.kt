@@ -11,7 +11,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.shortToast
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
-import cz.applifting.humansis.ui.main.MainActivity
+import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.menu_confirm_button.view.*
 
@@ -44,8 +44,8 @@ class BeneficiaryFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as MainActivity).supportActionBar?.title = getString(R.string.assign_booklet)
-        (activity as MainActivity).supportActionBar?.subtitle = args.beneficiaryName
+//        (activity as MainFragment).supportActionBar?.title = getString(R.string.assign_booklet)
+//        (activity as MainFragment).supportActionBar?.subtitle = args.beneficiaryName
 
         viewModel.distributedLD.observe(viewLifecycleOwner, Observer {
             tv_status.setValue(getString(if (it) R.string.distributed else R.string.not_distributed))
@@ -53,7 +53,7 @@ class BeneficiaryFragment : BaseFragment() {
             tv_beneficiary.setValue(args.beneficiaryName)
             tv_distribution.setValue(args.distributionName)
             tv_project.setValue(args.projectName)
-            (activity as MainActivity).invalidateOptionsMenu()
+//            (activity as MainFragment).invalidateOptionsMenu()
         })
 
         viewModel.refreshingLD.observe(viewLifecycleOwner, Observer {
@@ -81,7 +81,7 @@ class BeneficiaryFragment : BaseFragment() {
         val confirmBtn = rootView.btn_confirm_distribution
         confirmBtn?.setOnClickListener {
             viewModel.confirm()
-            getString(R.string.distribution_confirmation_message, args.beneficiaryName).shortToast(activity as MainActivity)
+            getString(R.string.distribution_confirmation_message, args.beneficiaryName).shortToast(activity as HumansisActivity)
         }
         return super.onPrepareOptionsMenu(menu)
     }

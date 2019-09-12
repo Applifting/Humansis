@@ -1,12 +1,11 @@
 package cz.applifting.humansis.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.ViewModelProviders
+import cz.applifting.humansis.ui.main.SharedViewModel
 import javax.inject.Inject
 
 /**
@@ -17,8 +16,11 @@ open class BaseFragment: Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    lateinit var sharedViewModel: SharedViewModel
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity?.application as App).appComponent.inject(this)
+        sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
     }
 }
