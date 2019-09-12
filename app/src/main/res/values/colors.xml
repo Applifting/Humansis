@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#132f30</color>
-    <color name="colorPrimaryDark">#132f30</color>
+    <color name="colorPrimary">@color/black</color>
+    <color name="colorPrimaryDark">@color/black</color>
     <color name="colorAccent">#4AA896</color>
     <color name="colorAccentDark">#429484</color>
 
@@ -20,4 +20,6 @@
 
     <color name="darkGrey">#2E2E2E</color>
     <color name="orange">#E3661F</color>
+    <color name="black">#000000</color>
+    <color name="screenBackgroundColor">@color/black</color>
 </resources>
