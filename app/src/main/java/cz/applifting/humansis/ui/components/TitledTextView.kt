@@ -3,8 +3,6 @@ package cz.applifting.humansis.ui.components
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tintedDrawable
@@ -39,7 +37,7 @@ class TitledTextView @JvmOverloads constructor(context: Context, attrs: Attribut
     }
 
     fun setStatus(distributed: Boolean) {
-        val color = if (distributed) R.color.distributed else R.color.notDistributed
+        val color = if (distributed) R.color.positiveColor else R.color.negativeColor
         iv_status.tintedDrawable(R.drawable.ic_distribution_state, color)
         iv_status.visible(true)
     }

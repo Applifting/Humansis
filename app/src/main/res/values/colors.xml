@@ -14,8 +14,8 @@
 
     <color name="error">#FF0F0F</color>
 
-    <color name="distributed">#75aff1</color>
-    <color name="notDistributed">#d46d35</color>
+    <color name="positiveColor">#75aff1</color>
+    <color name="negativeColor">#d46d35</color>
     <color name="white">#FFFFFF</color>
 
     <color name="darkGrey">#2E2E2E</color>
