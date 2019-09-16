@@ -11,7 +11,7 @@
     <string name="menu_test">Test</string>
     <string name="beneficiary_managment_system">Beneficiary Management System</string>
     <string name="username">Username</string>
-    <string name="password">*******</string>
+    <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="log_out">Log out</string>
     <string name="projects">Projects</string>
