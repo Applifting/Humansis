@@ -73,13 +73,12 @@ class BeneficiariesAdapter(
 
             val color = if (beneficiaryLocal.distributed) R.color.distributed else R.color.notDistributed
             ivDistributionState.tintedDrawable(R.drawable.ic_distribution_state, color)
+            llVulnerabilitiesHolder.removeAllViews()
 
             beneficiaryLocal.vulnerabilities.forEach {
-                llVulnerabilitiesHolder.removeAllViews()
-
-                getVulnerabilityDrawable(it)?.let { drawable ->
+                getVulnerabilityDrawable(it)?.let { drawableRes ->
                     val vulnerabilityImage = ImageView(view.context)
-                    vulnerabilityImage.simpleDrawable(drawable)
+                    vulnerabilityImage.simpleDrawable(drawableRes)
                     llVulnerabilitiesHolder.addView(vulnerabilityImage)
                 }
             }

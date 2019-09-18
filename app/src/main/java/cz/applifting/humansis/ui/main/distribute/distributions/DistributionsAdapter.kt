@@ -1,12 +1,13 @@
 package cz.applifting.humansis.ui.main.distribute.distributions
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.CommodityType
@@ -60,11 +61,9 @@ class DistributionsAdapter(
         val tvName = layout.tv_name
         val tvDate = layout.tv_date
         val tvBeneficieriesCnt = layout.tv_beneficieries_cnt
-        val ivCash = layout.iv_cash
-        val ivFood = layout.iv_food
-        val ivLoan = layout.iv_loan
         val ivTarget = layout.iv_target
         val ivStatus = layout.iv_status
+        val llComoditiesHolder = layout.ll_commodities_holder
         val pbDistributionProgress = layout.pb_distribution_progress
         val context = layout.context
 
@@ -75,20 +74,12 @@ class DistributionsAdapter(
             tvDate.text = context.getString(R.string.date_of_distribution, dateOfDistribution)
             tvBeneficieriesCnt.text = context.getString(R.string.beneficiaries, numberOfBeneficiaries)
 
-            // Set commodities
-            ivCash.visibility = View.GONE
-            ivFood.visibility = View.GONE
-            ivLoan.visibility = View.GONE
-
-            for (commodity in commodities) {
-                when (commodity) {
-                    CommodityType.CASH.name -> ivCash.visibility = View.VISIBLE
-                    CommodityType.FOOD.name -> ivFood.visibility = View.VISIBLE
-                    CommodityType.LOAN.name -> ivLoan.visibility = View.VISIBLE
-                    //              CommodityType.RTE_KIT -> TODO()
-                    ////            CommodityType.PAPER_VOUCHER -> TODO()
-                    ////            null -> TODO()
-                    else -> ivLoan.visibility = View.VISIBLE
+            distribution.commodities.forEach {
+                getCommodityResource(it)?.let { drawableRes ->
+                    val vulnerabilityImage = ImageView(context)
+                    vulnerabilityImage.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                    vulnerabilityImage.simpleDrawable(drawableRes)
+                    llComoditiesHolder.addView(vulnerabilityImage)
                 }
             }
 
@@ -100,6 +91,7 @@ class DistributionsAdapter(
                     context.getDrawable(R.drawable.ic_home_black_24dp)
                 }
             ivTarget.setImageDrawable(targetImage)
+
             layout.setOnClickListener { onItemClick(distributions[position]) }
 
             val statusColor = if (completed) R.color.distributed else R.color.notDistributed
@@ -110,6 +102,16 @@ class DistributionsAdapter(
             if (numberOfBeneficiaries > 0) {
                 pbDistributionProgress.progress = numberOfReachedBeneficiaries * 100 / numberOfBeneficiaries
             }
+        }
+    }
+
+    private fun getCommodityResource(commodity: String): Int? {
+        // values from https://api-demo.humansis.org/api/wsse/vulnerability_criteria
+        return when (commodity) {
+            CommodityType.CASH.name -> R.drawable.ic_attach_money_black_24dp
+            CommodityType.FOOD.name -> R.drawable.ic_local_dining_black_24dp
+            CommodityType.LOAN.name -> R.drawable.ic_account_balance_wallet_black_24dp
+            else -> null
         }
     }
 }
