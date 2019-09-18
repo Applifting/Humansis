@@ -29,7 +29,6 @@ class CryptoTest {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getTargetContext()
 
-
         val keyGenerator = KeyGenerator.getInstance(
             KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore"
         );

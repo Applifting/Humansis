@@ -3,7 +3,6 @@ package cz.applifting.humansis.managers
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.extensions.suspendCommit
@@ -19,6 +18,10 @@ import javax.inject.Inject
  *
  * This class is something like a repository, but it is not, as it is required by API service and can't depend on it
  */
+const val SP_DB_PASS_KEY = "humansis-db"
+const val SP_SALT_KEY = "humansis-db-pass-salt"
+const val KEYSTORE_KEY_ALIAS = "HumansisDBKey"
+
 class AuthManager @Inject constructor(private val dbProvider: DbProvider, private val sp: SharedPreferences, private val context: Context) {
 
     val db: HumansisDB by lazy { dbProvider.get() }
@@ -26,14 +29,13 @@ class AuthManager @Inject constructor(private val dbProvider: DbProvider, privat
     @SuppressLint("CommitPrefEdits")
     suspend fun login(userResponse: LoginReqRes, originalPass: ByteArray): User {
         // Initialize db and save the DB password in shared prefs
-        val dbPass = hashSHA512(originalPass.plus(DB_SALT.toByteArray()))
-        val encryptedPassword = encryptUsingKeyStoreKey(dbPass, DB_KEY_ALIAS, context)
+        // The hashing of pass might be unnecessary, but why not. I am passing it to 3-rd part lib.
+        val dbPass = hashSHA512(originalPass.plus(retrieveOrInitDbSalt().toByteArray()), 1000)
+        val encryptedPassword = encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context)
         val encodedPass = base64encode(encryptedPassword)
 
-        Log.d("asdfenc", encodedPass)
-
         with(sp.edit()) {
-            putString(DB_SP_KEY, encodedPass)
+            putString(SP_DB_PASS_KEY, encodedPass)
             suspendCommit()
         }
 
@@ -41,7 +43,6 @@ class AuthManager @Inject constructor(private val dbProvider: DbProvider, privat
 
         val db = dbProvider.get()
 
-        // TODO: For easier debugging, might delete later
         withContext(Dispatchers.IO) {
             db.clearAllTables()
         }
@@ -66,10 +67,8 @@ class AuthManager @Inject constructor(private val dbProvider: DbProvider, privat
     // Initializes DB if the key is available. Otherwise returns false.
     fun tryInitDB(): Boolean {
         if (dbProvider.isInitialized()) return true
-        val encryptedPassword = sp.getString(DB_SP_KEY, null) ?: return false
-        Log.d("asdfret", encryptedPassword)
-        val decryptedPassword = decryptUsingKeyStoreKey(base64decode(encryptedPassword), DB_KEY_ALIAS)
-
+        val encryptedPassword = sp.getString(SP_DB_PASS_KEY, null) ?: return false
+        val decryptedPassword = decryptUsingKeyStoreKey(base64decode(encryptedPassword), KEYSTORE_KEY_ALIAS, context) ?: return false
 
         dbProvider.init(decryptedPassword)
 
@@ -88,5 +87,18 @@ class AuthManager @Inject constructor(private val dbProvider: DbProvider, privat
         return user?.let {
             generateXWSSEHeader(user.username, user.saltedPassword)
         }
+    }
+
+    private suspend fun retrieveOrInitDbSalt(): String {
+        var salt = sp.getString(SP_SALT_KEY, null)
+
+        if (salt == null) {
+            salt = generateNonce()
+            sp.edit()
+                .putString(SP_SALT_KEY, salt)
+                .suspendCommit()
+        }
+
+        return salt
     }
 }
