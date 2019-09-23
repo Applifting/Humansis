@@ -3,9 +3,9 @@ package cz.applifting.humansis.ui.login
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.api.HumansisService
-import cz.applifting.humansis.managers.AuthManager
+import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.HumansisError
-import cz.applifting.humansis.misc.saltPassword
+import cz.applifting.humansis.misc.hashAndSaltPassword
 import cz.applifting.humansis.model.api.LoginReqRes
 import cz.applifting.humansis.model.db.User
 import cz.applifting.humansis.ui.BaseViewModel
@@ -18,7 +18,7 @@ import javax.inject.Inject
  */
 class LoginViewModel @Inject constructor(
     private val service: HumansisService,
-    private val authManager: AuthManager
+    private val loginManager: LoginManager
 ) : BaseViewModel() {
 
     val viewStateLD = MutableLiveData<LoginViewState>()
@@ -39,7 +39,7 @@ class LoginViewModel @Inject constructor(
 
             try {
                 val saltResponse = service.getSalt(username)
-                val hashedPassword = saltPassword(saltResponse.salt, password)
+                val hashedPassword = hashAndSaltPassword(saltResponse.salt, password)
                 val userResponse = service.postLogin(
                     LoginReqRes(
                         true,
@@ -53,7 +53,7 @@ class LoginViewModel @Inject constructor(
                     )
                 )
 
-                val user = authManager.login(userResponse, password.toByteArray())
+                val user = loginManager.login(userResponse, password.toByteArray())
                 loginLD.value = user
             } catch (e: HumansisError) {
                 viewStateLD.value = LoginViewState(errorMessage = e.message)

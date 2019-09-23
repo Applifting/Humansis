@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.managers.AuthManager
+import cz.applifting.humansis.managers.LoginManager
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
@@ -27,7 +27,7 @@ class AppModule {
 
     @Provides
     @Reusable
-    fun retrofitProvider(baseUrl: String, authManager: AuthManager): HumansisService {
+    fun retrofitProvider(baseUrl: String, loginManager: LoginManager): HumansisService {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
@@ -41,7 +41,7 @@ class AppModule {
                     val headersBuilder = oldRequest.headers().newBuilder()
                         .add("country", "KHM")
 
-                    authManager.getAuthHeader()?.let {
+                    loginManager.getAuthHeader()?.let {
                         headersBuilder.add("x-wsse", it)
                     }
 

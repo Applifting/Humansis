@@ -22,7 +22,7 @@ const val SP_DB_PASS_KEY = "humansis-db"
 const val SP_SALT_KEY = "humansis-db-pass-salt"
 const val KEYSTORE_KEY_ALIAS = "HumansisDBKey"
 
-class AuthManager @Inject constructor(private val dbProvider: DbProvider, private val sp: SharedPreferences, private val context: Context) {
+class LoginManager @Inject constructor(private val dbProvider: DbProvider, private val sp: SharedPreferences, private val context: Context) {
 
     val db: HumansisDB by lazy { dbProvider.get() }
 
@@ -31,8 +31,7 @@ class AuthManager @Inject constructor(private val dbProvider: DbProvider, privat
         // Initialize db and save the DB password in shared prefs
         // The hashing of pass might be unnecessary, but why not. I am passing it to 3-rd part lib.
         val dbPass = hashSHA512(originalPass.plus(retrieveOrInitDbSalt().toByteArray()), 1000)
-        val encryptedPassword = encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context)
-        val encodedPass = base64encode(encryptedPassword)
+        val encodedPass = base64encode(encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context))
 
         with(sp.edit()) {
             putString(SP_DB_PASS_KEY, encodedPass)

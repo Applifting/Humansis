@@ -33,7 +33,7 @@ const val SP_AES_IV_KEY = "db-aes"
 
 // TODO measure these functions and check which - if not all - should be done on background thread
 
-suspend fun saltPassword(salt: String, password: String): String {
+suspend fun hashAndSaltPassword(salt: String, password: String): String {
     return withContext(Dispatchers.Default) {
         val salted = "$password{$salt}".toByteArray()
         var digest = hashSHA512(salted)
