@@ -3,7 +3,6 @@ package cz.applifting.humansis.ui.main.distribute.projects
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -55,7 +54,7 @@ class ProjectsAdapter(
             tvName.text = project.name
             tvHouseHolds.text = context.getString(R.string.households, project.numberOfHouseholds)
             layout.setOnClickListener { onItemClick(project) }
-            flCompleted.setBackgroundColor(ContextCompat.getColor(context, if (project.completed) R.color.distributed else R.color.notDistributed))
+            flCompleted.setBackgroundColor(ContextCompat.getColor(context, if (project.completed) R.color.positiveColor else R.color.negativeColor))
         }
     }
 }
