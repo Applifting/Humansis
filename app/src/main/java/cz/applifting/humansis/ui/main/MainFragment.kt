@@ -1,16 +1,15 @@
 package cz.applifting.humansis.ui.main
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import cz.applifting.humansis.R
+import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
@@ -24,26 +23,27 @@ import kotlinx.android.synthetic.main.nav_header_main.*
 class MainFragment : BaseFragment() {
 
     private val viewModel: MainViewModel by viewModels { viewModelFactory }
+    private lateinit var mainNavController: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        return inflater.inflate(cz.applifting.humansis.R.layout.fragment_main, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         val appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.projectsFragment),
+            setOf(cz.applifting.humansis.R.id.projectsFragment),
             drawer_layout
         )
 
-        val fragmentContainer = view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError("Cannot find nav host in main")
-        val navController = Navigation.findNavController(fragmentContainer)
+        val fragmentContainer = view?.findViewById<View>(cz.applifting.humansis.R.id.nav_host_fragment) ?: throw HumansisError("Cannot find nav host in main")
+        mainNavController = Navigation.findNavController(fragmentContainer)
 
         (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
 
-        tb_toolbar.setupWithNavController(navController, appBarConfiguration)
-        nav_view.setupWithNavController(navController)
+        tb_toolbar.setupWithNavController(mainNavController, appBarConfiguration)
+        nav_view.setupWithNavController(mainNavController)
 
 
         // Define Observers
@@ -64,6 +64,31 @@ class MainFragment : BaseFragment() {
         sharedViewModel.tryDownloadingAll()
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(cz.applifting.humansis.R.menu.menu_status, menu)
+        // A fix for action with custom layout
+        // https://stackoverflow.com/a/35265797
+        val item = menu.findItem(action_open_status_dialog)
+        item.actionView.setOnClickListener { onOptionsItemSelected(item) }
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        when (item.itemId) {
+            action_open_status_dialog -> {
+                mainNavController.navigate(cz.applifting.humansis.R.id.uploadStatusDialogFragment)
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
 
     // TODO handle
     fun onBackPressed() {
