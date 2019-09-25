@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/nav_graph"
         app:startDestination="@id/projectsFragment">
 
@@ -49,76 +48,7 @@
         <argument
                 android:name="projectName"
                 app:argType="string" />
-
-        <action
-                android:id="@+id/action_beneficiariesFragment_to_qrBeneficiaryFragment"
-                app:destination="@id/qrBeneficiaryFragmentDialog"
-                app:exitAnim="@anim/slide_to_left"
-                app:enterAnim="@anim/slide_from_right"
-                app:popExitAnim="@anim/slide_to_right"
-                app:popEnterAnim="@anim/slide_from_left" />
-        <action
-                android:id="@+id/action_beneficiariesFragment_to_beneficiaryFragment"
-                app:destination="@id/beneficiaryFragmentDialog"
-                app:exitAnim="@anim/slide_to_left"
-                app:enterAnim="@anim/slide_from_right"
-                app:popExitAnim="@anim/slide_to_right"
-                app:popEnterAnim="@anim/slide_from_left" />
     </fragment>
-
-    <dialog android:id="@+id/beneficiaryFragmentDialog"
-            android:name="cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryFragmentDialog"
-            android:label="{beneficiaryName}">
-        <argument
-                android:name="beneficiaryId"
-                app:argType="integer" />
-        <argument
-                android:name="beneficiaryName"
-                app:argType="string" />
-        <argument
-                android:name="distributionName"
-                app:argType="string" />
-        <argument
-                android:name="projectName"
-                app:argType="string" />
-        <argument
-                android:name="distributionStatus"
-                app:argType="boolean" />
-        <argument
-                android:name="bookletId"
-                app:argType="string"
-                android:defaultValue="@null"
-                app:nullable="true"
-                />
-    </dialog>
-
-    <dialog android:id="@+id/qrBeneficiaryFragmentDialog"
-            android:name="cz.applifting.humansis.ui.main.distribute.qrbooklet.QRBookletFragment"
-            android:label="{beneficiaryName}">
-        <argument
-                android:name="beneficiaryId"
-                app:argType="integer" />
-        <argument
-                android:name="beneficiaryName"
-                app:argType="string" />
-        <argument
-                android:name="distributionName"
-                app:argType="string" />
-        <argument
-                android:name="projectName"
-                app:argType="string" />
-        <argument
-                android:name="distributionStatus"
-                app:argType="boolean" />
-
-        <action
-                android:id="@+id/action_qrBeneficiaryFragment_to_beneficiaryFragment"
-                app:destination="@id/beneficiaryFragmentDialog"
-                app:exitAnim="@anim/slide_to_left"
-                app:enterAnim="@anim/slide_from_right"
-                app:popExitAnim="@anim/slide_to_right"
-                app:popEnterAnim="@anim/slide_from_left" />
-    </dialog>
 
 
     <dialog

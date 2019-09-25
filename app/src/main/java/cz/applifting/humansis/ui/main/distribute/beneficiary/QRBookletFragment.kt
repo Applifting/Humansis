@@ -1,4 +1,4 @@
-package cz.applifting.humansis.ui.main.distribute.qrbooklet
+package cz.applifting.humansis.ui.main.distribute.beneficiary
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -11,14 +11,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
-import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryViewModel
 import kotlinx.android.synthetic.main.fragment_beneficiary.pb_loading
 import kotlinx.android.synthetic.main.fragment_beneficiary.tv_beneficiary
 import kotlinx.android.synthetic.main.fragment_beneficiary.tv_distribution
@@ -45,7 +43,7 @@ class QRBookletFragment : BaseFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
-    val args: QRBookletFragmentArgs by navArgs()
+    //val args: QRBookletFragmentArgs by navArgs()
 
     private val viewModel: BeneficiaryViewModel by viewModels {
         viewModelFactory
@@ -67,9 +65,9 @@ class QRBookletFragment : BaseFragment(), ZXingScannerView.ResultHandler {
         viewModel.distributedLD.observe(viewLifecycleOwner, Observer {
             tv_status.setValue(getString(if (it) R.string.distributed else R.string.not_distributed))
             tv_status.setStatus(it)
-            tv_beneficiary.setValue(args.beneficiaryName)
-            tv_distribution.setValue(args.distributionName)
-            tv_project.setValue(args.projectName)
+//            tv_beneficiary.setValue(args.beneficiaryName)
+//            tv_distribution.setValue(args.distributionName)
+//            tv_project.setValue(args.projectName)
         })
 
         viewModel.refreshingLD.observe(viewLifecycleOwner, Observer {
@@ -80,7 +78,7 @@ class QRBookletFragment : BaseFragment(), ZXingScannerView.ResultHandler {
             tv_project.visible(!it)
         })
 
-        viewModel.loadBeneficiary(args.beneficiaryId)
+       // viewModel.loadBeneficiary(args.beneficiaryId)
 
     }
 
@@ -112,15 +110,15 @@ class QRBookletFragment : BaseFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun goToBeneficiaryFragment(bookletId: String) {
-        val action = QRBookletFragmentDirections.actionQrBeneficiaryFragmentToBeneficiaryFragment(
-            args.beneficiaryId,
-            args.beneficiaryName,
-            args.distributionName,
-            args.projectName,
-            args.distributionStatus,
-            bookletId
-        )
-        findNavController().navigate(action)
+//        val action = QRBookletFragmentDirections.actionQrBeneficiaryFragmentToBeneficiaryFragment(
+//            args.beneficiaryId,
+//            args.beneficiaryName,
+//            args.distributionName,
+//            args.projectName,
+//            args.distributionStatus,
+//            bookletId
+//        )
+//        findNavController().navigate(action)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

@@ -4,16 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.NavDirections
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
+import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryFragmentDialog
 import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 
 /**
@@ -43,7 +43,7 @@ class BeneficiariesFragment : BaseFragment() {
         (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
         val viewAdapter = BeneficiariesAdapter { beneficiary ->
-            this.findNavController().navigate(chooseDirection(beneficiary))
+            showBeneficiaryDialog(beneficiary)
         }
 
         lc_beneficiaries.init(viewAdapter)
@@ -89,25 +89,40 @@ class BeneficiariesFragment : BaseFragment() {
         cmp_search_beneficiary.visible(show)
     }
 
-    private fun chooseDirection(beneficiary: BeneficiaryLocal): NavDirections {
 
-        //todo find differentiation, possible booklets not empty
-        return if (beneficiary.familyName == "Bis") {
-            BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragment(
-                beneficiary.id,
-                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
-                args.distributionName,
-                args.projectName,
-                beneficiary.distributed
-            )
+    private fun showBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
+        val fragmentManager = childFragmentManager
+        val dialog = BeneficiaryFragmentDialog()
+
+        // TODO maybe later test on tablets
+        if (false) {
+            // The device is using a large layout, so show the fragment as a dialog
+            dialog.show(fragmentManager, "dialog")
         } else {
-            BeneficiariesFragmentDirections.actionBeneficiariesFragmentToQrBeneficiaryFragment(
-                beneficiary.id,
-                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
-                args.distributionName,
-                args.projectName,
-                beneficiary.distributed
-            )
+            dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.FullscreenDialog)
+            dialog.show(fragmentManager, "DialogFragment");
         }
     }
+
+//    private fun chooseDirection(beneficiary: BeneficiaryLocal): NavDirections {
+//
+//        //todo find differentiation, possible booklets not empty
+//        //return if (beneficiary.familyName == "Bis") {
+////            return BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragment(
+////                beneficiary.id,
+////                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
+////                args.distributionName,
+////                args.projectName,
+////                beneficiary.distributed
+////            )
+////        } else {
+////            BeneficiariesFragmentDirections.actionBeneficiariesFragmentToQrBeneficiaryFragment(
+////                beneficiary.id,
+////                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
+////                args.distributionName,
+////                args.projectName,
+////                beneficiary.distributed
+////            )
+////        }
+//    }
 }
