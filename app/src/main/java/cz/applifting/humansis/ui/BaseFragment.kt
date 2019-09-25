@@ -16,6 +16,7 @@ open class BaseFragment: Fragment() {
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
+    // TODO decide whether to share one or multiple viewmodels as more stuff is added
     lateinit var sharedViewModel: SharedViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

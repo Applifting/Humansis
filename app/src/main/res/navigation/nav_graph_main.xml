@@ -48,8 +48,36 @@
         <argument
                 android:name="projectName"
                 app:argType="string" />
+        <action
+                android:id="@+id/action_beneficiariesFragment_to_beneficiaryFragmentDialog"
+                app:destination="@id/beneficiaryDialog" />
     </fragment>
 
+    <dialog android:id="@+id/beneficiaryDialog"
+            android:name="cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog"
+            android:label="{beneficiaryName}">
+        <argument
+                android:name="beneficiaryId"
+                app:argType="integer" />
+        <argument
+                android:name="beneficiaryName"
+                app:argType="string" />
+        <argument
+                android:name="distributionName"
+                app:argType="string" />
+        <argument
+                android:name="projectName"
+                app:argType="string" />
+        <argument
+                android:name="distributionStatus"
+                app:argType="boolean" />
+        <argument
+                android:name="bookletId"
+                app:argType="string"
+                android:defaultValue="@null"
+                app:nullable="true"
+                />
+    </dialog>
 
     <dialog
             android:id="@+id/uploadStatusDialogFragment"

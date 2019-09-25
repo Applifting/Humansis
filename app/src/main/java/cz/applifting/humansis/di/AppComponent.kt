@@ -5,7 +5,7 @@ import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.login.LoginFragment
 import cz.applifting.humansis.ui.main.MainFragment
-import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryFragmentDialog
+import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog
 import cz.applifting.humansis.ui.splash.SplashFragment
 import dagger.BindsInstance
 import dagger.Component
@@ -31,7 +31,7 @@ interface AppComponent {
 
     fun inject(splashActivity: SplashFragment)
 
-    fun inject(beneficiaryFragmentDialog: BeneficiaryFragmentDialog)
+    fun inject(beneficiaryDialog: BeneficiaryDialog)
 
     @Component.Builder
     interface Builder {

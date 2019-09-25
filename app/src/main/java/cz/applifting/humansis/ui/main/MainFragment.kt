@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
@@ -47,7 +48,7 @@ class MainFragment : BaseFragment() {
 
 
         // Define Observers
-        viewModel.userLD.observe(this, Observer {
+        viewModel.userLD.observe(viewLifecycleOwner, Observer {
             if (it == null) {
                 activity?.finishAffinity()
                 return@Observer
@@ -55,6 +56,13 @@ class MainFragment : BaseFragment() {
 
             tv_username.text = it.username
             tv_email.text = it.email
+        })
+
+        sharedViewModel.snackbarLD.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                Snackbar.make(view!!, it, Snackbar.LENGTH_SHORT).show()
+                sharedViewModel.showSnackbar(null)
+            }
         })
 
         btn_logout.setOnClickListener {

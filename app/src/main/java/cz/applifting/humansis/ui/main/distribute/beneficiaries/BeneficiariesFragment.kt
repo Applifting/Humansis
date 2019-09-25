@@ -4,16 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
-import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryFragmentDialog
 import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 
 /**
@@ -65,6 +64,8 @@ class BeneficiariesFragment : BaseFragment() {
             cmp_reached_beneficiaries.setStats(reachedBeneficiaries, totalBeneficiaries)
         })
 
+
+
         cmp_search_beneficiary.onTextChanged(viewModel::search)
         cmp_search_beneficiary.onSort { viewModel.sortBeneficiaries() }
 
@@ -78,10 +79,19 @@ class BeneficiariesFragment : BaseFragment() {
             }
         })
 
+        sharedViewModel.forceOfflineReload.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.loadBeneficiaries(args.distributionId)
+                sharedViewModel.forceOfflineReload(false)
+            }
+        })
+    }
+
+    override fun onResume() {
+        super.onResume()
         if (sharedViewModel.downloadingLD.value == false) {
             viewModel.loadBeneficiaries(args.distributionId)
         }
-
     }
 
     private fun showControls(show: Boolean) {
@@ -91,17 +101,15 @@ class BeneficiariesFragment : BaseFragment() {
 
 
     private fun showBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
-        val fragmentManager = childFragmentManager
-        val dialog = BeneficiaryFragmentDialog()
+        val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragmentDialog(
+            beneficiaryLocal.id,
+            getString(R.string.beneficiary_name, beneficiaryLocal.givenName, beneficiaryLocal.familyName),
+            args.distributionName,
+            args.projectName,
+            beneficiaryLocal.distributed
+        )
 
-        // TODO maybe later test on tablets
-        if (false) {
-            // The device is using a large layout, so show the fragment as a dialog
-            dialog.show(fragmentManager, "dialog")
-        } else {
-            dialog.setStyle(DialogFragment.STYLE_NORMAL, R.style.FullscreenDialog)
-            dialog.show(fragmentManager, "DialogFragment");
-        }
+        this.findNavController().navigate(action)
     }
 
 //    private fun chooseDirection(beneficiary: BeneficiaryLocal): NavDirections {
