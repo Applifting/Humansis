@@ -48,9 +48,14 @@
         <argument
                 android:name="projectName"
                 app:argType="string" />
+        <argument
+                android:name="isQRVoucherDistribution"
+                app:argType="boolean"
+                />
         <action
                 android:id="@+id/action_beneficiariesFragment_to_beneficiaryFragmentDialog"
-                app:destination="@id/beneficiaryDialog" />
+                app:destination="@id/beneficiaryDialog"
+                app:enterAnim="@anim/fragment_fade_enter" />
     </fragment>
 
     <dialog android:id="@+id/beneficiaryDialog"
@@ -72,10 +77,9 @@
                 android:name="distributionStatus"
                 app:argType="boolean" />
         <argument
-                android:name="bookletId"
-                app:argType="string"
-                android:defaultValue="@null"
-                app:nullable="true"
+                android:name="isQRVoucher"
+                app:argType="boolean"
+                android:defaultValue="false"
                 />
     </dialog>
 

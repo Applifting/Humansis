@@ -14,6 +14,8 @@ import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_beneficiaries.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -50,7 +52,7 @@ class BeneficiariesFragment : BaseFragment() {
             viewModel.loadBeneficiaries(args.distributionId, true)
         }
 
-        viewModel.searchResults.observe(viewLifecycleOwner, Observer {
+        viewModel.searchResultsLD.observe(viewLifecycleOwner, Observer {
             viewAdapter.update(it)
         })
 
@@ -64,20 +66,10 @@ class BeneficiariesFragment : BaseFragment() {
             cmp_reached_beneficiaries.setStats(reachedBeneficiaries, totalBeneficiaries)
         })
 
-
-
         cmp_search_beneficiary.onTextChanged(viewModel::search)
         cmp_search_beneficiary.onSort { viewModel.sortBeneficiaries() }
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
-
-        sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                viewModel.showRefreshing()
-            } else {
-                viewModel.loadBeneficiaries(args.distributionId)
-            }
-        })
 
         sharedViewModel.forceOfflineReload.observe(viewLifecycleOwner, Observer {
             if (it) {
@@ -85,13 +77,18 @@ class BeneficiariesFragment : BaseFragment() {
                 sharedViewModel.forceOfflineReload(false)
             }
         })
-    }
 
-    override fun onResume() {
-        super.onResume()
-        if (sharedViewModel.downloadingLD.value == false) {
-            viewModel.loadBeneficiaries(args.distributionId)
-        }
+        sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.showRefreshing()
+            } else if (viewModel.searchResultsLD.value.isNullOrEmpty()) {
+                launch {
+                    // Load after animation finishes to avoid drop in frame rate
+                    delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
+                    viewModel.loadBeneficiaries(args.distributionId)
+                }
+            }
+        })
     }
 
     private fun showControls(show: Boolean) {
@@ -106,31 +103,10 @@ class BeneficiariesFragment : BaseFragment() {
             getString(R.string.beneficiary_name, beneficiaryLocal.givenName, beneficiaryLocal.familyName),
             args.distributionName,
             args.projectName,
-            beneficiaryLocal.distributed
+            beneficiaryLocal.distributed,
+            args.isQRVoucherDistribution
         )
 
         this.findNavController().navigate(action)
     }
-
-//    private fun chooseDirection(beneficiary: BeneficiaryLocal): NavDirections {
-//
-//        //todo find differentiation, possible booklets not empty
-//        //return if (beneficiary.familyName == "Bis") {
-////            return BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragment(
-////                beneficiary.id,
-////                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
-////                args.distributionName,
-////                args.projectName,
-////                beneficiary.distributed
-////            )
-////        } else {
-////            BeneficiariesFragmentDirections.actionBeneficiariesFragmentToQrBeneficiaryFragment(
-////                beneficiary.id,
-////                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
-////                args.distributionName,
-////                args.projectName,
-////                beneficiary.distributed
-////            )
-////        }
-//    }
 }

@@ -73,6 +73,7 @@ class DistributionsAdapter(
             tvName.text = name
             tvDate.text = context.getString(R.string.date_of_distribution, dateOfDistribution)
             tvBeneficieriesCnt.text = context.getString(R.string.beneficiaries, numberOfBeneficiaries)
+            llComoditiesHolder.removeAllViews()
 
             distribution.commodities.forEach {
                 getCommodityResource(it)?.let { drawableRes ->
@@ -111,6 +112,7 @@ class DistributionsAdapter(
             CommodityType.CASH.name -> R.drawable.ic_attach_money_black_24dp
             CommodityType.FOOD.name -> R.drawable.ic_local_dining_black_24dp
             CommodityType.LOAN.name -> R.drawable.ic_account_balance_wallet_black_24dp
+            CommodityType.QR_VOUCHER.name -> R.drawable.ic_crop_free_black_24dp
             else -> null
         }
     }

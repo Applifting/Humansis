@@ -30,6 +30,9 @@ class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(con
     }
 
     fun setState(state: ListComponentState) {
+        // Always scroll top
+        rv_list.scrollToPosition(0)
+
         pb_loading.visible(state.isRetrieving)
         swrl_swipe_to_refresh.isRefreshing = state.isRefreshing
 
@@ -39,7 +42,6 @@ class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(con
         } else {
             tv_info.visible(false)
         }
-
     }
 
     fun setOnRefreshListener(listener: () -> Unit) {
