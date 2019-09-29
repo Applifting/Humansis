@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.format
-import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.visible
 import java.util.*
 
@@ -22,19 +21,15 @@ class UploadStatusDialogFragment : DialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.fragment_dialog_upload_status, container)
-        val ivConnectionStatus = rootView.findViewById<ImageView>(R.id.iv_connection_status)
         val ivCloseDialog = rootView.findViewById<ImageView>(R.id.iv_cross)
         val tvChanges = rootView.findViewById<TextView>(R.id.tv_changes)
         val tvCurrentDataDate = rootView.findViewById<TextView>(R.id.tv_current_data_date)
-        val tvConnectionStatus = rootView.findViewById<TextView>(R.id.tv_connection_status)
         val btnUpload = rootView.findViewById<Button>(R.id.btn_upload)
 
         // todo use conditions from network manager and db
         val offline = true
         val localChanges = true
 
-        ivConnectionStatus.simpleDrawable(if (offline) R.drawable.ic_offline else R.drawable.ic_online)
-        tvConnectionStatus.text = getString(if (offline) R.string.offline else R.string.online)
 
         context?.let {
             tvChanges.setTextColor(ContextCompat.getColor(it, if (offline) R.color.negativeColor else R.color.positiveColor))
