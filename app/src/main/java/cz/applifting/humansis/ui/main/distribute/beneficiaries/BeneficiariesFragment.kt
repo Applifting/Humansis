@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
@@ -15,6 +14,8 @@ import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_beneficiaries.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -43,7 +44,7 @@ class BeneficiariesFragment : BaseFragment() {
         (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.beneficiaries_title)
 
         val viewAdapter = BeneficiariesAdapter { beneficiary ->
-            this.findNavController().navigate(chooseDirection(beneficiary))
+            showBeneficiaryDialog(beneficiary)
         }
 
         lc_beneficiaries.init(viewAdapter)
@@ -51,7 +52,7 @@ class BeneficiariesFragment : BaseFragment() {
             viewModel.loadBeneficiaries(args.distributionId, true)
         }
 
-        viewModel.searchResults.observe(viewLifecycleOwner, Observer {
+        viewModel.searchResultsLD.observe(viewLifecycleOwner, Observer {
             viewAdapter.update(it)
         })
 
@@ -70,18 +71,24 @@ class BeneficiariesFragment : BaseFragment() {
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
 
-        sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.forceOfflineReload.observe(viewLifecycleOwner, Observer {
             if (it) {
-                viewModel.showRefreshing()
-            } else {
                 viewModel.loadBeneficiaries(args.distributionId)
+                sharedViewModel.forceOfflineReload(false)
             }
         })
 
-        if (sharedViewModel.downloadingLD.value == false) {
-            viewModel.loadBeneficiaries(args.distributionId)
-        }
-
+        sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.showRefreshing()
+            } else if (viewModel.searchResultsLD.value.isNullOrEmpty()) {
+                launch {
+                    // Load after animation finishes to avoid drop in frame rate
+                    delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
+                    viewModel.loadBeneficiaries(args.distributionId)
+                }
+            }
+        })
     }
 
     private fun showControls(show: Boolean) {
@@ -89,25 +96,17 @@ class BeneficiariesFragment : BaseFragment() {
         cmp_search_beneficiary.visible(show)
     }
 
-    private fun chooseDirection(beneficiary: BeneficiaryLocal): NavDirections {
 
-        //todo find differentiation, possible booklets not empty
-        return if (beneficiary.familyName == "Bis") {
-            BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragment(
-                beneficiary.id,
-                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
-                args.distributionName,
-                args.projectName,
-                beneficiary.distributed
-            )
-        } else {
-            BeneficiariesFragmentDirections.actionBeneficiariesFragmentToQrBeneficiaryFragment(
-                beneficiary.id,
-                getString(R.string.beneficiary_name, beneficiary.givenName, beneficiary.familyName),
-                args.distributionName,
-                args.projectName,
-                beneficiary.distributed
-            )
-        }
+    private fun showBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
+        val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragmentDialog(
+            beneficiaryLocal.id,
+            getString(R.string.beneficiary_name, beneficiaryLocal.givenName, beneficiaryLocal.familyName),
+            args.distributionName,
+            args.projectName,
+            beneficiaryLocal.distributed,
+            args.isQRVoucherDistribution
+        )
+
+        this.findNavController().navigate(action)
     }
 }

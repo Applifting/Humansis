@@ -19,6 +19,8 @@ class SharedViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val downloadingLD = MutableLiveData<Boolean>()
+    val snackbarLD = MutableLiveData<String>()
+    val forceOfflineReload = MutableLiveData<Boolean>()
 
     fun tryDownloadingAll() {
         // TODO when should we download all?
@@ -39,5 +41,13 @@ class SharedViewModel @Inject constructor(
                 downloadingLD.value = false
             }
         }
+    }
+
+    fun showSnackbar(text: String?) {
+        snackbarLD.value = text
+    }
+
+    fun forceOfflineReload(force: Boolean) {
+        forceOfflineReload.value = force
     }
 }

@@ -1,8 +1,10 @@
 package cz.applifting.humansis.ui.components
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.tintedDrawable
@@ -11,8 +13,9 @@ import kotlinx.android.synthetic.main.titled_text_view.view.*
 
 class TitledTextView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    init {
+    private var isBookled = false
 
+    init {
         LayoutInflater.from(context).inflate(R.layout.titled_text_view, this, true)
 
         attrs?.let {
@@ -32,8 +35,21 @@ class TitledTextView @JvmOverloads constructor(context: Context, attrs: Attribut
         }
     }
 
-    fun setValue(value: String) {
-        tv_value.text = value
+    fun setValue(value: String?) {
+        if (value == null) {
+            tv_value.text = "?"
+
+            if (isBookled) {
+                btn_action.visibility = View.GONE
+            }
+        } else {
+            tv_value.text = value
+
+            if (isBookled) {
+                btn_action.visibility = View.VISIBLE
+            }
+        }
+
     }
 
     fun setStatus(distributed: Boolean) {
@@ -42,10 +58,9 @@ class TitledTextView @JvmOverloads constructor(context: Context, attrs: Attribut
         iv_status.visible(true)
     }
 
-    fun setAction(actionTitle:String,onClickListener: OnClickListener) {
-        btn_action.text = actionTitle
-        btn_action.setOnClickListener(onClickListener)
-        btn_action.visible(true)
+    fun setAsBooklet(rescanAction: () -> Unit) {
+        isBookled = true
+        tv_value.typeface = Typeface.DEFAULT_BOLD
+        btn_action.setOnClickListener { rescanAction() }
     }
-
 }

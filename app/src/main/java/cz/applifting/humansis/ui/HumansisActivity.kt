@@ -1,6 +1,7 @@
 package cz.applifting.humansis.ui
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import cz.applifting.humansis.R
@@ -16,7 +17,11 @@ class HumansisActivity: AppCompatActivity() {
         setContentView(R.layout.activity_humansis)
 
         val navController = findNavController(R.id.nav_host_fragment_base)
-
         (application as App).appComponent.inject(this)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        super.onOptionsItemSelected(item)
+        return false
     }
 }

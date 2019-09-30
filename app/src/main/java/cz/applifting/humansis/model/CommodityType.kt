@@ -10,5 +10,6 @@ enum class CommodityType {
     @SerializedName("Loan") LOAN,
     @SerializedName("RTE Kit") RTE_KIT,
     @SerializedName("Paper Voucher") PAPER_VOUCHER,
-    @SerializedName("Food") FOOD
+    @SerializedName("Food") FOOD,
+    @SerializedName("QR Code Voucher") QR_VOUCHER
 }

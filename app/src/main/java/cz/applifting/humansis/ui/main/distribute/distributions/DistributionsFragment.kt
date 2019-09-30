@@ -9,10 +9,12 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
+import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
-import cz.applifting.humansis.ui.main.MainFragment
 import kotlinx.android.synthetic.main.fragment_distributions.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -35,7 +37,11 @@ class DistributionsFragment : BaseFragment() {
         (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.distributions)
 
         val viewAdapter = DistributionsAdapter {
-            val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(it.id, it.name, args.projectName)
+            val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(
+                it.id,
+                it.name,
+                args.projectName,
+                it.commodities.contains(CommodityType.QR_VOUCHER.toString()))
             this.findNavController().navigate(action)
         }
 
@@ -51,14 +57,13 @@ class DistributionsFragment : BaseFragment() {
         sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
             if (it) {
                 viewModel.showRefreshing()
-            } else {
-                viewModel.loadDistributions(args.projectId)
+            } else if (viewModel.distributionsLD.value.isNullOrEmpty()) {
+                launch {
+                    // Load after animation finishes to avoid drop in frame rate
+                    delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
+                    viewModel.loadDistributions(args.projectId)
+                }
             }
         })
-
-        if (sharedViewModel.downloadingLD.value == false) {
-            viewModel.loadDistributions(args.projectId)
-        }
-
     }
 }

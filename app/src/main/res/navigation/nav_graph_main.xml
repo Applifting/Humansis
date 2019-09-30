@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/nav_graph"
         app:startDestination="@id/projectsFragment">
 
@@ -49,51 +48,18 @@
         <argument
                 android:name="projectName"
                 app:argType="string" />
-
-        <action
-                android:id="@+id/action_beneficiariesFragment_to_qrBeneficiaryFragment"
-                app:destination="@id/qrBeneficiaryFragment"
-                app:exitAnim="@anim/slide_to_left"
-                app:enterAnim="@anim/slide_from_right"
-                app:popExitAnim="@anim/slide_to_right"
-                app:popEnterAnim="@anim/slide_from_left" />
-        <action
-                android:id="@+id/action_beneficiariesFragment_to_beneficiaryFragment"
-                app:destination="@id/beneficiaryFragment"
-                app:exitAnim="@anim/slide_to_left"
-                app:enterAnim="@anim/slide_from_right"
-                app:popExitAnim="@anim/slide_to_right"
-                app:popEnterAnim="@anim/slide_from_left" />
-    </fragment>
-
-    <fragment android:id="@+id/beneficiaryFragment"
-            android:name="cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryFragment"
-            android:label="{beneficiaryName}">
         <argument
-                android:name="beneficiaryId"
-                app:argType="integer" />
-        <argument
-                android:name="beneficiaryName"
-                app:argType="string" />
-        <argument
-                android:name="distributionName"
-                app:argType="string" />
-        <argument
-                android:name="projectName"
-                app:argType="string" />
-        <argument
-                android:name="distributionStatus"
-                app:argType="boolean" />
-        <argument
-                android:name="bookletId"
-                app:argType="string"
-                android:defaultValue="@null"
-                app:nullable="true"
+                android:name="isQRVoucherDistribution"
+                app:argType="boolean"
                 />
+        <action
+                android:id="@+id/action_beneficiariesFragment_to_beneficiaryFragmentDialog"
+                app:destination="@id/beneficiaryDialog"
+                app:enterAnim="@anim/fragment_fade_enter" />
     </fragment>
 
-    <fragment android:id="@+id/qrBeneficiaryFragment"
-            android:name="cz.applifting.humansis.ui.main.distribute.qrbooklet.QRBookletFragment"
+    <dialog android:id="@+id/beneficiaryDialog"
+            android:name="cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog"
             android:label="{beneficiaryName}">
         <argument
                 android:name="beneficiaryId"
@@ -110,15 +76,18 @@
         <argument
                 android:name="distributionStatus"
                 app:argType="boolean" />
+        <argument
+                android:name="isQRVoucher"
+                app:argType="boolean"
+                android:defaultValue="false"
+                />
+    </dialog>
 
-        <action
-                android:id="@+id/action_qrBeneficiaryFragment_to_beneficiaryFragment"
-                app:destination="@id/beneficiaryFragment"
-                app:exitAnim="@anim/slide_to_left"
-                app:enterAnim="@anim/slide_from_right"
-                app:popExitAnim="@anim/slide_to_right"
-                app:popEnterAnim="@anim/slide_from_left" />
-    </fragment>
+    <dialog
+            android:id="@+id/uploadStatusDialogFragment"
+            android:name="cz.applifting.humansis.ui.components.UploadStatusDialogFragment"
+            android:label="UploadStatusDialogFragment" />
+    <action android:id="@+id/action_global_uploadStatusDialogFragment" app:destination="@id/uploadStatusDialogFragment" />
 
 
 </navigation>
