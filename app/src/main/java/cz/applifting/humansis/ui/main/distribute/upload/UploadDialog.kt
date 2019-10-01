@@ -14,7 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.format
 import cz.applifting.humansis.extensions.isNetworkConnected
@@ -59,24 +58,26 @@ class UploadDialog : DialogFragment() {
                     context?.let { context ->
                         tvChanges.setTextColor(ContextCompat.getColor(context, if (localChanges) R.color.negativeColor else R.color.positiveColor))
                     }
-                    btnUpload.visible(localChanges)
-                    btnUpload.setOnClickListener {
-                        viewModel.uploadChanges()
-                    }
+                    btnUpload.visible(localChanges && online)
                 }
             })
 
+        btnUpload.setOnClickListener {
+            viewModel.uploadChanges()
+        }
 
         viewModel.lastUpdate?.let {
             tvCurrentDataDate.text = it.format()
         }
 
-        viewModel.changesUploadedLD.observe(viewLifecycleOwner, Observer<Boolean> {
+        viewModel.changesUploadedLD.observe(viewLifecycleOwner, Observer<Boolean> { uploaded ->
             context?.let {
                 LocalBroadcastManager.getInstance(it).sendBroadcast(Intent(PENDING_CHANGES_ACTION))
-                // todo find better way how to redraw dialog
-                dismiss()
-                findNavController().navigate(R.id.uploadDialog)
+                tvChanges.text = getString(if (!uploaded) R.string.pending_local_changes else R.string.no_pending_changes)
+                context?.let { context ->
+                    tvChanges.setTextColor(ContextCompat.getColor(context, if (!uploaded) R.color.negativeColor else R.color.positiveColor))
+                }
+                btnUpload.visible(!uploaded && online)
             }
         })
 
@@ -86,6 +87,4 @@ class UploadDialog : DialogFragment() {
 
         return rootView
     }
-
-
 }

@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import cz.applifting.humansis.db.converters.DateConverter
+import cz.applifting.humansis.db.converters.IntListConverter
 import cz.applifting.humansis.db.converters.StringListConverter
 import cz.applifting.humansis.db.converters.TargetConverter
 import cz.applifting.humansis.db.daos.*
@@ -17,7 +18,7 @@ import cz.applifting.humansis.model.db.*
     version = 5,
     exportSchema = false
 )
-@TypeConverters(StringListConverter::class, TargetConverter::class, DateConverter::class)
+@TypeConverters(StringListConverter::class, TargetConverter::class, DateConverter::class, IntListConverter::class)
 abstract class HumansisDB : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun beneficiariesDao(): BeneficiaryDao

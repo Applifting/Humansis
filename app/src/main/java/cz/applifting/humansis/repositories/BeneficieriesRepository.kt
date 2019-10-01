@@ -4,6 +4,7 @@ import android.content.Context
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
+import cz.applifting.humansis.model.api.Relief
 import cz.applifting.humansis.model.api.Vulnerability
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import javax.inject.Inject
@@ -24,11 +25,13 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                 .map {
                     BeneficiaryLocal(
                         it.id,
+                        it.beneficiary.id,
                         it.beneficiary.givenName,
                         it.beneficiary.familyName,
                         distributionId,
-                        it.beneficiary.distributed,
-                        parseVulnerabilities(it.beneficiary.vulnerabilities)
+                        isDistributed(it.reliefs),
+                        parseVulnerabilities(it.beneficiary.vulnerabilities),
+                        parseReliefs(it.reliefs)
                     )
                 }
 
@@ -53,12 +56,31 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return db.beneficiariesDao().update(beneficiary)
     }
 
+    suspend fun countReachedBeneficiariesOffline(distributionId: Int): Int {
+        return db.beneficiariesDao().countReachedBeneficiaries(distributionId)
+    }
+
     private fun parseVulnerabilities(vulnerability: List<Vulnerability>): List<String> {
         return vulnerability.map { it.vulnerabilityName }
     }
 
-    suspend fun countReachedBeneficiariesOffline(distributionId: Int): Int {
-        return db.beneficiariesDao().countReachedBeneficiaries(distributionId)
+    private fun parseReliefs(reliefs: List<Relief>?): List<Int> {
+        return reliefs?.map { it.id } ?: mutableListOf()
     }
+
+    private fun isDistributed(reliefs: List<Relief>?): Boolean {
+        if (reliefs == null) {
+            return false
+        }
+
+        reliefs.forEach {
+            if (it.distributedAt == null) {
+                return false
+            }
+        }
+
+        return true
+    }
+
 
 }

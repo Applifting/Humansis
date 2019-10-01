@@ -6,6 +6,7 @@ import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.api.Commodity
+import cz.applifting.humansis.model.api.DistributedReliefRequest
 import cz.applifting.humansis.model.db.DistributionLocal
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -51,6 +52,15 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
 
     suspend fun getUncompletedDistributions(projectId: Int): List<DistributionLocal> {
         return db.distributionsDao().findUncompletedDistributions(projectId) ?: listOf()
+    }
+
+    suspend fun setDistributedRelief(ids: List<Int>) {
+        try {
+            val result = service.setDistributedRelief(DistributedReliefRequest(ids))
+            result
+        } catch (e: HttpException) {
+            null
+        }
     }
 
     private fun parseCommodities(commodities: List<Commodity>): List<String> {
