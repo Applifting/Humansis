@@ -6,6 +6,7 @@ import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.api.Commodity
+import cz.applifting.humansis.model.api.DistributedReliefRequest
 import cz.applifting.humansis.model.db.DistributionLocal
 import retrofit2.HttpException
 import javax.inject.Inject

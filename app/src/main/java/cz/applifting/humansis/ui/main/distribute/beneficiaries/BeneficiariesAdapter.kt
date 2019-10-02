@@ -64,7 +64,7 @@ class BeneficiariesAdapter(
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
-            tvId.text = view.context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
+            tvId.text = view.context.getString(R.string.beneficiary_id, beneficiaryLocal.beneficiaryId)
             tvName.text = view.context.getString(
                 R.string.beneficiary_name,
                 beneficiaryLocal.givenName,
@@ -72,7 +72,7 @@ class BeneficiariesAdapter(
             )
 
             val color = if (beneficiaryLocal.distributed) R.color.positiveColor else R.color.negativeColor
-            ivDistributionState.tintedDrawable(R.drawable.ic_distribution_state, color)
+            ivDistributionState.tintedDrawable(R.drawable.ic_circle, color)
             llVulnerabilitiesHolder.removeAllViews()
 
             beneficiaryLocal.vulnerabilities.forEach {

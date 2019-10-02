@@ -29,7 +29,7 @@ class BeneficiariesViewModel @Inject constructor(
 
     init {
         searchResultsLD.addSource(beneficiariesLD) { list ->
-            searchResultsLD.value = list.sort()
+            searchResultsLD.value = list?.sort()
         }
     }
 

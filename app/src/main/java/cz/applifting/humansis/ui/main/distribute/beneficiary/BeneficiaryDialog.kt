@@ -1,6 +1,7 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiary
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.zxing.BarcodeFormat
@@ -21,6 +23,7 @@ import com.google.zxing.Result
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
+import cz.applifting.humansis.ui.main.PENDING_CHANGES_ACTION
 import cz.applifting.humansis.ui.main.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
@@ -88,7 +91,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
 
             btn_confirm_distribution.setOnClickListener {
-                viewModel.markAsDistributed(true, args.beneficiaryId, args.isQRVoucher)
+                viewModel.markAsDistributed(args.beneficiaryId)
                 view.btn_confirm_distribution.isEnabled = false
             }
         }
@@ -100,6 +103,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 sharedViewModel.forceOfflineReload(true)
                 sharedViewModel.showSnackbar("Item was successfully distributed to ${args.beneficiaryName}")
                 dismiss()
+
+                context?.let {
+                    val localBroadcastManager = LocalBroadcastManager.getInstance(it)
+                    localBroadcastManager.sendBroadcast(Intent(PENDING_CHANGES_ACTION))
+                }
             }
         })
 
