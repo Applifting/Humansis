@@ -91,7 +91,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
 
             btn_confirm_distribution.setOnClickListener {
-                viewModel.markAsDistributed(true, args.beneficiaryId, args.isQRVoucher)
+                viewModel.markAsDistributed(args.beneficiaryId)
                 view.btn_confirm_distribution.isEnabled = false
             }
         }

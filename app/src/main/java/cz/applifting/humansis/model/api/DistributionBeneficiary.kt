@@ -5,5 +5,6 @@ import com.google.gson.annotations.SerializedName
 data class DistributionBeneficiary(
     @SerializedName("id") val id: Int,
     @SerializedName("beneficiary") val beneficiary: Beneficiary,
-    @SerializedName("general_reliefs") val reliefs: List<Relief>?
+    @SerializedName("general_reliefs") val reliefs: List<Relief>,
+    @SerializedName("booklets") val booklets: List<Booklet>
 )

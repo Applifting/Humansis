@@ -20,8 +20,8 @@ class PendingChangesRepository @Inject constructor(val dbProvider: DbProvider) {
         return db.pendingChangesDao().getAll()
     }
 
-    suspend fun createPendingChange(beneficiaryId: Int, distributed: Boolean, isQrVoucher: Boolean) {
-        val pendingChangeLocal = PendingChangeLocal(beneficiaryId = beneficiaryId, distributed = distributed, date = Date(), isQrVoucher = isQrVoucher)
+    suspend fun createPendingChange(beneficiaryId: Int) {
+        val pendingChangeLocal = PendingChangeLocal(beneficiaryId = beneficiaryId,  date = Date())
         return db.pendingChangesDao().insert(pendingChangeLocal)
     }
 

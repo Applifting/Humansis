@@ -29,4 +29,6 @@ interface HumansisService {
     @POST("distributions/generalrelief/distributed")
     suspend fun setDistributedRelief(@Body distributedReliefRequest: DistributedReliefRequest)
 
+    @POST("booklets/assign/{beneficiaryId}/{distributionId}")
+    suspend fun assignBooklet(@Path("beneficiaryId") beneficiaryId: Int, @Path("distributionId") distributionId: Int, @Body assingBookletRequest: AssingBookletRequest)
 }

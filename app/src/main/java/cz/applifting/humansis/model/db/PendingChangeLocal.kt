@@ -8,7 +8,5 @@ import java.util.*
 data class PendingChangeLocal(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
     val date: Date,
-    val beneficiaryId: Int,
-    val isQrVoucher: Boolean,
-    val distributed: Boolean
+    val beneficiaryId: Int
 )

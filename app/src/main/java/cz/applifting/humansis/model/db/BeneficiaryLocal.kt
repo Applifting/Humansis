@@ -17,5 +17,6 @@ data class BeneficiaryLocal(
     val distributionId: Int,
     val distributed: Boolean,
     val vulnerabilities: List<String>,
-    val reliefs: List<Int>
+    val reliefs: List<Int>,
+    val booklets: List<String>
 )

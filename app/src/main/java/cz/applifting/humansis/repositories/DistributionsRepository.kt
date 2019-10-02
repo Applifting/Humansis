@@ -54,15 +54,6 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
         return db.distributionsDao().findUncompletedDistributions(projectId) ?: listOf()
     }
 
-    suspend fun setDistributedRelief(ids: List<Int>) {
-        try {
-            val result = service.setDistributedRelief(DistributedReliefRequest(ids))
-            result
-        } catch (e: HttpException) {
-            null
-        }
-    }
-
     private fun parseCommodities(commodities: List<Commodity>): List<String> {
         return commodities.map {
             it.modalityType.name?.name ?: context.getString(R.string.unknown)
