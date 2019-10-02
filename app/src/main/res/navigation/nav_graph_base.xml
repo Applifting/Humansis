@@ -7,9 +7,15 @@
             android:name="cz.applifting.humansis.ui.splash.SplashFragment"
             android:label="SplashFragment" >
         <action
+                app:launchSingleTop="true"
+                app:popUpTo="@+id/nav_graph_base"
+                app:popUpToInclusive="true"
                 android:id="@+id/action_splashFragment_to_mainFragment"
                 app:destination="@id/mainFragment" />
         <action
+                app:launchSingleTop="true"
+                app:popUpTo="@+id/nav_graph_base"
+                app:popUpToInclusive="true"
                 android:id="@+id/action_splashFragment_to_loginFragment"
                 app:destination="@id/loginFragment" />
     </fragment>

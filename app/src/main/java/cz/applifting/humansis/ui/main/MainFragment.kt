@@ -8,7 +8,6 @@ import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -139,15 +138,6 @@ class MainFragment : BaseFragment() {
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    // TODO handle
-    fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            //super.onBackPressed()
-        }
     }
 
     private val mainReceiver = object : BroadcastReceiver() {
