@@ -4,6 +4,7 @@ import android.content.Context
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
+import cz.applifting.humansis.model.api.Relief
 import cz.applifting.humansis.model.api.Vulnerability
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import javax.inject.Inject
@@ -28,7 +29,10 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                         it.beneficiary.familyName,
                         distributionId,
                         it.beneficiary.distributed,
-                        parseVulnerabilities(it.beneficiary.vulnerabilities)
+                        parseVulnerabilities(it.beneficiary.vulnerabilities),
+                        parseReliefIds(it.generalReliefs),
+                        null,
+                        false
                     )
                 }
 
@@ -42,7 +46,8 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     }
 
     suspend fun getBeneficieriesOffline(distributionId: Int): List<BeneficiaryLocal> {
-        return db.beneficiariesDao().getByDistribution(distributionId) ?: listOf()
+        val beneficiaries = db.beneficiariesDao().getByDistribution(distributionId) ?: listOf()
+        return beneficiaries
     }
 
     suspend fun getBeneficiaryOffline(beneficiaryId: Int): BeneficiaryLocal {
@@ -53,12 +58,15 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return db.beneficiariesDao().update(beneficiary)
     }
 
-    private fun parseVulnerabilities(vulnerability: List<Vulnerability>): List<String> {
-        return vulnerability.map { it.vulnerabilityName }
-    }
-
     suspend fun countReachedBeneficiariesOffline(distributionId: Int): Int {
         return db.beneficiariesDao().countReachedBeneficiaries(distributionId)
     }
 
+    private fun parseReliefIds(reliefs: List<Relief>): List<Int> {
+        return reliefs.map { it.id }
+    }
+
+    private fun parseVulnerabilities(vulnerability: List<Vulnerability>): List<String> {
+        return vulnerability.map { it.vulnerabilityName }
+    }
 }

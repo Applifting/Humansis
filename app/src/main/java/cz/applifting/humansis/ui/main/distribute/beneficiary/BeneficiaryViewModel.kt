@@ -14,21 +14,21 @@ import javax.inject.Inject
 class BeneficiaryViewModel @Inject constructor(private val repository: BeneficieriesRepository) : BaseViewModel() {
 
     val distributedLD = MutableLiveData<Boolean>()
-    val bookletIdLD = MutableLiveData<String>()
+    val qrBookletIdLD = MutableLiveData<String>()
 
     init {
-        bookletIdLD.value = null
+        qrBookletIdLD.value = null
     }
 
-    internal fun markAsDistributed(isDistributed: Boolean, beneficiaryId: Int, isQRVoucher: Boolean) {
+    internal fun editBeneficiary(isDistributed: Boolean, beneficiaryId: Int) {
         launch {
             val beneficiary = repository.getBeneficiaryOffline(beneficiaryId)
-            repository.updateBeneficiaryOffline(beneficiary.copy(distributed = isDistributed))
+            repository.updateBeneficiaryOffline(beneficiary.copy(distributed = isDistributed, QRBookletCode = qrBookletIdLD.value, edited = true))
             distributedLD.value = isDistributed
         }
     }
 
     fun setScannedBooklet(bookletId: String?) {
-        bookletIdLD.value = bookletId
+        qrBookletIdLD.value = bookletId
     }
 }

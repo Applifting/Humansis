@@ -67,6 +67,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             tv_distribution.setValue(args.distributionName)
             tv_project.setValue(args.projectName)
 
+            if (args.distributionStatus) {
+                btn_action.text = context.getString(R.string.revert)
+                btn_action.background = context.getDrawable(R.drawable.background_revert_btn)
+            } else {
+                btn_action.text = context.getString(R.string.confirm_distribution)
+                btn_action.background = context.getDrawable(R.drawable.background_confirm_btn)
+            }
+
             // Listeners
             btn_close.setOnClickListener { dismiss() }
 
@@ -87,24 +95,28 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 qr_scanner_holder.visibility = View.GONE
             }
 
-            btn_confirm_distribution.setOnClickListener {
-                viewModel.markAsDistributed(true, args.beneficiaryId, args.isQRVoucher)
-                view.btn_confirm_distribution.isEnabled = false
+            btn_action.setOnClickListener {
+                viewModel.editBeneficiary(!args.distributionStatus, args.beneficiaryId)
+                sharedViewModel.markPendingChanges()
+                view.btn_action.isEnabled = false
             }
         }
 
 
         // Observers
         viewModel.distributedLD.observe(viewLifecycleOwner, Observer { isDistributed ->
-            if (isDistributed) {
-                sharedViewModel.forceOfflineReload(true)
-                sharedViewModel.showSnackbar("Item was successfully distributed to ${args.beneficiaryName}")
-                dismiss()
+            sharedViewModel.forceOfflineReload(true)
+            val text= if (isDistributed) {
+                "Item was successfully distributed to ${args.beneficiaryName}"
+            } else {
+                "Distribution was successfully reverted."
             }
+            sharedViewModel.showSnackbar(text)
+            dismiss()
         })
 
-        viewModel.bookletIdLD.observe(viewLifecycleOwner, Observer {
-            view.btn_confirm_distribution.isEnabled = !(it == null && args.isQRVoucher)
+        viewModel.qrBookletIdLD.observe(viewLifecycleOwner, Observer {
+            view.btn_action.isEnabled = !(it == null && args.isQRVoucher)
             view?.tv_booklet?.setValue(it)
         })
 

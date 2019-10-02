@@ -48,9 +48,6 @@ class BeneficiariesFragment : BaseFragment() {
         }
 
         lc_beneficiaries.init(viewAdapter)
-        lc_beneficiaries.setOnRefreshListener {
-            viewModel.loadBeneficiaries(args.distributionId, true)
-        }
 
         viewModel.searchResultsLD.observe(viewLifecycleOwner, Observer {
             viewAdapter.update(it)
@@ -71,7 +68,7 @@ class BeneficiariesFragment : BaseFragment() {
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
 
-        sharedViewModel.forceOfflineReload.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.forceOfflineReloadLD.observe(viewLifecycleOwner, Observer {
             if (it) {
                 viewModel.loadBeneficiaries(args.distributionId)
                 sharedViewModel.forceOfflineReload(false)

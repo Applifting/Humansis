@@ -29,29 +29,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/iv_cross"
-                app:srcCompat="@drawable/ic_offline" />
-
-        <TextView
-                android:id="@+id/tv_connection_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/iv_connection_status"
-                tools:text="@string/offline" />
+                app:srcCompat="@drawable/ic_cloud_queue_black_24dp" />
 
         <TextView
                 android:id="@+id/tv_changes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="64dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="64dp"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_connection_status"
+                app:layout_constraintTop_toBottomOf="@+id/iv_connection_status"
                 tools:text="@string/pending_local_changes" />
 
         <TextView
@@ -95,6 +85,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_current_data_date" />
+
+        <ProgressBar
+                android:id="@+id/pb_upload"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/btn_upload" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

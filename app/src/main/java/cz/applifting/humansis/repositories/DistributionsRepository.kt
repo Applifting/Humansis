@@ -17,7 +17,8 @@ import javax.inject.Singleton
 @Singleton
 class DistributionsRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
-    val db: HumansisDB by lazy { dbProvider.get() }
+    private val db: HumansisDB by lazy { dbProvider.get() }
+    private val distributionsCache: HashMap<Int, List<DistributionLocal>> = HashMap()
 
     suspend fun getDistributionsOnline(projectId: Int): List<DistributionLocal>? {
         return try {
@@ -39,6 +40,8 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
             db.distributionsDao().deleteByProject(projectId)
             db.distributionsDao().insertAll(result)
 
+            distributionsCache[projectId] = result
+
             result
         } catch (e: HttpException) {
             null
@@ -46,7 +49,13 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
     }
 
     suspend fun getDistributionsOffline(projectId: Int): List<DistributionLocal> {
-        return db.distributionsDao().getByProject(projectId) ?: listOf()
+        if (distributionsCache.containsKey(projectId)) {
+            return distributionsCache[projectId] ?: listOf()
+        } else {
+            val distributions = db.distributionsDao().getByProject(projectId) ?: listOf()
+            distributionsCache[projectId] = distributions
+            return distributions
+        }
     }
 
     suspend fun getUncompletedDistributions(projectId: Int): List<DistributionLocal> {

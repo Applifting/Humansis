@@ -16,6 +16,7 @@ import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.menu_status_button.view.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 /**
@@ -68,8 +69,6 @@ class MainFragment : BaseFragment() {
         btn_logout.setOnClickListener {
             viewModel.logout()
         }
-
-        sharedViewModel.tryDownloadingAll()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,11 +82,15 @@ class MainFragment : BaseFragment() {
         // https://stackoverflow.com/a/35265797
         val item = menu.findItem(action_open_status_dialog)
         item.actionView.setOnClickListener { onOptionsItemSelected(item) }
+
+        sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
+            item.actionView.view.visibility = if (it) View.VISIBLE else View.INVISIBLE
+        })
+
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         when (item.itemId) {
             action_open_status_dialog -> {
                 mainNavController.navigate(cz.applifting.humansis.R.id.uploadStatusDialogFragment)
