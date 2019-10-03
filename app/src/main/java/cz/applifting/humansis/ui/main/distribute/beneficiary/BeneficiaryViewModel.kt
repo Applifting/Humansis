@@ -2,6 +2,7 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary
 
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.repositories.BeneficieriesRepository
+import cz.applifting.humansis.repositories.PendingChangesRepository
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -11,7 +12,8 @@ import javax.inject.Inject
  * @since 9. 9. 2019
  */
 
-class BeneficiaryViewModel @Inject constructor(private val repository: BeneficieriesRepository) : BaseViewModel() {
+class BeneficiaryViewModel @Inject constructor(private val beneficieriesRepository: BeneficieriesRepository, private val pendingChangesRepository: PendingChangesRepository) :
+    BaseViewModel() {
 
     val distributedLD = MutableLiveData<Boolean>()
     val qrBookletIdLD = MutableLiveData<String>()
@@ -22,9 +24,17 @@ class BeneficiaryViewModel @Inject constructor(private val repository: Beneficie
 
     internal fun editBeneficiary(isDistributed: Boolean, beneficiaryId: Int) {
         launch {
-            val beneficiary = repository.getBeneficiaryOffline(beneficiaryId)
-            repository.updateBeneficiaryOffline(beneficiary.copy(distributed = isDistributed, QRBookletCode = qrBookletIdLD.value, edited = true))
-            distributedLD.value = isDistributed
+            val beneficiary = beneficieriesRepository.getBeneficiaryOffline(beneficiaryId)
+            val updatedBeneficiary = if (qrBookletIdLD.value != null) beneficiary.copy(distributed = isDistributed, qrBooklets = mutableListOf(qrBookletIdLD.value!!)) else beneficiary.copy(distributed = true)
+            beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+
+            if (isDistributed) {
+                pendingChangesRepository.createPendingChange(beneficiaryId)
+            } else {
+                // TODO delete pending change
+            }
+
+            distributedLD.value = true
         }
     }
 

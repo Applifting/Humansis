@@ -11,12 +11,12 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "beneficiaries")
 data class BeneficiaryLocal(
     @PrimaryKey val id: Int,
+    val beneficiaryId: Int,
     val givenName: String?,
     val familyName: String?,
     val distributionId: Int,
     val distributed: Boolean,
     val vulnerabilities: List<String>,
     val reliefIDs: List<Int>,
-    val QRBookletCode: String?,
-    val edited: Boolean
+    val qrBooklets: List<String>
 )

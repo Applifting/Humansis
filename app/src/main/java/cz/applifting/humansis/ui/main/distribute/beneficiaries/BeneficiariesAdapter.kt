@@ -64,7 +64,7 @@ class BeneficiariesAdapter(
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
-            tvId.text = view.context.getString(R.string.beneficiary_id, beneficiaryLocal.id)
+            tvId.text = view.context.getString(R.string.beneficiary_id, beneficiaryLocal.beneficiaryId)
             tvName.text = view.context.getString(
                 R.string.beneficiary_name,
                 beneficiaryLocal.givenName,
@@ -72,7 +72,7 @@ class BeneficiariesAdapter(
             )
 
             val color = if (beneficiaryLocal.distributed) R.color.positiveColor else R.color.negativeColor
-            ivDistributionState.tintedDrawable(R.drawable.ic_distribution_state, color)
+            ivDistributionState.tintedDrawable(R.drawable.ic_circle, color)
             llVulnerabilitiesHolder.removeAllViews()
 
             beneficiaryLocal.vulnerabilities.forEach {
@@ -90,12 +90,10 @@ class BeneficiariesAdapter(
             // values from https://api-demo.humansis.org/api/wsse/vulnerability_criteria
             return when (vulnerability) {
                 "disabled" -> R.drawable.ic_vulnerability_disabled
-                //todo solo parent icon
-                "soloParent" -> R.drawable.ic_vulnerability_disabled
+                "soloParent" -> R.drawable.ic_vulnerability_solo_parent
                 "lactating" -> R.drawable.ic_vulnerability_lactating
                 "pregnant" -> R.drawable.ic_vulnerability_pregnant
-                //todo nutritional issues icon
-                "nutritionalIssues" -> R.drawable.ic_vulnerability_disabled
+                "nutritionalIssues" -> R.drawable.ic_vulnerability_nutritional_issues
                 else -> null
             }
         }

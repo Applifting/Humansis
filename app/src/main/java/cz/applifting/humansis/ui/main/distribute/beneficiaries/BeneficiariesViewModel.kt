@@ -3,9 +3,7 @@ package cz.applifting.humansis.ui.main.distribute.beneficiaries
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.ui.components.listComponent.ListComponentState
 import cz.applifting.humansis.ui.main.BaseListViewModel
 import kotlinx.coroutines.launch
@@ -17,19 +15,17 @@ import javax.inject.Inject
  * @since 5. 9. 2019
  */
 class BeneficiariesViewModel @Inject constructor(
-    private val beneficieriesRepository: BeneficieriesRepository,
-    private val distributionsRepository: DistributionsRepository) : BaseListViewModel() {
+    private val beneficieriesRepository: BeneficieriesRepository
+) : BaseListViewModel() {
 
     private val beneficiariesLD = MutableLiveData<List<BeneficiaryLocal>>()
     internal val beneficiariesViewStateLD: MutableLiveData<ListComponentState> = MutableLiveData()
     internal val statsLD: MutableLiveData<Pair<Int, Int>> = MutableLiveData()
     internal val searchResultsLD = MediatorLiveData<List<BeneficiaryLocal>>()
 
-    private lateinit var distribution: DistributionLocal
-
     init {
         searchResultsLD.addSource(beneficiariesLD) { list ->
-            searchResultsLD.value = list.sort()
+            searchResultsLD.value = list?.sort()
         }
     }
 
@@ -46,7 +42,6 @@ class BeneficiariesViewModel @Inject constructor(
             } else {
                 beneficieriesRepository.getBeneficieriesOffline(distributionId)
             }
-
             beneficiariesLD.value = beneficiaries
             statsLD.value = Pair(beneficiaries?.count { it.distributed } ?: 0, beneficiaries?.size ?: 0)
             finishLoading(beneficiaries)

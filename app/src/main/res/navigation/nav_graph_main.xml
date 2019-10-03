@@ -84,10 +84,10 @@
     </dialog>
 
     <dialog
-            android:id="@+id/uploadStatusDialogFragment"
-            android:name="cz.applifting.humansis.ui.main.distribute.UploadDialog"
-            android:label="UploadStatusDialogFragment" />
-    <action android:id="@+id/action_global_uploadStatusDialogFragment" app:destination="@id/uploadStatusDialogFragment" />
+            android:id="@+id/uploadDialog"
+            android:name="cz.applifting.humansis.ui.main.distribute.upload.UploadDialog"
+            android:label="UploadDialog" />
+    <action android:id="@+id/action_global_uploadDialogFragment" app:destination="@id/uploadDialog" />
 
 
 </navigation>

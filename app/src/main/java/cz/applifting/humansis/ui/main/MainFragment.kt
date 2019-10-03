@@ -2,7 +2,6 @@ package cz.applifting.humansis.ui.main
 
 import android.os.Bundle
 import android.view.*
-import androidx.core.view.GravityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -10,6 +9,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
+import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
@@ -28,18 +28,18 @@ class MainFragment : BaseFragment() {
     private lateinit var mainNavController: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(cz.applifting.humansis.R.layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         val appBarConfiguration = AppBarConfiguration(
-            setOf(cz.applifting.humansis.R.id.projectsFragment),
+            setOf(R.id.projectsFragment),
             drawer_layout
         )
 
-        val fragmentContainer = view?.findViewById<View>(cz.applifting.humansis.R.id.nav_host_fragment) ?: throw HumansisError("Cannot find nav host in main")
+        val fragmentContainer = view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError("Cannot find nav host in main")
         mainNavController = Navigation.findNavController(fragmentContainer)
 
         (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
@@ -77,14 +77,14 @@ class MainFragment : BaseFragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(cz.applifting.humansis.R.menu.menu_status, menu)
+        inflater.inflate(R.menu.menu_status, menu)
         // A fix for action with custom layout
         // https://stackoverflow.com/a/35265797
         val item = menu.findItem(action_open_status_dialog)
         item.actionView.setOnClickListener { onOptionsItemSelected(item) }
 
         sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
-            item.actionView.view.visibility = if (it) View.VISIBLE else View.INVISIBLE
+           item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
         })
 
         super.onCreateOptionsMenu(menu, inflater)
@@ -93,20 +93,11 @@ class MainFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             action_open_status_dialog -> {
-                mainNavController.navigate(cz.applifting.humansis.R.id.uploadStatusDialogFragment)
+                mainNavController.navigate(R.id.uploadDialog)
                 return true
             }
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    // TODO handle
-    fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            //super.onBackPressed()
-        }
     }
 }

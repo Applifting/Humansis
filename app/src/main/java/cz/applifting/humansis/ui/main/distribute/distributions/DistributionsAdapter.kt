@@ -96,7 +96,7 @@ class DistributionsAdapter(
             layout.setOnClickListener { onItemClick(distributions[position]) }
 
             val statusColor = if (completed) R.color.positiveColor else R.color.negativeColor
-            ivStatus.tintedDrawable(R.drawable.ic_distribution_state, statusColor)
+            ivStatus.tintedDrawable(R.drawable.ic_circle, statusColor)
 
             pbDistributionProgress.visible(!completed)
 
