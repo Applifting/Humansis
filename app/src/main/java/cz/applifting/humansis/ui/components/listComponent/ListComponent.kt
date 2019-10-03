@@ -27,6 +27,8 @@ class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(con
             adapter = viewAdapter
             addItemDecoration(VerticalMarginItemDecoration())
         }
+
+        swrl_swipe_to_refresh.isEnabled = false
     }
 
     fun setState(state: ListComponentState) {
@@ -36,7 +38,7 @@ class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(con
         pb_loading.visible(state.isRetrieving)
         swrl_swipe_to_refresh.isRefreshing = state.isRefreshing
 
-        if (state.text != null) {
+        if (state.text != null && !state.isRetrieving && !state.isRetrieving) {
             tv_info.text = state.text
             tv_info.visible(true)
         } else {
@@ -45,6 +47,7 @@ class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(con
     }
 
     fun setOnRefreshListener(listener: () -> Unit) {
+        swrl_swipe_to_refresh.isEnabled = true
         swrl_swipe_to_refresh.setOnRefreshListener(listener)
     }
 

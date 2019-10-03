@@ -32,7 +32,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                         isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets),
                         parseVulnerabilities(it.beneficiary.vulnerabilities),
                         parseReliefs(it.reliefs),
-                        parseBooklets(it.booklets)
+                        parseQRBooklets(it.booklets)
                     )
                 }
 
@@ -64,12 +64,12 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     suspend fun distribute(beneficiaryId: Int) {
         val beneficiaryLocal = db.beneficiariesDao().findById(beneficiaryId)
 
-        if (beneficiaryLocal.reliefs.isNotEmpty()) {
-            setDistributedRelief(beneficiaryLocal.reliefs)
+        if (beneficiaryLocal.reliefIDs.isNotEmpty()) {
+            setDistributedRelief(beneficiaryLocal.reliefIDs)
         }
 
-        if (beneficiaryLocal.booklets.isNotEmpty()) {
-            assignBooklet(beneficiaryLocal.booklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.distributionId)
+        if (beneficiaryLocal.qrBooklets.isNotEmpty()) {
+            assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.distributionId)
         }
 
     }
@@ -100,7 +100,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return reliefs.map { it.id }
     }
 
-    private fun parseBooklets(booklets: List<Booklet>): List<String> {
+    private fun parseQRBooklets(booklets: List<Booklet>): List<String> {
         return booklets.map { it.code }
     }
 

@@ -15,6 +15,9 @@ abstract class BaseListViewModel: BaseViewModel() {
 
     private val _listStateLD = MutableLiveData<ListComponentState>()
 
+    init {
+        _listStateLD.value = ListComponentState()
+    }
 
     fun showRefreshing() {
         _listStateLD.value = ListComponentState(isRefreshing = true, isRetrieving = false, text = "Downloading...")

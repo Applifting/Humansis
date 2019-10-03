@@ -12,7 +12,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="16dp"
             android:tint="@color/white"
-            app:srcCompat="@drawable/ic_offline" />
+            app:srcCompat="@drawable/ic_cloud_queue_white_24dp" />
 
 
     <ImageView

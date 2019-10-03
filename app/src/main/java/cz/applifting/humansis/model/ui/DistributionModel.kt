@@ -6,7 +6,7 @@ import cz.applifting.humansis.model.Target
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
  * @since 12. 9. 2019
  */
-
+// TODO remove this and instead use @Ingore in DB entity
 data class DistributionModel(
     val id: Int,
     val name: String,

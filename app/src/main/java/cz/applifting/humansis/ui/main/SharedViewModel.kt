@@ -1,14 +1,15 @@
 package cz.applifting.humansis.ui.main
 
 import android.content.SharedPreferences
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.PendingChangesRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.BaseViewModel
-import cz.applifting.humansis.ui.main.distribute.upload.LAST_DATA_UPDATE
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.*
@@ -25,10 +26,26 @@ class SharedViewModel @Inject constructor(
     private val sp: SharedPreferences
 ) : BaseViewModel() {
 
+    private val lastDownloadKey = "lastDownloadKey"
+
     val downloadingLD = MutableLiveData<Boolean>()
+    val uploadDialogLD = MutableLiveData<Boolean>()
     val snackbarLD = MutableLiveData<String>()
-    val forceOfflineReload = MutableLiveData<Boolean>()
-    val hasPendingChangesLD = MutableLiveData<Boolean>()
+    val forceOfflineReloadLD = MutableLiveData<Boolean>()
+    val lastDownloadLD = MutableLiveData<Date>()
+    val pendingChangesLD = MutableLiveData<Boolean>()
+
+    val loadingLD = MediatorLiveData<Boolean>()
+
+    init {
+        downloadingLD.value = false
+        lastDownloadLD.value = sp.getDate(lastDownloadKey)
+
+        loadingLD.addSource(downloadingLD) { loadingLD.value = it }
+        loadingLD.addSource(uploadDialogLD) { loadingLD.value = it }
+
+        initPendingChanges()
+    }
 
     fun tryDownloadingAll() {
         // TODO when should we download all?
@@ -43,13 +60,34 @@ class SharedViewModel @Inject constructor(
                     .map { async { beneficieriesRepository.getBeneficieriesOnline(it.id) } }
                     .map { it.await() }
 
-                sp.setDate(LAST_DATA_UPDATE, Date())
+                pendingChangesLD.value = false
+                sp.setDate(lastDownloadKey, Date())
 
             } catch (e: Throwable) {
 
             } finally {
                 downloadingLD.value = false
             }
+        }
+
+        val lastDownloadAt = Date()
+        lastDownloadLD.value = lastDownloadAt
+        sp.setDate(lastDownloadKey, lastDownloadAt)
+    }
+
+    fun uploadChanges() {
+        launch {
+            uploadDialogLD.value = true
+            val pendingChanges = pendingChangesRepository.getPendingChanges()
+            pendingChanges?.forEach { change ->
+                beneficieriesRepository.distribute(change.beneficiaryId)
+                change.id?.let {
+                    pendingChangesRepository.deletePendingChange(it)
+                }
+            }
+
+            uploadDialogLD.value = false
+            tryDownloadingAll()
         }
     }
 
@@ -58,13 +96,16 @@ class SharedViewModel @Inject constructor(
     }
 
     fun forceOfflineReload(force: Boolean) {
-        forceOfflineReload.value = force
+        forceOfflineReloadLD.value = force
     }
 
-    fun checkPendingChanges() {
+    fun markPendingChanges() {
+        pendingChangesLD.value = true
+    }
+
+    private fun initPendingChanges() {
         launch {
-            val hasChanges = pendingChangesRepository.hasPendingChanges()
-            hasPendingChangesLD.value = hasChanges
+            pendingChangesLD.value = pendingChangesRepository.hasPendingChanges()
         }
     }
 }

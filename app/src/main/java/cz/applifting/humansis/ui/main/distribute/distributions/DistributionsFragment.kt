@@ -46,7 +46,6 @@ class DistributionsFragment : BaseFragment() {
         }
 
         lc_distributions.init(viewAdapter)
-        lc_distributions.setOnRefreshListener { viewModel.loadDistributions(args.projectId, true) }
 
         viewModel.distributionsLD.observe(viewLifecycleOwner, Observer {
             viewAdapter.updateDistributions(it)
@@ -66,4 +65,6 @@ class DistributionsFragment : BaseFragment() {
             }
         })
     }
+
+
 }

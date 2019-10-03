@@ -1,7 +1,6 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiary
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -15,7 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.zxing.BarcodeFormat
@@ -23,7 +21,6 @@ import com.google.zxing.Result
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
-import cz.applifting.humansis.ui.main.PENDING_CHANGES_ACTION
 import cz.applifting.humansis.ui.main.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
@@ -70,6 +67,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             tv_distribution.setValue(args.distributionName)
             tv_project.setValue(args.projectName)
 
+            if (args.distributionStatus) {
+                btn_action.text = context.getString(R.string.revert)
+                btn_action.background = context.getDrawable(R.drawable.background_revert_btn)
+            } else {
+                btn_action.text = context.getString(R.string.confirm_distribution)
+                btn_action.background = context.getDrawable(R.drawable.background_confirm_btn)
+            }
+
             // Listeners
             btn_close.setOnClickListener { dismiss() }
 
@@ -90,29 +95,28 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 qr_scanner_holder.visibility = View.GONE
             }
 
-            btn_confirm_distribution.setOnClickListener {
-                viewModel.markAsDistributed(args.beneficiaryId)
-                view.btn_confirm_distribution.isEnabled = false
+            btn_action.setOnClickListener {
+                viewModel.editBeneficiary(!args.distributionStatus, args.beneficiaryId)
+                sharedViewModel.markPendingChanges()
+                view.btn_action.isEnabled = false
             }
         }
 
 
         // Observers
         viewModel.distributedLD.observe(viewLifecycleOwner, Observer { isDistributed ->
-            if (isDistributed) {
-                sharedViewModel.forceOfflineReload(true)
-                sharedViewModel.showSnackbar("Item was successfully distributed to ${args.beneficiaryName}")
-                dismiss()
-
-                context?.let {
-                    val localBroadcastManager = LocalBroadcastManager.getInstance(it)
-                    localBroadcastManager.sendBroadcast(Intent(PENDING_CHANGES_ACTION))
-                }
+            sharedViewModel.forceOfflineReload(true)
+            val text= if (isDistributed) {
+                "Item was successfully distributed to ${args.beneficiaryName}"
+            } else {
+                "Distribution was successfully reverted."
             }
+            sharedViewModel.showSnackbar(text)
+            dismiss()
         })
 
-        viewModel.bookletIdLD.observe(viewLifecycleOwner, Observer {
-            view.btn_confirm_distribution.isEnabled = !(it == null && args.isQRVoucher)
+        viewModel.qrBookletIdLD.observe(viewLifecycleOwner, Observer {
+            view.btn_action.isEnabled = !(it == null && args.isQRVoucher)
             view?.tv_booklet?.setValue(it)
         })
 

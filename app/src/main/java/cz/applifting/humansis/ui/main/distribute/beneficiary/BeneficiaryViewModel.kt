@@ -16,23 +16,29 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
     BaseViewModel() {
 
     val distributedLD = MutableLiveData<Boolean>()
-    val bookletIdLD = MutableLiveData<String>()
+    val qrBookletIdLD = MutableLiveData<String>()
 
     init {
-        bookletIdLD.value = null
+        qrBookletIdLD.value = null
     }
 
-    internal fun markAsDistributed(beneficiaryId: Int) {
+    internal fun editBeneficiary(isDistributed: Boolean, beneficiaryId: Int) {
         launch {
             val beneficiary = beneficieriesRepository.getBeneficiaryOffline(beneficiaryId)
-            val updatedBeneficiary = if (bookletIdLD.value != null) beneficiary.copy(distributed = true, booklets = mutableListOf(bookletIdLD.value!!)) else beneficiary.copy(distributed = true)
+            val updatedBeneficiary = if (qrBookletIdLD.value != null) beneficiary.copy(distributed = isDistributed, qrBooklets = mutableListOf(qrBookletIdLD.value!!)) else beneficiary.copy(distributed = true)
             beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-            pendingChangesRepository.createPendingChange(beneficiaryId)
+
+            if (isDistributed) {
+                pendingChangesRepository.createPendingChange(beneficiaryId)
+            } else {
+                // TODO delete pending change
+            }
+
             distributedLD.value = true
         }
     }
 
     fun setScannedBooklet(bookletId: String?) {
-        bookletIdLD.value = bookletId
+        qrBookletIdLD.value = bookletId
     }
 }
