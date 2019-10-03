@@ -58,7 +58,7 @@ class TitledTextView @JvmOverloads constructor(context: Context, attrs: Attribut
         iv_status.visible(true)
     }
 
-    fun setAsBooklet(rescanAction: () -> Unit) {
+    fun setRescanActionListener(rescanAction: () -> Unit) {
         isBookled = true
         tv_value.typeface = Typeface.DEFAULT_BOLD
         btn_action.setOnClickListener { rescanAction() }

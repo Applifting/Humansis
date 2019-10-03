@@ -76,14 +76,16 @@ class BeneficiariesFragment : BaseFragment() {
         })
 
         sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                viewModel.showRefreshing()
-            } else if (viewModel.searchResultsLD.value.isNullOrEmpty()) {
-                launch {
+            when {
+                it -> viewModel.showRefreshing()
+
+                viewModel.searchResultsLD.value.isNullOrEmpty() -> launch {
                     // Load after animation finishes to avoid drop in frame rate
                     delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
                     viewModel.loadBeneficiaries(args.distributionId)
                 }
+
+                else -> viewModel.finishLoading(viewModel.searchResultsLD.value)
             }
         })
     }
@@ -97,10 +99,8 @@ class BeneficiariesFragment : BaseFragment() {
     private fun showBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
         val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragmentDialog(
             beneficiaryLocal.id,
-            getString(R.string.beneficiary_name, beneficiaryLocal.givenName, beneficiaryLocal.familyName),
             args.distributionName,
             args.projectName,
-            beneficiaryLocal.distributed,
             args.isQRVoucherDistribution
         )
 

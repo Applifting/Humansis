@@ -65,22 +65,16 @@
                 android:name="beneficiaryId"
                 app:argType="integer" />
         <argument
-                android:name="beneficiaryName"
-                app:argType="string" />
-        <argument
                 android:name="distributionName"
                 app:argType="string" />
         <argument
                 android:name="projectName"
                 app:argType="string" />
-        <argument
-                android:name="distributionStatus"
-                app:argType="boolean" />
+
         <argument
                 android:name="isQRVoucher"
-                app:argType="boolean"
-                android:defaultValue="false"
-                />
+                app:argType="boolean"/>
+
     </dialog>
 
     <dialog

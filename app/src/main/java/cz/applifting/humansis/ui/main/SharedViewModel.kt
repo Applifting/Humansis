@@ -43,12 +43,9 @@ class SharedViewModel @Inject constructor(
 
         loadingLD.addSource(downloadingLD) { loadingLD.value = it }
         loadingLD.addSource(uploadDialogLD) { loadingLD.value = it }
-
-        initPendingChanges()
     }
 
     fun tryDownloadingAll() {
-        // TODO when should we download all?
         launch {
             try {
                 downloadingLD.value = true
@@ -76,6 +73,11 @@ class SharedViewModel @Inject constructor(
     }
 
     fun uploadChanges() {
+        /*
+        TODO We should reconsider the way changes are saved. Approach with a separate table/repository allows us to store history and might enable us to use some kind
+        back button functionality. This is in my opinion a little over-engineered and we need to store 'edited' flag in beneficiary table anyway.
+        */
+
         launch {
             uploadDialogLD.value = true
             val pendingChanges = pendingChangesRepository.getPendingChanges()
@@ -103,7 +105,7 @@ class SharedViewModel @Inject constructor(
         pendingChangesLD.value = true
     }
 
-    private fun initPendingChanges() {
+    fun initPendingChanges() {
         launch {
             pendingChangesLD.value = pendingChangesRepository.hasPendingChanges()
         }

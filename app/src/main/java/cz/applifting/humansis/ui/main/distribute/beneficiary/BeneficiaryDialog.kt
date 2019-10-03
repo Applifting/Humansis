@@ -19,6 +19,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.main.SharedViewModel
@@ -59,66 +60,76 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         (activity?.application as App).appComponent.inject(this)
         sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
 
-        // Views
+
         view.apply {
-            tv_status.setValue(getString(if (args.distributionStatus) R.string.distributed else R.string.not_distributed))
-            tv_status.setStatus(args.distributionStatus)
-            tv_beneficiary.setValue(args.beneficiaryName)
-            tv_distribution.setValue(args.distributionName)
-            tv_project.setValue(args.projectName)
-
-            if (args.distributionStatus) {
-                btn_action.text = context.getString(R.string.revert)
-                btn_action.background = context.getDrawable(R.drawable.background_revert_btn)
-            } else {
-                btn_action.text = context.getString(R.string.confirm_distribution)
-                btn_action.background = context.getDrawable(R.drawable.background_confirm_btn)
-            }
-
-            // Listeners
             btn_close.setOnClickListener { dismiss() }
-
-            if (args.isQRVoucher) {
-                tv_booklet.setAsBooklet {
-                    viewModel.setScannedBooklet(null)
-                    view?.qr_scanner_holder?.visibility = View.VISIBLE
-                    startScanner(view)
-                }
-
-                if (!isCameraPermissionGranted()) {
-                    requestCameraPermission()
-                } else {
-                    startScanner(view)
-                }
-            } else {
-                tv_booklet.visibility = View.GONE
-                qr_scanner_holder.visibility = View.GONE
-            }
-
-            btn_action.setOnClickListener {
-                viewModel.editBeneficiary(!args.distributionStatus, args.beneficiaryId)
-                sharedViewModel.markPendingChanges()
-                view.btn_action.isEnabled = false
-            }
         }
 
+        viewModel.beneficiaryLD.observe(viewLifecycleOwner, Observer {
+            // Views
+            view.apply {
+                tv_status.setValue(getString(if (it.distributed) R.string.distributed else R.string.not_distributed))
+                tv_status.setStatus(it.distributed)
+                tv_beneficiary.setValue("${it.givenName} ${it.familyName}")
+                tv_distribution.setValue(args.distributionName)
+                tv_project.setValue(args.projectName)
 
-        // Observers
-        viewModel.distributedLD.observe(viewLifecycleOwner, Observer { isDistributed ->
-            sharedViewModel.forceOfflineReload(true)
-            val text= if (isDistributed) {
-                "Item was successfully distributed to ${args.beneficiaryName}"
-            } else {
-                "Distribution was successfully reverted."
+                if (it.distributed) {
+                    if (it.edited) {
+                        btn_action.text = context.getString(R.string.revert)
+                        btn_action.background = context.getDrawable(R.drawable.background_revert_btn)
+                    } else {
+                        btn_action.visible(false)
+                    }
+                } else {
+                    btn_action.text = context.getString(R.string.confirm_distribution)
+                    btn_action.background = context.getDrawable(R.drawable.background_confirm_btn)
+                }
+
+                if (args.isQRVoucher) {
+                    val booklet = (it.qrBooklets?.firstOrNull())
+                    tv_booklet.setStatus(it.distributed)
+                    tv_booklet.setValue(booklet)
+                    view.btn_action.isEnabled = !(booklet == null && args.isQRVoucher)
+
+                    if (booklet == null) {
+                        qr_scanner_holder.visibility = View.VISIBLE
+                        startScanner(view)
+                    } else {
+                        qr_scanner_holder.visibility = View.GONE
+                    }
+
+                    tv_booklet.setRescanActionListener {
+                        viewModel.editBeneficiary(it.distributed, args.beneficiaryId, null)
+                        view?.qr_scanner_holder?.visibility = View.VISIBLE
+                        startScanner(view)
+                    }
+
+                    if (!isCameraPermissionGranted()) {
+                        requestCameraPermission()
+                    }
+                }
+
+                btn_action.setOnClickListener { view ->
+                    viewModel.editBeneficiary(!it.distributed, args.beneficiaryId, it.qrBooklets?.firstOrNull())
+                    sharedViewModel.markPendingChanges()
+                    view.btn_action.isEnabled = false
+                }
             }
-            sharedViewModel.showSnackbar(text)
-            dismiss()
+
+            if (viewModel.distributed != null) {
+                sharedViewModel.forceOfflineReload(true)
+                val text = if (viewModel.distributed == true) {
+                    "Item was successfully distributed."
+                } else {
+                    "Distribution was successfully reverted."
+                }
+                sharedViewModel.showSnackbar(text)
+                dismiss()
+            }
         })
 
-        viewModel.qrBookletIdLD.observe(viewLifecycleOwner, Observer {
-            view.btn_action.isEnabled = !(it == null && args.isQRVoucher)
-            view?.tv_booklet?.setValue(it)
-        })
+        viewModel.loadBeneficiary(args.beneficiaryId)
 
         return view
     }
@@ -127,14 +138,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         val scannedId = rawResult.toString()
         qr_scanner_holder?.visibility = View.GONE
 
-        viewModel.setScannedBooklet(scannedId)
+        viewModel.editBeneficiary(viewModel.beneficiaryLD.value?.distributed ?: false, args.beneficiaryId, scannedId)
 
         Toast.makeText(context, rawResult.toString(), Toast.LENGTH_SHORT).show()
     }
 
     override fun onResume() {
         super.onResume()
-        qr_scanner.startCamera()
+        //qr_scanner.startCamera()
     }
 
     override fun onPause() {

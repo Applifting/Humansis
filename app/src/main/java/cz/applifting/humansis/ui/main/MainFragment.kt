@@ -69,6 +69,8 @@ class MainFragment : BaseFragment() {
         btn_logout.setOnClickListener {
             viewModel.logout()
         }
+
+        sharedViewModel.initPendingChanges()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

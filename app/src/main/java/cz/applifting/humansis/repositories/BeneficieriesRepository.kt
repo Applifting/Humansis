@@ -32,7 +32,8 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                         isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets),
                         parseVulnerabilities(it.beneficiary.vulnerabilities),
                         parseReliefs(it.reliefs),
-                        parseQRBooklets(it.booklets)
+                        parseQRBooklets(it.booklets),
+                        false
                     )
                 }
 
@@ -68,7 +69,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
             setDistributedRelief(beneficiaryLocal.reliefIDs)
         }
 
-        if (beneficiaryLocal.qrBooklets.isNotEmpty()) {
+        if (beneficiaryLocal.qrBooklets?.isNotEmpty() == true) {
             assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.distributionId)
         }
 
