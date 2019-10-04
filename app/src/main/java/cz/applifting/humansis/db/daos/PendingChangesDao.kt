@@ -17,6 +17,9 @@ interface PendingChangesDao {
     @Query("DELETE FROM pending_changes WHERE id = :pendingChangeId")
     suspend fun deleteById(pendingChangeId: Int)
 
+    @Query("DELETE FROM pending_changes WHERE beneficiaryId = :beneficiaryId")
+    suspend fun deleteByBeneficiaryId(beneficiaryId: Int)
+
     @Query("DELETE FROM pending_changes")
     suspend fun deleteAll()
 

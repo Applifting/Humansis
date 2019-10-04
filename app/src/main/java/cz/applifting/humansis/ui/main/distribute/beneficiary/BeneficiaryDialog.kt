@@ -88,6 +88,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                 if (args.isQRVoucher) {
                     val booklet = (it.qrBooklets?.firstOrNull())
+
+                    if (!it.distributed) {
+                        tv_booklet.setRescanActionListener {
+                            viewModel.editBeneficiary(false, args.beneficiaryId, null, true)
+                            view?.qr_scanner_holder?.visibility = View.VISIBLE
+                            startScanner(view)
+                        }
+                    }
+
                     tv_booklet.setStatus(it.distributed)
                     tv_booklet.setValue(booklet)
                     view.btn_action.isEnabled = !(booklet == null && args.isQRVoucher)
@@ -99,23 +108,20 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         qr_scanner_holder.visibility = View.GONE
                     }
 
-                    tv_booklet.setRescanActionListener {
-                        viewModel.editBeneficiary(it.distributed, args.beneficiaryId, null)
-                        view?.qr_scanner_holder?.visibility = View.VISIBLE
-                        startScanner(view)
-                    }
-
-                    if (!isCameraPermissionGranted()) {
+                    if (!isCameraPermissionGranted() && !it.distributed) {
                         requestCameraPermission()
                     }
+                } else {
+                    tv_booklet.visible(false)
                 }
 
                 btn_action.setOnClickListener { view ->
                     viewModel.editBeneficiary(!it.distributed, args.beneficiaryId, it.qrBooklets?.firstOrNull())
-                    sharedViewModel.markPendingChanges()
                     view.btn_action.isEnabled = false
                 }
             }
+
+            sharedViewModel.initPendingChanges()
 
             if (viewModel.distributed != null) {
                 sharedViewModel.forceOfflineReload(true)
@@ -138,7 +144,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         val scannedId = rawResult.toString()
         qr_scanner_holder?.visibility = View.GONE
 
-        viewModel.editBeneficiary(viewModel.beneficiaryLD.value?.distributed ?: false, args.beneficiaryId, scannedId)
+        viewModel.editBeneficiary(false, args.beneficiaryId, scannedId)
 
         Toast.makeText(context, rawResult.toString(), Toast.LENGTH_SHORT).show()
     }
@@ -150,13 +156,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     override fun onPause() {
         super.onPause()
-        qr_scanner.stopCamera()
+        if (args.isQRVoucher) {
+            qr_scanner.stopCamera()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (CAMERA_REQUEST_CODE == requestCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // permission granted, we can scan a qr code
+                viewModel.loadBeneficiary(args.beneficiaryId)
             } else {
                 // permission not granted, go to previous screen
                 findNavController().navigateUp()

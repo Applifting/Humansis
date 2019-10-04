@@ -26,21 +26,49 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
         }
     }
 
-    internal fun editBeneficiary(isDistributed: Boolean, beneficiaryId: Int, qrBooklet: String?) {
+    internal fun editBeneficiary(isDistributed: Boolean, beneficiaryId: Int, qrBooklet: String?, rescan: Boolean = false) {
         launch {
             val beneficiary = beneficieriesRepository.getBeneficiaryOffline(beneficiaryId)
 
-            val updatedBeneficiary = beneficiary.copy(distributed = isDistributed, qrBooklets = listOfNotNull(qrBooklet), edited = true)
-            beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-
-            if (isDistributed) {
-                pendingChangesRepository.createPendingChange(beneficiaryId)
+            val updatedBeneficiary = if (isDistributed) {
+                confirm(beneficiary, qrBooklet)
+            } else if (!isDistributed && qrBooklet != null) {
+                if (beneficiary.edited) {
+                    revert(beneficiary)
+                } else {
+                    scanQrBooklet(beneficiary, qrBooklet, rescan)
+                }
             } else {
-                // TODO delete pending change
+                if (rescan) {
+                    scanQrBooklet(beneficiary, qrBooklet, rescan)
+                } else {
+                    revert(beneficiary)
+                }
             }
 
-            distributed = isDistributed
             beneficiaryLD.value = updatedBeneficiary
         }
+    }
+
+    private suspend fun confirm(beneficiary: BeneficiaryLocal, qrBooklet: String?): BeneficiaryLocal {
+        val updatedBeneficiary = beneficiary.copy(distributed = true, edited = true, qrBooklets = if (qrBooklet == null) mutableListOf() else listOfNotNull(qrBooklet))
+        beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+        pendingChangesRepository.createPendingChange(beneficiary.id)
+        distributed = true
+        return updatedBeneficiary
+    }
+
+    private suspend fun revert(beneficiary: BeneficiaryLocal): BeneficiaryLocal {
+        val updatedBeneficiary = beneficiary.copy(distributed = false, edited = false, qrBooklets = mutableListOf())
+        beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+        pendingChangesRepository.deletePendingChangeByBeneficiaryId(beneficiary.id)
+        distributed = false
+        return updatedBeneficiary
+    }
+
+    private suspend fun scanQrBooklet(beneficiary: BeneficiaryLocal, qrBooklet: String?, rescan: Boolean): BeneficiaryLocal {
+        val updatedBeneficiary = beneficiary.copy(distributed = false, edited = !rescan, qrBooklets = if (rescan) mutableListOf() else listOfNotNull(qrBooklet))
+        beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+        return updatedBeneficiary
     }
 }

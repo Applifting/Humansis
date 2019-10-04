@@ -1,6 +1,7 @@
 package cz.applifting.humansis.ui
 
 import android.app.Application
+import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.di.AppComponent
 import cz.applifting.humansis.di.DaggerAppComponent
 
@@ -15,7 +16,7 @@ class App: Application() {
 
         appComponent = DaggerAppComponent.builder()
             .context(this)
-            .baseUrl("https://api-demo.humansis.org/api/wsse/")
+            .baseUrl(BuildConfig.API_BASE_URL)
             .build()
     }
 

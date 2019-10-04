@@ -51,8 +51,6 @@ class ProjectsFragment : BaseFragment() {
             }
         })
 
-        if (sharedViewModel.downloadingLD.value == false) {
-            viewModel.loadProjects()
-        }
+        sharedViewModel.tryFirstDownload()
     }
 }
