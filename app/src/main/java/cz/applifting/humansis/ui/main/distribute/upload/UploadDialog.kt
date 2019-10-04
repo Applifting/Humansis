@@ -58,7 +58,11 @@ class UploadDialog : DialogFragment() {
         })
 
         sharedViewModel.loadingLD.observe(viewLifecycleOwner, Observer {
-            btnUpload.visibility = if (it) { View.INVISIBLE } else { View.VISIBLE }
+            btnUpload.visibility = if (it) {
+                View.INVISIBLE
+            } else {
+                if (sharedViewModel.pendingChangesLD.value as Boolean && online) View.VISIBLE else View.GONE
+            }
             pb_upload.visible(it)
         })
 
