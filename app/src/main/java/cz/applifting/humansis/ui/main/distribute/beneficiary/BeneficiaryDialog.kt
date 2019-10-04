@@ -164,7 +164,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (CAMERA_REQUEST_CODE == requestCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // permission granted, we can scan a qr code
+                viewModel.loadBeneficiary(args.beneficiaryId)
             } else {
                 // permission not granted, go to previous screen
                 findNavController().navigateUp()
