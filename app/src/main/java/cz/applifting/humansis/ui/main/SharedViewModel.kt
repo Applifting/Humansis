@@ -38,9 +38,7 @@ class SharedViewModel @Inject constructor(
     val loadingLD = MediatorLiveData<Boolean>()
 
     init {
-        downloadingLD.value = false
         lastDownloadLD.value = sp.getDate(lastDownloadKey)
-
         loadingLD.addSource(downloadingLD) { loadingLD.value = it }
         loadingLD.addSource(uploadDialogLD) { loadingLD.value = it }
     }
@@ -70,6 +68,14 @@ class SharedViewModel @Inject constructor(
         val lastDownloadAt = Date()
         lastDownloadLD.value = lastDownloadAt
         sp.setDate(lastDownloadKey, lastDownloadAt)
+    }
+
+    fun tryFirstDownload() {
+        if (sp.getDate(lastDownloadKey) == null) {
+            tryDownloadingAll()
+        } else {
+            downloadingLD.value = false
+        }
     }
 
     fun uploadChanges() {
