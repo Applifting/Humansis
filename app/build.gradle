@@ -14,10 +14,30 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        release {
+            storeFile file('keystore/release.keystore')
+            keyAlias 'humansisReleaseKey'
+            storePassword "humansis"
+            keyPassword "humansis"
+        }
+        debug {
+            storeFile file('keystore/debug.keystore')
+            keyAlias 'humansisDebugKey'
+            storePassword 'humansis'
+            keyPassword 'humansis'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -28,11 +48,30 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    flavorDimensions "environment"
+
+    productFlavors {
+
+        prod {
+            dimension "environment"
+            applicationIdSuffix ".prod"
+            buildConfigField "String", "API_BASE_URL", "\"https://api.bmstaging.info/api/wsse/\""
+            resValue "string", "app_name", "Humansis"
+        }
+
+        demo {
+            dimension "environment"
+            applicationIdSuffix ".demo"
+            buildConfigField "String", "API_BASE_URL", "\"https://api-demo.humansis.org/api/wsse/\""
+            resValue "string", "app_name", "Humansis DEMO"
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.core:core-ktx:1.0.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
