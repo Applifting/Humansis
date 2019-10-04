@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.BaseFragment
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -54,8 +55,9 @@ class LoginFragment : BaseFragment() {
         })
 
 
-        et_username.setText("demo@humansis.org")
-        et_password.setText("Tester123")
-
+        if (BuildConfig.FLAVOR.equals("demo")) {
+            et_username.setText("demo@humansis.org")
+            et_password.setText("Tester123")
+        }
     }
 }
