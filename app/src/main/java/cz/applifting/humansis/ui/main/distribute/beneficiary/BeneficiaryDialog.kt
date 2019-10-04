@@ -105,17 +105,20 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         startScanner(view)
                     }
 
-                    if (!isCameraPermissionGranted()) {
+                    if (!isCameraPermissionGranted() && !it.distributed) {
                         requestCameraPermission()
                     }
+                } else {
+                    tv_booklet.visible(false)
                 }
 
                 btn_action.setOnClickListener { view ->
                     viewModel.editBeneficiary(!it.distributed, args.beneficiaryId, it.qrBooklets?.firstOrNull())
-                    sharedViewModel.markPendingChanges()
                     view.btn_action.isEnabled = false
                 }
             }
+
+            sharedViewModel.initPendingChanges()
 
             if (viewModel.distributed != null) {
                 sharedViewModel.forceOfflineReload(true)
@@ -150,7 +153,9 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     override fun onPause() {
         super.onPause()
-        qr_scanner.stopCamera()
+        if (args.isQRVoucher) {
+            qr_scanner.stopCamera()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

@@ -29,6 +29,10 @@ class PendingChangesRepository @Inject constructor(val dbProvider: DbProvider) {
         return db.pendingChangesDao().deleteById(pendingChangeId)
     }
 
+    suspend fun deletePendingChangeByBeneficiaryId(beneficiaryId: Int) {
+        return db.pendingChangesDao().deleteByBeneficiaryId(beneficiaryId)
+    }
+
     suspend fun deleteAllPendingChanges() {
         return db.pendingChangesDao().deleteAll()
     }

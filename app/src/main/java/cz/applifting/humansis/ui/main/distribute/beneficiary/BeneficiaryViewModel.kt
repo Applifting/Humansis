@@ -36,7 +36,7 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
             if (isDistributed) {
                 pendingChangesRepository.createPendingChange(beneficiaryId)
             } else {
-                // TODO delete pending change
+                pendingChangesRepository.deletePendingChangeByBeneficiaryId(beneficiaryId)
             }
 
             distributed = isDistributed
