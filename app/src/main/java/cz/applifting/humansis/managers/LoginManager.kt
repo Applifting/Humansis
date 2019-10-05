@@ -9,6 +9,7 @@ import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.misc.*
 import cz.applifting.humansis.model.api.LoginReqRes
 import cz.applifting.humansis.model.db.User
+import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -60,6 +61,7 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
             distributionsDao().deleteAll()
             projectsDao().deleteAll()
             beneficiariesDao().deleteAll()
+            sp.edit().putString(LAST_DOWNLOAD_KEY, null).suspendCommit()
         }
     }
 

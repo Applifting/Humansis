@@ -51,5 +51,6 @@
     <string name="current_data">Current data</string>
     <string name="upload_changes">Upload changes</string>
     <string name="revert">Revert</string>
+    <string name="logout_alert_text">Are you sure you want to log out?</string>
 
 </resources>

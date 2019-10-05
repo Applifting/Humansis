@@ -2,6 +2,7 @@ package cz.applifting.humansis.ui.main
 
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
@@ -18,6 +19,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
 import kotlinx.android.synthetic.main.nav_header_main.*
+
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -66,7 +68,14 @@ class MainFragment : BaseFragment() {
         })
 
         btn_logout.setOnClickListener {
-            viewModel.logout()
+            AlertDialog.Builder(context!!)
+                .setMessage(getString(R.string.logout_alert_text))
+                .setPositiveButton(android.R.string.yes) { _, _ ->
+                    viewModel.logout()
+                }
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
         }
 
         sharedViewModel.initPendingChanges()
@@ -95,7 +104,7 @@ class MainFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             action_open_status_dialog -> {
-                mainNavController.navigate(R.id.uploadDialog)
+                mainNavController.navigate(cz.applifting.humansis.R.id.uploadDialog)
                 return true
             }
         }

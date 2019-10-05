@@ -18,6 +18,8 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 10, September, 2019
  */
+const val LAST_DOWNLOAD_KEY = "lastDownloadKey"
+
 class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val distributionsRepository: DistributionsRepository,
@@ -25,8 +27,6 @@ class SharedViewModel @Inject constructor(
     private val pendingChangesRepository: PendingChangesRepository,
     private val sp: SharedPreferences
 ) : BaseViewModel() {
-
-    private val lastDownloadKey = "lastDownloadKey"
 
     val downloadingLD = MutableLiveData<Boolean>()
     val uploadDialogLD = MutableLiveData<Boolean>()
@@ -38,7 +38,7 @@ class SharedViewModel @Inject constructor(
     val loadingLD = MediatorLiveData<Boolean>()
 
     init {
-        lastDownloadLD.value = sp.getDate(lastDownloadKey)
+        lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
         loadingLD.addSource(downloadingLD) { loadingLD.value = it }
         loadingLD.addSource(uploadDialogLD) { loadingLD.value = it }
     }
@@ -59,7 +59,7 @@ class SharedViewModel @Inject constructor(
 
                 val lastDownloadAt = Date()
                 lastDownloadLD.value = lastDownloadAt
-                sp.setDate(lastDownloadKey, lastDownloadAt)
+                sp.setDate(LAST_DOWNLOAD_KEY, lastDownloadAt)
 
             } catch (e: Throwable) {
                 snackbarLD.value = "Error: ${e.message}"
@@ -71,7 +71,7 @@ class SharedViewModel @Inject constructor(
     }
 
     fun tryFirstDownload() {
-        if (sp.getDate(lastDownloadKey) == null) {
+        if (sp.getDate(LAST_DOWNLOAD_KEY) == null) {
             tryDownloadingAll()
         } else {
             downloadingLD.value = false
