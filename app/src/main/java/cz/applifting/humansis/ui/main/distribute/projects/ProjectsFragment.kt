@@ -50,7 +50,5 @@ class ProjectsFragment : BaseFragment() {
                 viewModel.loadProjects()
             }
         })
-
-        sharedViewModel.tryFirstDownload()
     }
 }

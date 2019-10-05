@@ -56,14 +56,14 @@ class DistributionsFragment : BaseFragment() {
         sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
             if (it) {
                 viewModel.showRefreshing()
-            } else if (viewModel.distributionsLD.value.isNullOrEmpty()) {
-                launch {
-                    // Load after animation finishes to avoid drop in frame rate
-                    delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
-                    viewModel.loadDistributions(args.projectId)
-                }
             }
         })
+
+        launch {
+            // Load after animation finishes to avoid drop in frame rate
+            delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
+            viewModel.loadDistributions(args.projectId)
+        }
     }
 
 

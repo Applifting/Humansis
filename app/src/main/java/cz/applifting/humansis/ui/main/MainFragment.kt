@@ -1,6 +1,7 @@
 package cz.applifting.humansis.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -70,7 +71,9 @@ class MainFragment : BaseFragment() {
             viewModel.logout()
         }
 
+        Log.d("asfd", "gere")
         sharedViewModel.initPendingChanges()
+        sharedViewModel.tryFirstDownload()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -56,18 +56,18 @@ class SharedViewModel @Inject constructor(
                     .map { it.await() }
 
                 pendingChangesLD.value = false
-                sp.setDate(lastDownloadKey, Date())
+
+                val lastDownloadAt = Date()
+                lastDownloadLD.value = lastDownloadAt
+                sp.setDate(lastDownloadKey, lastDownloadAt)
 
             } catch (e: Throwable) {
-
+                snackbarLD.value = "Error: ${e.message}"
             } finally {
                 downloadingLD.value = false
+                forceOfflineReloadLD.value = true
             }
         }
-
-        val lastDownloadAt = Date()
-        lastDownloadLD.value = lastDownloadAt
-        sp.setDate(lastDownloadKey, lastDownloadAt)
     }
 
     fun tryFirstDownload() {
@@ -88,10 +88,15 @@ class SharedViewModel @Inject constructor(
             uploadDialogLD.value = true
             val pendingChanges = pendingChangesRepository.getPendingChanges()
             pendingChanges?.forEach { change ->
-                beneficieriesRepository.distribute(change.beneficiaryId)
-                change.id?.let {
-                    pendingChangesRepository.deletePendingChange(it)
+                try {
+                    beneficieriesRepository.distribute(change.beneficiaryId)
+                    change.id?.let {
+                        pendingChangesRepository.deletePendingChange(it)
+                    }
+                } catch (e: Throwable) {
+                    snackbarLD.value = "Error: ${e.message}"
                 }
+
             }
 
             uploadDialogLD.value = false

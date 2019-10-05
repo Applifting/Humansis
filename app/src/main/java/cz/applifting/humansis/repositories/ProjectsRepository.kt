@@ -6,7 +6,6 @@ import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.db.ProjectLocal
-import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,18 +18,15 @@ class ProjectsRepository @Inject constructor(val service: HumansisService, val d
     val db: HumansisDB by lazy { dbProvider.get() }
 
     suspend fun getProjectsOnline(): List<ProjectLocal>? {
-        return try {
-            val result = service
-                .getProjects()
-                .map { ProjectLocal(it.id, it.name ?: context.getString(R.string.unknown), it.numberOfHouseholds ?: -1) }
-            
-            db.projectsDao().deleteAll()
-            db.projectsDao().insertAll(result)
+        val result = service
+            .getProjects()
+            .map { ProjectLocal(it.id, it.name ?: context.getString(R.string.unknown), it.numberOfHouseholds ?: -1) }
 
-            result
-        } catch (e: HttpException) {
-            null
-        }
+        db.projectsDao().deleteAll()
+        db.projectsDao().insertAll(result)
+
+        return result
+
     }
 
     suspend fun getProjectsOffline(): List<ProjectLocal> {

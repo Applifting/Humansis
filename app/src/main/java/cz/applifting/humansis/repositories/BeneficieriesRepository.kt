@@ -6,7 +6,6 @@ import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.api.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,31 +18,27 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     val db: HumansisDB by lazy { dbProvider.get() }
 
     suspend fun getBeneficieriesOnline(distributionId: Int): List<BeneficiaryLocal>? {
-        return try {
-            val result = service
-                .getDistributionBeneficiaries(distributionId)
-                .map {
-                    BeneficiaryLocal(
-                        it.id,
-                        it.beneficiary.id,
-                        it.beneficiary.givenName,
-                        it.beneficiary.familyName,
-                        distributionId,
-                        isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets),
-                        parseVulnerabilities(it.beneficiary.vulnerabilities),
-                        parseReliefs(it.reliefs),
-                        parseQRBooklets(it.booklets),
-                        false
-                    )
-                }
+        val result = service
+            .getDistributionBeneficiaries(distributionId)
+            .map {
+                BeneficiaryLocal(
+                    it.id,
+                    it.beneficiary.id,
+                    it.beneficiary.givenName,
+                    it.beneficiary.familyName,
+                    distributionId,
+                    isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets),
+                    parseVulnerabilities(it.beneficiary.vulnerabilities),
+                    parseReliefs(it.reliefs),
+                    parseQRBooklets(it.booklets),
+                    false
+                )
+            }
 
-            db.beneficiariesDao().deleteByDistribution(distributionId)
-            db.beneficiariesDao().insertAll(result)
+        db.beneficiariesDao().deleteByDistribution(distributionId)
+        db.beneficiariesDao().insertAll(result)
 
-            result
-        } catch (e: Throwable) {
-            null
-        }
+        return result
     }
 
     suspend fun getBeneficieriesOffline(distributionId: Int): List<BeneficiaryLocal> {
@@ -76,21 +71,11 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     }
 
     private suspend fun setDistributedRelief(ids: List<Int>) {
-        try {
-            val result = service.setDistributedRelief(DistributedReliefRequest(ids))
-            result
-        } catch (e: HttpException) {
-            null
-        }
+        service.setDistributedRelief(DistributedReliefRequest(ids))
     }
 
     private suspend fun assignBooklet(code: String, beneficiaryId: Int, distributionId: Int) {
-        try {
-            val result = service.assignBooklet(beneficiaryId, distributionId, AssingBookletRequest(code))
-            result
-        } catch (e: HttpException) {
-            null
-        }
+        service.assignBooklet(beneficiaryId, distributionId, AssingBookletRequest(code))
     }
 
     private fun parseVulnerabilities(vulnerability: List<Vulnerability>): List<String> {
