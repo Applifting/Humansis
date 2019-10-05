@@ -56,7 +56,7 @@ class UploadDialog : DialogFragment() {
             tvCurrentDataDate.text = it.format()
         })
 
-        sharedViewModel.loadingLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
             btnSync.visibility = if (it) {
                 View.INVISIBLE
             } else {
@@ -66,7 +66,7 @@ class UploadDialog : DialogFragment() {
         })
 
         btnSync.setOnClickListener {
-            sharedViewModel.uploadChanges()
+            sharedViewModel.synchronize()
         }
 
         ivCloseDialog.setOnClickListener { dismiss() }

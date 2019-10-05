@@ -60,9 +60,9 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         (activity?.application as App).appComponent.inject(this)
         sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
 
-
         view.apply {
             btn_close.setOnClickListener { dismiss() }
+            tv_booklet.visible(args.isQRVoucher)
         }
 
         viewModel.beneficiaryLD.observe(viewLifecycleOwner, Observer {
@@ -111,8 +111,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     if (!isCameraPermissionGranted() && !it.distributed) {
                         requestCameraPermission()
                     }
-                } else {
-                    tv_booklet.visible(false)
                 }
 
                 btn_action.setOnClickListener { view ->

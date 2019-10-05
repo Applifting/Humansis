@@ -52,5 +52,6 @@
     <string name="sync">Upload &amp; Download</string>
     <string name="revert">Revert</string>
     <string name="logout_alert_text">Are you sure you want to log out?</string>
+    <string name="error_message">There was an error during sync.</string>
 
 </resources>

@@ -67,6 +67,10 @@ class MainFragment : BaseFragment() {
             }
         })
 
+        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
+
+        })
+
         btn_logout.setOnClickListener {
             AlertDialog.Builder(context!!)
                 .setMessage(getString(R.string.logout_alert_text))

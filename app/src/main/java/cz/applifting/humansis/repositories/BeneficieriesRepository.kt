@@ -17,9 +17,10 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
 
     val db: HumansisDB by lazy { dbProvider.get() }
 
-    suspend fun getBeneficieriesOnline(distributionId: Int): List<BeneficiaryLocal>? {
+    suspend fun getBeneficieriesOnline(distributionId: Int, skip: List<Int> = listOf()): List<BeneficiaryLocal>? {
         val result = service
             .getDistributionBeneficiaries(distributionId)
+            .filter { !skip.contains(it.id) }
             .map {
                 BeneficiaryLocal(
                     it.id,
@@ -35,7 +36,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                 )
             }
 
-        db.beneficiariesDao().deleteByDistribution(distributionId)
+        db.beneficiariesDao().deleteByDistribution(distributionId, skip)
         db.beneficiariesDao().insertAll(result)
 
         return result

@@ -53,17 +53,17 @@ class DistributionsFragment : BaseFragment() {
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_distributions::setState))
 
-        sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                viewModel.showRefreshing()
+        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
+            when {
+                it -> viewModel.showRefreshing()
+
+                else -> launch {
+                    // Load after animation finishes to avoid drop in frame rate
+                    delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
+                    viewModel.loadDistributions(args.projectId)
+                }
             }
         })
-
-        launch {
-            // Load after animation finishes to avoid drop in frame rate
-            delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
-            viewModel.loadDistributions(args.projectId)
-        }
     }
 
 

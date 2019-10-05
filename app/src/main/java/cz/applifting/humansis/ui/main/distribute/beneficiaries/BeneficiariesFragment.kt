@@ -75,17 +75,15 @@ class BeneficiariesFragment : BaseFragment() {
             }
         })
 
-        sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
             when {
                 it -> viewModel.showRefreshing()
 
-                viewModel.searchResultsLD.value.isNullOrEmpty() -> launch {
+                else -> launch {
                     // Load after animation finishes to avoid drop in frame rate
                     delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
                     viewModel.loadBeneficiaries(args.distributionId)
                 }
-
-                else -> viewModel.finishLoading(viewModel.searchResultsLD.value)
             }
         })
     }

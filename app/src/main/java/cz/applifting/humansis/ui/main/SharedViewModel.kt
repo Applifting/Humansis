@@ -1,16 +1,23 @@
 package cz.applifting.humansis.ui.main
 
+import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getDate
-import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.BaseViewModel
-import kotlinx.coroutines.async
+import cz.applifting.humansis.workers.SYNC_WORKER
+import cz.applifting.humansis.workers.SyncWorker
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -24,79 +31,61 @@ class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val distributionsRepository: DistributionsRepository,
     private val beneficieriesRepository: BeneficieriesRepository,
-    private val sp: SharedPreferences
+    private val sp: SharedPreferences,
+    context: Context
 ) : BaseViewModel() {
 
-    val downloadingLD = MutableLiveData<Boolean>()
-    val uploadDialogLD = MutableLiveData<Boolean>()
-    val snackbarLD = MutableLiveData<String>()
+    val snackbarLD = MediatorLiveData<String>()
     val forceOfflineReloadLD = MutableLiveData<Boolean>()
     val lastDownloadLD = MutableLiveData<Date>()
-    val pendingChangesLD = MutableLiveData<Boolean>()
+    val pendingChangesLD = MediatorLiveData<Boolean>()
 
-    val loadingLD = MediatorLiveData<Boolean>()
+    val syncWorkerIsLoadingLD: MediatorLiveData<Boolean> = MediatorLiveData()
+    private val workInfosLD: LiveData<List<WorkInfo>>
+
+
+    private val workManager = WorkManager.getInstance(context)
 
     init {
         lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
-        loadingLD.addSource(downloadingLD) { loadingLD.value = it }
-        loadingLD.addSource(uploadDialogLD) { loadingLD.value = it }
+        workInfosLD = workManager.getWorkInfosForUniqueWorkLiveData(SYNC_WORKER)
+        syncWorkerIsLoadingLD.addSource(
+            workInfosLD
+        ) {
+            if (it.isNullOrEmpty()) {
+                return@addSource
+            }
+            syncWorkerIsLoadingLD.value = !it.first().state.isFinished
+        }
+
+        // TODO check if this is a correct usage of mediator liveData
+        pendingChangesLD.addSource(workInfosLD) { refreshPendingChanges() }
+        
+        snackbarLD.addSource(workInfosLD) {
+            if (it.isNullOrEmpty()) {
+                return@addSource
+            }
+
+            if (it.first().state == WorkInfo.State.FAILED) {
+                snackbarLD.value = context.getString(R.string.error_message)
+            }
+        }
     }
 
-    fun tryDownloadingAll() {
+    fun synchronize() {
         launch {
-            try {
-                downloadingLD.value = true
-                projectsRepository
-                    .getProjectsOnline()
-                    .orEmpty()
-                    .map { async { distributionsRepository.getDistributionsOnline(it.id) } }
-                    .flatMap { it.await() ?: listOf() }
-                    .map { async { beneficieriesRepository.getBeneficieriesOnline(it.id) } }
-                    .map { it.await() }
+            workManager.beginUniqueWork(SYNC_WORKER, ExistingWorkPolicy.KEEP, OneTimeWorkRequest.from(SyncWorker::class.java)).enqueue()
+            forceOfflineReloadLD.value = true
 
-                pendingChangesLD.value = false
-
-                val lastDownloadAt = Date()
-                lastDownloadLD.value = lastDownloadAt
-                sp.setDate(LAST_DOWNLOAD_KEY, lastDownloadAt)
-
-            } catch (e: Throwable) {
-                snackbarLD.value = "Error: ${e.message}"
-            } finally {
-                downloadingLD.value = false
-                forceOfflineReloadLD.value = true
-            }
         }
     }
 
     fun tryFirstDownload() {
         if (sp.getDate(LAST_DOWNLOAD_KEY) == null) {
-            tryDownloadingAll()
-        } else {
-            downloadingLD.value = false
+            synchronize()
         }
     }
 
-    fun uploadChanges() {
-        launch {
-            uploadDialogLD.value = true
-
-            getAllBeneficiaries()
-                .forEach {
-                    if (it.edited && it.distributed) {
-                        try {
-                            beneficieriesRepository.distribute(it.id)
-                        } catch (e: Throwable) {
-                            snackbarLD.value = "Error: ${e.message}"
-                        }
-
-                    }
-                }
-
-            uploadDialogLD.value = false
-            tryDownloadingAll()
-        }
-    }
 
     fun showSnackbar(text: String?) {
         snackbarLD.value = text
@@ -120,7 +109,7 @@ class SharedViewModel @Inject constructor(
     }
 
     private suspend fun getAllBeneficiaries(): List<BeneficiaryLocal> {
-       return projectsRepository
+        return projectsRepository
             .getProjectsOffline()
             .flatMap { distributionsRepository.getDistributionsOffline(it.id) }
             .flatMap { beneficieriesRepository.getBeneficieriesOffline(it.id) }

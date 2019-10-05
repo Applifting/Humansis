@@ -42,7 +42,7 @@ class ProjectsFragment : BaseFragment() {
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_projects::setState))
 
-        sharedViewModel.downloadingLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
             if (it) {
                 viewModel.showRefreshing()
             } else {

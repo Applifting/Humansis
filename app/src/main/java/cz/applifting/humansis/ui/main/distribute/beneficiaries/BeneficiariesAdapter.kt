@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
+import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
 
@@ -60,6 +61,7 @@ class BeneficiariesAdapter(
         val tvName = view.tv_name
         val ivDistributionState = view.iv_distribution_state
         val llVulnerabilitiesHolder = view.ll_vulnerabilities_holder
+        val ivOffline = view.iv_offline
         val context = view.context
 
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
@@ -82,6 +84,8 @@ class BeneficiariesAdapter(
                     llVulnerabilitiesHolder.addView(vulnerabilityImage)
                 }
             }
+
+            ivOffline.visible(beneficiaryLocal.edited)
 
             view.setOnClickListener { onItemClick(beneficiaryLocal) }
         }
