@@ -17,6 +17,13 @@ class MainViewModel @Inject constructor(
 
     val userLD = MutableLiveData<User>()
 
+    init {
+        launch {
+            val user = loginManager.retrieveUser()
+            userLD.value = user
+        }
+    }
+
     fun logout() {
         launch(Dispatchers.IO) {
             loginManager.logout()
