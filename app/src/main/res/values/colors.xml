@@ -14,7 +14,7 @@
 
     <color name="error">#FF0F0F</color>
 
-    <color name="positiveColor">#75aff1</color>
+    <color name="light_blue">#75aff1</color>
     <color name="negativeColor">#d46d35</color>
     <color name="white">#FFFFFF</color>
 

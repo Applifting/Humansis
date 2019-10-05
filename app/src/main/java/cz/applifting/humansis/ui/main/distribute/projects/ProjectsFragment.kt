@@ -35,7 +35,6 @@ class ProjectsFragment : BaseFragment() {
         }
 
         lc_projects.init(adapter)
-        lc_projects.setOnRefreshListener { sharedViewModel.tryDownloadingAll() }
 
         viewModel.projectsLD.observe(viewLifecycleOwner, Observer {
             adapter.updateProjects(it)

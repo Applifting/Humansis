@@ -40,7 +40,7 @@ class UploadDialog : DialogFragment() {
         val tvCurrentDataDate = rootView.findViewById<TextView>(R.id.tv_current_data_date)
         val ivConnectionStatus = rootView.findViewById<ImageView>(R.id.iv_connection_status)
         val tvConnectionStatus = rootView.findViewById<TextView>(R.id.tv_connectoin_status)
-        val btnUpload = rootView.findViewById<Button>(R.id.btn_upload)
+        val btnSync = rootView.findViewById<Button>(R.id.btn_sync)
 
         val online = context?.isNetworkConnected() ?: false
 
@@ -49,8 +49,7 @@ class UploadDialog : DialogFragment() {
 
         sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
             tvChanges.text = getString(if (it) R.string.pending_local_changes else R.string.no_pending_changes)
-            tvChanges.setTextColor(ContextCompat.getColor(context!!, if (it) R.color.negativeColor else R.color.positiveColor))
-            btnUpload.visible(it && online)
+            tvChanges.setTextColor(ContextCompat.getColor(context!!, if (it) R.color.negativeColor else R.color.light_blue))
         })
 
         sharedViewModel.lastDownloadLD.observe(viewLifecycleOwner, Observer {
@@ -58,15 +57,15 @@ class UploadDialog : DialogFragment() {
         })
 
         sharedViewModel.loadingLD.observe(viewLifecycleOwner, Observer {
-            btnUpload.visibility = if (it) {
+            btnSync.visibility = if (it) {
                 View.INVISIBLE
             } else {
-                if (sharedViewModel.pendingChangesLD.value as Boolean && online) View.VISIBLE else View.GONE
+                View.VISIBLE
             }
             pb_upload.visible(it)
         })
 
-        btnUpload.setOnClickListener {
+        btnSync.setOnClickListener {
             sharedViewModel.uploadChanges()
         }
 

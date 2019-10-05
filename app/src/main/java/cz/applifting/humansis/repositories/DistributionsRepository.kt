@@ -22,6 +22,7 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
     suspend fun getDistributionsOnline(projectId: Int): List<DistributionLocal>? {
         val result = service
             .getDistributions(projectId)
+            .filter { it.validated && !it.archived && !it.completed }
             .map {
                 DistributionLocal(
                     it.id,

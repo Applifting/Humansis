@@ -70,7 +70,7 @@
                 tools:text="20-09-2019 13:30" />
 
         <Button
-                android:id="@+id/btn_upload"
+                android:id="@+id/btn_sync"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="32dp"
@@ -80,7 +80,7 @@
                 android:background="@drawable/background_upload_btn"
                 android:paddingStart="32dp"
                 android:paddingEnd="32dp"
-                android:text="@string/upload_changes"
+                android:text="@string/sync"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -95,7 +95,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/btn_upload" />
+                app:layout_constraintTop_toTopOf="@+id/btn_sync" />
 
         <TextView
                 android:id="@+id/tv_connectoin_status"

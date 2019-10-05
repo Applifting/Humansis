@@ -49,7 +49,7 @@
     <string name="pending_local_changes">Pending local changes</string>
     <string name="no_pending_changes">No pending changes</string>
     <string name="current_data">Current data</string>
-    <string name="upload_changes">Upload changes</string>
+    <string name="sync">Upload &amp; Download</string>
     <string name="revert">Revert</string>
     <string name="logout_alert_text">Are you sure you want to log out?</string>
 
