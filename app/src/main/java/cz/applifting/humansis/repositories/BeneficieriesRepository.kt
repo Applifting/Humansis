@@ -67,7 +67,6 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         if (beneficiaryLocal.qrBooklets?.isNotEmpty() == true) {
             assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.distributionId)
         }
-
     }
 
     private suspend fun setDistributedRelief(ids: List<Int>) {

@@ -5,9 +5,9 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.setDate
+import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
-import cz.applifting.humansis.repositories.PendingChangesRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.async
@@ -24,7 +24,6 @@ class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val distributionsRepository: DistributionsRepository,
     private val beneficieriesRepository: BeneficieriesRepository,
-    private val pendingChangesRepository: PendingChangesRepository,
     private val sp: SharedPreferences
 ) : BaseViewModel() {
 
@@ -79,25 +78,20 @@ class SharedViewModel @Inject constructor(
     }
 
     fun uploadChanges() {
-        /*
-        TODO We should reconsider the way changes are saved. Approach with a separate table/repository allows us to store history and might enable us to use some kind
-        back button functionality. This is in my opinion a little over-engineered and we need to store 'edited' flag in beneficiary table anyway.
-        */
-
         launch {
             uploadDialogLD.value = true
-            val pendingChanges = pendingChangesRepository.getPendingChanges()
-            pendingChanges?.forEach { change ->
-                try {
-                    beneficieriesRepository.distribute(change.beneficiaryId)
-                    change.id?.let {
-                        pendingChangesRepository.deletePendingChange(it)
-                    }
-                } catch (e: Throwable) {
-                    snackbarLD.value = "Error: ${e.message}"
-                }
 
-            }
+            getAllBeneficiaries()
+                .forEach {
+                    if (it.edited && it.distributed) {
+                        try {
+                            beneficieriesRepository.distribute(it.id)
+                        } catch (e: Throwable) {
+                            snackbarLD.value = "Error: ${e.message}"
+                        }
+
+                    }
+                }
 
             uploadDialogLD.value = false
             tryDownloadingAll()
@@ -112,13 +106,23 @@ class SharedViewModel @Inject constructor(
         forceOfflineReloadLD.value = force
     }
 
-    fun markPendingChanges() {
-        pendingChangesLD.value = true
+    fun refreshPendingChanges() {
+        launch {
+            for (beneficiary in getAllBeneficiaries()) {
+                if (beneficiary.edited) {
+                    pendingChangesLD.value = true
+                    return@launch
+                }
+            }
+
+            pendingChangesLD.value = false
+        }
     }
 
-    fun initPendingChanges() {
-        launch {
-            pendingChangesLD.value = pendingChangesRepository.hasPendingChanges()
-        }
+    private suspend fun getAllBeneficiaries(): List<BeneficiaryLocal> {
+       return projectsRepository
+            .getProjectsOffline()
+            .flatMap { distributionsRepository.getDistributionsOffline(it.id) }
+            .flatMap { beneficieriesRepository.getBeneficieriesOffline(it.id) }
     }
 }

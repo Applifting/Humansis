@@ -3,7 +3,6 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
-import cz.applifting.humansis.repositories.PendingChangesRepository
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -13,7 +12,7 @@ import javax.inject.Inject
  * @since 9. 9. 2019
  */
 
-class BeneficiaryViewModel @Inject constructor(private val beneficieriesRepository: BeneficieriesRepository, private val pendingChangesRepository: PendingChangesRepository) :
+class BeneficiaryViewModel @Inject constructor(private val beneficieriesRepository: BeneficieriesRepository) :
     BaseViewModel() {
 
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
@@ -53,7 +52,6 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
     private suspend fun confirm(beneficiary: BeneficiaryLocal, qrBooklet: String?): BeneficiaryLocal {
         val updatedBeneficiary = beneficiary.copy(distributed = true, edited = true, qrBooklets = if (qrBooklet == null) mutableListOf() else listOfNotNull(qrBooklet))
         beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-        pendingChangesRepository.createPendingChange(beneficiary.id)
         distributed = true
         return updatedBeneficiary
     }
@@ -61,7 +59,6 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
     private suspend fun revert(beneficiary: BeneficiaryLocal): BeneficiaryLocal {
         val updatedBeneficiary = beneficiary.copy(distributed = false, edited = false, qrBooklets = mutableListOf())
         beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-        pendingChangesRepository.deletePendingChangeByBeneficiaryId(beneficiary.id)
         distributed = false
         return updatedBeneficiary
     }

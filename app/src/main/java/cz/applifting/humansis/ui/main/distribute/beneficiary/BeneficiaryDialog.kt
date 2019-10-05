@@ -121,7 +121,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 }
             }
 
-            sharedViewModel.initPendingChanges()
+            sharedViewModel.refreshPendingChanges()
 
             if (viewModel.distributed != null) {
                 sharedViewModel.forceOfflineReload(true)
