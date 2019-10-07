@@ -10,6 +10,7 @@ import cz.applifting.humansis.model.api.LoginReqRes
 import cz.applifting.humansis.model.db.User
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import javax.inject.Inject
 
 
@@ -57,6 +58,9 @@ class LoginViewModel @Inject constructor(
                 loginLD.value = user
             } catch (e: HumansisError) {
                 viewStateLD.value = LoginViewState(errorMessage = e.message)
+            } catch (e: HttpException) {
+                val message = e.response()?.errorBody()?.string()
+                viewStateLD.value = LoginViewState(errorMessage = message)
             }
         }
     }
