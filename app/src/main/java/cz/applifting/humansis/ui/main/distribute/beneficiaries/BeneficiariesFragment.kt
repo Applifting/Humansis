@@ -6,13 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.hideSoftKeyboard
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
+import kotlinx.android.synthetic.main.component_search_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -84,6 +88,13 @@ class BeneficiariesFragment : BaseFragment() {
                     delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
                     viewModel.loadBeneficiaries(args.distributionId)
                 }
+            }
+        })
+
+        findNavController().addOnDestinationChangedListener(object : NavController.OnDestinationChangedListener {
+            override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
+                et_search.hideSoftKeyboard()
+                findNavController().removeOnDestinationChangedListener(this)
             }
         })
     }
