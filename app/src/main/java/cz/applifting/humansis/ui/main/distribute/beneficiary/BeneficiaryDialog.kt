@@ -133,8 +133,6 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
         })
 
-        viewModel.loadBeneficiary(args.beneficiaryId)
-
         return view
     }
 
@@ -149,7 +147,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     override fun onResume() {
         super.onResume()
-        //qr_scanner.startCamera()
+        viewModel.loadBeneficiary(args.beneficiaryId)
     }
 
     override fun onPause() {
