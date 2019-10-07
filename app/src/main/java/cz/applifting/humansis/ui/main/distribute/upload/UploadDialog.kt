@@ -43,8 +43,9 @@ class UploadDialog : DialogFragment() {
         val btnSync = rootView.findViewById<Button>(R.id.btn_sync)
 
         val online = context?.isNetworkConnected() ?: false
+        btnSync.isEnabled = online
 
-        ivConnectionStatus.simpleDrawable(if (online) R.drawable.ic_cloud_queue_black_24dp else R.drawable.ic_offline)
+        ivConnectionStatus.simpleDrawable(if (online) R.drawable.ic_online else R.drawable.ic_offline)
         tvConnectionStatus.text = getString(if (online) R.string.online else R.string.offline)
 
         sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {

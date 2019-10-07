@@ -6,9 +6,15 @@
             <corners android:radius="25dp"/>
         </shape>
     </item>
-    <item>
+    <item android:state_enabled="true">
         <shape>
             <solid android:color="@color/colorAccent"/>
+            <corners android:radius="25dp"/>
+        </shape>
+    </item>
+    <item android:state_enabled="false">
+        <shape>
+            <solid android:color="@color/lightGrey"/>
             <corners android:radius="25dp"/>
         </shape>
     </item>

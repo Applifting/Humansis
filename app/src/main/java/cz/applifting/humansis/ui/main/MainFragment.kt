@@ -1,7 +1,13 @@
 package cz.applifting.humansis.ui.main
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -12,6 +18,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
+import cz.applifting.humansis.extensions.isNetworkConnected
+import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
@@ -91,6 +99,17 @@ class MainFragment : BaseFragment() {
         setHasOptionsMenu(true)
     }
 
+    override fun onResume() {
+        super.onResume()
+        val networkFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        activity?.registerReceiver(networkReceiver, networkFilter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        activity?.unregisterReceiver(networkReceiver)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_status, menu)
         // A fix for action with custom layout
@@ -98,8 +117,11 @@ class MainFragment : BaseFragment() {
         val item = menu.findItem(action_open_status_dialog)
         item.actionView.setOnClickListener { onOptionsItemSelected(item) }
 
+        val ivStatus = item.actionView.findViewById<ImageView>(R.id.iv_status)
+        ivStatus.simpleDrawable(if (context?.isNetworkConnected() == true) R.drawable.ic_online else R.drawable.ic_offline)
+
         sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
-           item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
+            item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
         })
 
         super.onCreateOptionsMenu(menu, inflater)
@@ -108,11 +130,19 @@ class MainFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             action_open_status_dialog -> {
-                mainNavController.navigate(cz.applifting.humansis.R.id.uploadDialog)
+                mainNavController.navigate(R.id.uploadDialog)
                 return true
             }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private val networkReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            context?.let {
+                activity?.invalidateOptionsMenu()
+            }
+        }
     }
 }
