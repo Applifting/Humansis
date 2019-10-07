@@ -91,12 +91,7 @@ class BeneficiariesFragment : BaseFragment() {
             }
         })
 
-        findNavController().addOnDestinationChangedListener(object : NavController.OnDestinationChangedListener {
-            override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
-                et_search.hideSoftKeyboard()
-                findNavController().removeOnDestinationChangedListener(this)
-            }
-        })
+        findNavController().addOnDestinationChangedListener { _, _, _ -> et_search?.hideSoftKeyboard() }
     }
 
     private fun showControls(show: Boolean) {
