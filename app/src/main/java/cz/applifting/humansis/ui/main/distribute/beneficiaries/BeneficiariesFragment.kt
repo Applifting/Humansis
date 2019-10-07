@@ -95,13 +95,16 @@ class BeneficiariesFragment : BaseFragment() {
 
 
     private fun showBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
-        val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragmentDialog(
-            beneficiaryLocal.id,
-            args.distributionName,
-            args.projectName,
-            args.isQRVoucherDistribution
-        )
-
-        this.findNavController().navigate(action)
+        (findNavController().currentDestination?.id == R.id.beneficiariesFragment).let { safeToNavigate ->
+            if (safeToNavigate) {
+                val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragmentDialog(
+                    beneficiaryLocal.id,
+                    args.distributionName,
+                    args.projectName,
+                    args.isQRVoucherDistribution
+                )
+                findNavController().navigate(action)
+            }
+        }
     }
 }
