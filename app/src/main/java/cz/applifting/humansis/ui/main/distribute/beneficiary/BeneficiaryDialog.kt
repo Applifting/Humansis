@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
+import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
@@ -37,6 +38,8 @@ import javax.inject.Inject
 class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     companion object {
         private const val CAMERA_REQUEST_CODE = 0
+        private val BOOKLET_REGEX = "^\\d{2}-\\d{2}-\\d{2}$".toRegex()
+        private const val INVALID_CODE = "Invalid code"
     }
 
     @Inject
@@ -48,7 +51,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, cz.applifting.humansis.R.style.FullscreenDialog)
+        setStyle(STYLE_NORMAL, R.style.FullscreenDialog)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -64,7 +67,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(cz.applifting.humansis.R.layout.fragment_beneficiary, container, false)
+        val view = inflater.inflate(R.layout.fragment_beneficiary, container, false)
         (activity?.application as App).appComponent.inject(this)
         sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
 
@@ -78,7 +81,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         viewModel.beneficiaryLD.observe(viewLifecycleOwner, Observer {
             // Views
             view.apply {
-                tv_status.setValue(getString(if (it.distributed) cz.applifting.humansis.R.string.distributed else cz.applifting.humansis.R.string.not_distributed))
+                tv_status.setValue(getString(if (it.distributed) R.string.distributed else R.string.not_distributed))
                 tv_status.setStatus(it.distributed)
                 tv_beneficiary.setValue("${it.givenName} ${it.familyName}")
                 tv_distribution.setValue(args.distributionName)
@@ -86,14 +89,14 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                 if (it.distributed) {
                     if (it.edited) {
-                        btn_action.text = context.getString(cz.applifting.humansis.R.string.revert)
-                        btn_action.background = context.getDrawable(cz.applifting.humansis.R.drawable.background_revert_btn)
+                        btn_action.text = context.getString(R.string.revert)
+                        btn_action.background = context.getDrawable(R.drawable.background_revert_btn)
                     } else {
                         btn_action.visible(false)
                     }
                 } else {
-                    btn_action.text = context.getString(cz.applifting.humansis.R.string.confirm_distribution)
-                    btn_action.background = context.getDrawable(cz.applifting.humansis.R.drawable.background_confirm_btn)
+                    btn_action.text = context.getString(R.string.confirm_distribution)
+                    btn_action.background = context.getDrawable(R.drawable.background_confirm_btn)
                 }
 
                 if (args.isQRVoucher) {
@@ -109,7 +112,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                     tv_booklet.setStatus(it.distributed)
                     tv_booklet.setValue(booklet)
-                    view.btn_action.isEnabled = !(booklet == null && args.isQRVoucher)
+                    view.btn_action.isEnabled = (booklet != null && booklet != INVALID_CODE)
 
                     if (booklet == null) {
                         qr_scanner_holder.visibility = View.VISIBLE
@@ -147,12 +150,20 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     override fun handleResult(rawResult: Result?) {
-        val scannedId = rawResult.toString()
+
         qr_scanner_holder?.visibility = View.GONE
+
+        val result = rawResult.toString()
+
+        val scannedId = if (BOOKLET_REGEX.matches(result)) {
+            result
+        } else {
+            INVALID_CODE
+        }
 
         viewModel.editBeneficiary(false, args.beneficiaryId, scannedId)
 
-        Toast.makeText(context, rawResult.toString(), Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, scannedId, Toast.LENGTH_SHORT).show()
     }
 
     override fun onResume() {
