@@ -7,6 +7,7 @@ import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.managers.LoginManager
+import cz.applifting.humansis.managers.SP_COUNTRY
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
@@ -29,7 +30,7 @@ class AppModule {
 
     @Provides
     @Reusable
-    fun retrofitProvider(baseUrl: String, loginManager: LoginManager, context: Context): HumansisService {
+    fun retrofitProvider(baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences): HumansisService {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
@@ -43,7 +44,10 @@ class AppModule {
                 if (context.isNetworkConnected()) {
                     runBlocking {
                         val headersBuilder = oldRequest.headers().newBuilder()
-                            .add("country", "KHM")
+
+                        sp.getString(SP_COUNTRY, null)?.let {
+                            headersBuilder.add("country", it)
+                        }
 
                         loginManager.getAuthHeader()?.let {
                             headersBuilder.add("x-wsse", it)

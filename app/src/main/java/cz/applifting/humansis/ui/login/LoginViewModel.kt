@@ -50,6 +50,7 @@ class LoginViewModel @Inject constructor(
                         hashedPassword,
                         null,
                         username,
+                        null,
                         null
                     )
                 )

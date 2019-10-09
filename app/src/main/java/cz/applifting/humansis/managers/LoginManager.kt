@@ -22,6 +22,7 @@ import javax.inject.Inject
 const val SP_DB_PASS_KEY = "humansis-db"
 const val SP_SALT_KEY = "humansis-db-pass-salt"
 const val KEYSTORE_KEY_ALIAS = "HumansisDBKey"
+const val SP_COUNTRY = "country"
 
 class LoginManager @Inject constructor(private val dbProvider: DbProvider, private val sp: SharedPreferences, private val context: Context) {
 
@@ -34,8 +35,11 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
         val dbPass = hashSHA512(originalPass.plus(retrieveOrInitDbSalt().toByteArray()), 1000)
         val encodedPass = base64encode(encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context))
 
+        val defaultCountry = userResponse.projects?.firstOrNull()?.iso3 ?: "KHM"
+
         with(sp.edit()) {
             putString(SP_DB_PASS_KEY, encodedPass)
+            putString(SP_COUNTRY, defaultCountry)
             suspendCommit()
         }
 

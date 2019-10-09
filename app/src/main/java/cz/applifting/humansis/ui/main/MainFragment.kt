@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.R
@@ -45,7 +46,7 @@ class MainFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
 
         val appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.projectsFragment),
+            setOf(R.id.projectsFragment, R.id.settingsFragment),
             drawer_layout
         )
 
@@ -56,7 +57,6 @@ class MainFragment : BaseFragment() {
 
         tb_toolbar.setupWithNavController(mainNavController, appBarConfiguration)
         nav_view.setupWithNavController(mainNavController)
-
 
         // Define Observers
         viewModel.userLD.observe(viewLifecycleOwner, Observer {

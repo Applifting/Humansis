@@ -50,15 +50,15 @@
                 app:argType="string" />
         <argument
                 android:name="isQRVoucherDistribution"
-                app:argType="boolean"
-                />
+                app:argType="boolean" />
         <action
                 android:id="@+id/action_beneficiariesFragment_to_beneficiaryFragmentDialog"
                 app:destination="@id/beneficiaryDialog"
                 app:enterAnim="@anim/fragment_fade_enter" />
     </fragment>
 
-    <dialog android:id="@+id/beneficiaryDialog"
+    <dialog
+            android:id="@+id/beneficiaryDialog"
             android:name="cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog"
             android:label="{beneficiaryName}">
         <argument
@@ -73,7 +73,7 @@
 
         <argument
                 android:name="isQRVoucher"
-                app:argType="boolean"/>
+                app:argType="boolean" />
 
     </dialog>
 
@@ -81,7 +81,21 @@
             android:id="@+id/uploadDialog"
             android:name="cz.applifting.humansis.ui.main.distribute.upload.UploadDialog"
             android:label="UploadDialog" />
-    <action android:id="@+id/action_global_uploadDialogFragment" app:destination="@id/uploadDialog" />
+    <action
+            android:id="@+id/action_global_uploadDialogFragment"
+            app:destination="@id/uploadDialog" />
 
+    <fragment
+            android:id="@+id/settingsFragment"
+            android:name="cz.applifting.humansis.ui.main.settings.SettingsFragment"
+            android:label="Settings" />
+
+    <action
+            android:id="@+id/goToSettings"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_from_right"
+            app:exitAnim="@anim/slide_to_left"
+            app:popEnterAnim="@anim/slide_from_left"
+            app:popExitAnim="@anim/slide_to_right" />
 
 </navigation>

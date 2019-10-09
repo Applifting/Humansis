@@ -14,5 +14,6 @@ data class LoginReqRes(
     val password: String,
     val roles: List<Role>?,
     val username: String,
-    val vendor: String?
+    val vendor: String?,
+    val projects: List<Project>?
 )

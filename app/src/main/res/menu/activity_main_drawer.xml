@@ -8,6 +8,11 @@
                 android:id="@id/projectsFragment"
                 android:icon="@drawable/ic_description_blue_24dp"
                 android:title="@string/menu_home"/>
+
+        <item
+                android:id="@id/settingsFragment"
+                android:icon="@drawable/ic_settings"
+                android:title="@string/action_settings"/>
     </group>
 
 </menu>
