@@ -7,6 +7,6 @@ import com.google.gson.annotations.SerializedName
  */
 enum class Target {
 
-    @SerializedName("0") INDIVIDUAL,
-    @SerializedName("1") FAMILY
+    @SerializedName("0") FAMILY,
+    @SerializedName("1") INDIVIDUAL
 }
