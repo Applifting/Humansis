@@ -16,56 +16,40 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
     BaseViewModel() {
 
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
-    var distributed: Boolean? = null
-
 
     fun loadBeneficiary(id: Int) {
         launch {
-            beneficiaryLD.value = beneficieriesRepository.getBeneficiaryOffline(id)
+            val beneficiary = beneficieriesRepository
+                .getBeneficiaryOffline(id)
+            beneficiary.currentViewing = true
+
+            beneficiaryLD.value = beneficiary
         }
     }
 
-    internal fun editBeneficiary(isDistributed: Boolean, beneficiaryId: Int, qrBooklet: String?, rescan: Boolean = false) {
+    fun scanQRBooklet(code: String?) {
+        val beneficiary = beneficiaryLD.value?.copy(
+            qrBooklets = if (code != null) listOf(code) else listOfNotNull()
+        ) ?: throw IllegalStateException()
+        beneficiary.currentViewing = true
+
+        beneficiaryLD.value = beneficiary
+    }
+
+    internal fun editBeneficiary() {
         launch {
-            val beneficiary = beneficieriesRepository.getBeneficiaryOffline(beneficiaryId)
+            val beneficiary = beneficiaryLD.value ?: throw IllegalStateException("Beneficiary was not loaded")
 
-            val updatedBeneficiary = if (isDistributed) {
-                confirm(beneficiary, qrBooklet)
-            } else if (!isDistributed && qrBooklet != null) {
-                if (beneficiary.edited) {
-                    revert(beneficiary)
-                } else {
-                    scanQrBooklet(beneficiary, qrBooklet, rescan)
-                }
-            } else {
-                if (rescan) {
-                    scanQrBooklet(beneficiary, qrBooklet, rescan)
-                } else {
-                    revert(beneficiary)
-                }
-            }
+            val updatedBeneficiary = beneficiary.copy(
+                distributed = !beneficiary.distributed,
+                edited = !beneficiary.distributed,
+                qrBooklets = if (beneficiary.distributed) mutableListOf() else beneficiary.qrBooklets
+            )
 
+            updatedBeneficiary.currentViewing = false
+
+            beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
             beneficiaryLD.value = updatedBeneficiary
         }
-    }
-
-    private suspend fun confirm(beneficiary: BeneficiaryLocal, qrBooklet: String?): BeneficiaryLocal {
-        val updatedBeneficiary = beneficiary.copy(distributed = true, edited = true, qrBooklets = if (qrBooklet == null) mutableListOf() else listOfNotNull(qrBooklet))
-        beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-        distributed = true
-        return updatedBeneficiary
-    }
-
-    private suspend fun revert(beneficiary: BeneficiaryLocal): BeneficiaryLocal {
-        val updatedBeneficiary = beneficiary.copy(distributed = false, edited = false, qrBooklets = mutableListOf())
-        beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-        distributed = false
-        return updatedBeneficiary
-    }
-
-    private suspend fun scanQrBooklet(beneficiary: BeneficiaryLocal, qrBooklet: String?, rescan: Boolean): BeneficiaryLocal {
-        val updatedBeneficiary = beneficiary.copy(distributed = false, edited = !rescan, qrBooklets = if (rescan) mutableListOf() else listOfNotNull(qrBooklet))
-        beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-        return updatedBeneficiary
     }
 }

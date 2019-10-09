@@ -1,6 +1,7 @@
 package cz.applifting.humansis.model.db
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 /**
@@ -9,7 +10,7 @@ import androidx.room.PrimaryKey
  */
 
 @Entity(tableName = "beneficiaries")
-data class BeneficiaryLocal(
+data class BeneficiaryLocal constructor(
     @PrimaryKey val id: Int,
     val beneficiaryId: Int,
     val givenName: String?,
@@ -20,4 +21,8 @@ data class BeneficiaryLocal(
     val reliefIDs: List<Int>,
     val qrBooklets: List<String>?,
     val edited: Boolean
-)
+) {
+    // Used in UI only
+    @Ignore
+    var currentViewing: Boolean = false
+}
