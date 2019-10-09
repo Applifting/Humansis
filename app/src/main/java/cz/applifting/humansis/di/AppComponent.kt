@@ -8,7 +8,7 @@ import cz.applifting.humansis.ui.main.MainFragment
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog
 import cz.applifting.humansis.ui.main.distribute.upload.UploadDialog
 import cz.applifting.humansis.ui.splash.SplashFragment
-import cz.applifting.humansis.workers.SyncWorker
+import cz.applifting.humansis.synchronization.SyncWorker
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
