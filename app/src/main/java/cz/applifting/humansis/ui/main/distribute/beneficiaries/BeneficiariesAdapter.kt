@@ -4,12 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout.HORIZONTAL
+import android.widget.LinearLayout.VERTICAL
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
 
@@ -61,7 +65,7 @@ class BeneficiariesAdapter(
         val tvHumansisId = view.tv_humansis_id
         val tvName = view.tv_name
         val ivDistributionState = view.iv_distribution_state
-        val llVulnerabilitiesHolder = view.ll_vulnerabilities_holder
+        val llCommoditiesHolder = view.ll_commodities_holder
         val ivOffline = view.iv_offline
         val context = view.context
 
@@ -77,32 +81,30 @@ class BeneficiariesAdapter(
 
             val color = if (beneficiaryLocal.distributed) R.color.orange else R.color.light_blue
             ivDistributionState.tintedDrawable(R.drawable.ic_circle, color)
-            llVulnerabilitiesHolder.removeAllViews()
+            llCommoditiesHolder.removeAllViews()
 
-            beneficiaryLocal.vulnerabilities.forEach {
-                getVulnerabilityDrawable(it)?.let { drawableRes ->
-                    val vulnerabilityImage = ImageView(view.context)
-                    vulnerabilityImage.simpleDrawable(drawableRes)
-                    llVulnerabilitiesHolder.addView(vulnerabilityImage)
+            if (beneficiaryLocal.distributed && !beneficiaryLocal.edited) {
+                beneficiaryLocal.commodities?.forEach { commodity ->
+                    val bookletValue = TextView(view.context)
+                    bookletValue.text = view.context.getString(R.string.commodity_value, commodity.value, commodity.unit)
+                    llCommoditiesHolder.orientation = VERTICAL
+                    llCommoditiesHolder.addView(bookletValue)
+                }
+            } else if (!beneficiaryLocal.distributed) {
+                beneficiaryLocal.commodities?.forEach { commodity ->
+                    try {
+                        val commodityImage = ImageView(view.context)
+                        commodityImage.simpleDrawable(CommodityType.valueOf(commodity.type).drawableResId)
+                        llCommoditiesHolder.orientation = HORIZONTAL
+                        llCommoditiesHolder.addView(commodityImage)
+                    } catch (e: IllegalArgumentException) {
+                        // do not show, unknown type
+                    }
                 }
             }
 
             ivOffline.visible(beneficiaryLocal.edited)
-
             view.setOnClickListener { onItemClick(beneficiaryLocal) }
         }
-
-        private fun getVulnerabilityDrawable(vulnerability: String): Int? {
-            // values from https://api-demo.humansis.org/api/wsse/vulnerability_criteria
-            return when (vulnerability) {
-                "disabled" -> R.drawable.ic_vulnerability_disabled
-                "soloParent" -> R.drawable.ic_vulnerability_solo_parent
-                "lactating" -> R.drawable.ic_vulnerability_lactating
-                "pregnant" -> R.drawable.ic_vulnerability_pregnant
-                "nutritionalIssues" -> R.drawable.ic_vulnerability_nutritional_issues
-                else -> null
-            }
-        }
     }
-
 }

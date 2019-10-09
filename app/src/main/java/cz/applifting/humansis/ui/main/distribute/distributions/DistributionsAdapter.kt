@@ -76,11 +76,13 @@ class DistributionsAdapter(
             llComoditiesHolder.removeAllViews()
 
             distribution.commodities.forEach {
-                getCommodityResource(it)?.let { drawableRes ->
-                    val vulnerabilityImage = ImageView(context)
-                    vulnerabilityImage.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                    vulnerabilityImage.simpleDrawable(drawableRes)
-                    llComoditiesHolder.addView(vulnerabilityImage)
+                try {
+                    val commodityImage = ImageView(context)
+                    commodityImage.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                    commodityImage.simpleDrawable(CommodityType.valueOf(it.type).drawableResId)
+                    llComoditiesHolder.addView(commodityImage)
+                } catch (e: IllegalArgumentException) {
+                    // do not show, unknown type
                 }
             }
 
@@ -103,18 +105,6 @@ class DistributionsAdapter(
             if (numberOfBeneficiaries > 0) {
                 pbDistributionProgress.progress = numberOfReachedBeneficiaries * 100 / numberOfBeneficiaries
             }
-        }
-    }
-
-    private fun getCommodityResource(commodity: String): Int? {
-        // values from https://api-demo.humansis.org/api/wsse/vulnerability_criteria
-        return when (commodity) {
-            CommodityType.CASH.name -> R.drawable.ic_commodity_cash
-            CommodityType.FOOD.name -> R.drawable.ic_commodity_food
-            CommodityType.LOAN.name -> R.drawable.ic_commodity_loan
-            CommodityType.QR_VOUCHER.name -> R.drawable.ic_commodity_voucher
-            CommodityType.RTE_KIT.name -> R.drawable.ic_commodity_rte_kit
-            else -> null
         }
     }
 }

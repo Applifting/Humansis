@@ -45,4 +45,11 @@
                 android:name="email"
                 app:argType="string" />
     </fragment>
+
+    <action
+            android:id="@+id/logout"
+            app:destination="@id/splashFragment"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/nav_graph_base"
+            app:popUpToInclusive="true" />
 </navigation>

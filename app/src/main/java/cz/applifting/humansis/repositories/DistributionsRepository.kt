@@ -6,6 +6,7 @@ import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.api.Commodity
+import cz.applifting.humansis.model.db.CommodityLocal
 import cz.applifting.humansis.model.db.DistributionLocal
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -58,9 +59,9 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
         return db.distributionsDao().findUncompletedDistributions(projectId) ?: listOf()
     }
 
-    private fun parseCommodities(commodities: List<Commodity>): List<String> {
+    private fun parseCommodities(commodities: List<Commodity>): List<CommodityLocal> {
         return commodities.map {
-            it.modalityType.name?.name ?: context.getString(R.string.unknown)
+            CommodityLocal(it.modalityType.name?.name ?: context.getString(R.string.unknown), it.value, it.unit)
         }
     }
 }

@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
  */
 
 @Entity(tableName = "beneficiaries")
-data class BeneficiaryLocal constructor(
+data class BeneficiaryLocal(
     @PrimaryKey val id: Int,
     val beneficiaryId: Int,
     val givenName: String?,
@@ -20,7 +20,8 @@ data class BeneficiaryLocal constructor(
     val vulnerabilities: List<String>,
     val reliefIDs: List<Int>,
     val qrBooklets: List<String>?,
-    val edited: Boolean
+    val edited: Boolean,
+    val commodities: List<CommodityLocal>?
 ) {
     // Used in UI only
     @Ignore

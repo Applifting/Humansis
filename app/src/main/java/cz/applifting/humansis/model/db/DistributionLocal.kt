@@ -23,7 +23,7 @@ data class DistributionLocal(
     @PrimaryKey val id: Int,
     val name: String,
     val numberOfBeneficiaries: Int,
-    val commodities: List<String>,
+    val commodities: List<CommodityLocal>,
     val dateOfDistribution: String,
     val projectId: Int,
     val target: Target,

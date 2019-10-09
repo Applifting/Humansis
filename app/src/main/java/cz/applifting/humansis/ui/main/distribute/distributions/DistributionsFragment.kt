@@ -41,7 +41,7 @@ class DistributionsFragment : BaseFragment() {
                 it.id,
                 it.name,
                 args.projectName,
-                it.commodities.contains(CommodityType.QR_VOUCHER.toString()))
+                it.commodities.any { commodity -> commodity.type == CommodityType.QR_VOUCHER.toString() })
             this.findNavController().navigate(action)
         }
 
