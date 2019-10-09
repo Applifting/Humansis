@@ -190,9 +190,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             qr_scanner.setResultHandler(this@BeneficiaryDialog)
             qr_scanner.startCamera()
             qr_scanner.setAutoFocus(true)
+            qr_scanner.setSquareViewFinder(true)
             qr_scanner.setFormats(mutableListOf(BarcodeFormat.QR_CODE))
             // for HUAWEI phones, according to docs
-            qr_scanner.setAspectTolerance(0.5f)
+            qr_scanner.setAspectTolerance(0.1f)
         }
     }
 
