@@ -83,14 +83,14 @@ class BeneficiariesAdapter(
             ivDistributionState.tintedDrawable(R.drawable.ic_circle, color)
             llCommoditiesHolder.removeAllViews()
 
-            if (beneficiaryLocal.distributed) {
+            if (beneficiaryLocal.distributed && !beneficiaryLocal.edited) {
                 beneficiaryLocal.commodities?.forEach { commodity ->
                     val bookletValue = TextView(view.context)
                     bookletValue.text = view.context.getString(R.string.commodity_value, commodity.value, commodity.unit)
                     llCommoditiesHolder.orientation = VERTICAL
                     llCommoditiesHolder.addView(bookletValue)
                 }
-            } else {
+            } else if (!beneficiaryLocal.distributed) {
                 beneficiaryLocal.commodities?.forEach { commodity ->
                     try {
                         val commodityImage = ImageView(view.context)
