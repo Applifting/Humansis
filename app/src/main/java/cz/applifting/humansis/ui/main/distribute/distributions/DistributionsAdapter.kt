@@ -109,10 +109,11 @@ class DistributionsAdapter(
     private fun getCommodityResource(commodity: String): Int? {
         // values from https://api-demo.humansis.org/api/wsse/vulnerability_criteria
         return when (commodity) {
-            CommodityType.CASH.name -> R.drawable.ic_attach_money_black_24dp
-            CommodityType.FOOD.name -> R.drawable.ic_local_dining_black_24dp
-            CommodityType.LOAN.name -> R.drawable.ic_account_balance_wallet_black_24dp
-            CommodityType.QR_VOUCHER.name -> R.drawable.ic_crop_free_black_24dp
+            CommodityType.CASH.name -> R.drawable.ic_commodity_cash
+            CommodityType.FOOD.name -> R.drawable.ic_commodity_food
+            CommodityType.LOAN.name -> R.drawable.ic_commodity_loan
+            CommodityType.QR_VOUCHER.name -> R.drawable.ic_commodity_voucher
+            CommodityType.RTE_KIT.name -> R.drawable.ic_commodity_rte_kit
             else -> null
         }
     }
