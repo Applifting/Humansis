@@ -65,7 +65,7 @@ class MainFragment : BaseFragment() {
                 return@Observer
             }
 
-            tv_username.text = it.username
+            tv_username?.text = it.username
         })
 
         sharedViewModel.snackbarLD.observe(viewLifecycleOwner, Observer {
