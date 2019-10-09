@@ -99,14 +99,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     btn_action.background = context.getDrawable(R.drawable.background_confirm_btn)
                 }
 
+                // Handle QR voucher
                 if (args.isQRVoucher) {
                     val booklet = (it.qrBooklets?.firstOrNull())
 
                     if (!it.distributed) {
                         tv_booklet.setRescanActionListener {
-                            viewModel.editBeneficiary(false, args.beneficiaryId, null, true)
-                            view?.qr_scanner_holder?.visibility = View.VISIBLE
-                            startScanner(view)
+                            viewModel.scanQRBooklet(null)
                         }
                     }
 
@@ -126,23 +125,23 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
                 }
 
-                btn_action.setOnClickListener { view ->
-                    viewModel.editBeneficiary(!it.distributed, args.beneficiaryId, it.qrBooklets?.firstOrNull())
-                    view.btn_action.isEnabled = false
+                btn_action.setOnClickListener {
+                    viewModel.editBeneficiary()
+                    btn_action.isEnabled = false
                 }
-            }
 
-            sharedViewModel.refreshPendingChanges()
-
-            if (viewModel.distributed != null) {
-                sharedViewModel.forceOfflineReload(true)
-                val text = if (viewModel.distributed == true) {
-                    "Item was successfully distributed."
-                } else {
-                    "Distribution was successfully reverted."
+                // Close dialog and notify shareViewModel after beneficiary is saved to db
+                if (!it.currentViewing) {
+                    sharedViewModel.refreshPendingChanges()
+                    sharedViewModel.forceOfflineReload(true)
+                    val text = if (it.distributed) {
+                        "Item was successfully distributed."
+                    } else {
+                        "Distribution was successfully reverted."
+                    }
+                    sharedViewModel.showSnackbar(text)
+                    dismiss()
                 }
-                sharedViewModel.showSnackbar(text)
-                dismiss()
             }
         })
 
@@ -150,9 +149,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     override fun handleResult(rawResult: Result?) {
-
         qr_scanner_holder?.visibility = View.GONE
-
         val result = rawResult.toString()
 
         val scannedId = if (BOOKLET_REGEX.matches(result)) {
@@ -161,8 +158,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             INVALID_CODE
         }
 
-        viewModel.editBeneficiary(false, args.beneficiaryId, scannedId)
-
+        viewModel.scanQRBooklet(scannedId)
         Toast.makeText(context, scannedId, Toast.LENGTH_SHORT).show()
     }
 
@@ -194,20 +190,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             qr_scanner.setResultHandler(this@BeneficiaryDialog)
             qr_scanner.startCamera()
             qr_scanner.setAutoFocus(true)
+            qr_scanner.setSquareViewFinder(true)
             qr_scanner.setFormats(mutableListOf(BarcodeFormat.QR_CODE))
             // for HUAWEI phones, according to docs
-            qr_scanner.setAspectTolerance(0.5f)
+            qr_scanner.setAspectTolerance(0.1f)
         }
     }
 
     private fun handleBackPressed() {
-        viewModel.beneficiaryLD.value?.let {
-            if (viewModel.distributed == null && !it.distributed && args.isQRVoucher) {
-                viewModel.editBeneficiary(false, args.beneficiaryId, null)
-            } else {
-                dismiss()
-            }
-        }
+        dismiss()
     }
 
     private fun requestCameraPermission() {

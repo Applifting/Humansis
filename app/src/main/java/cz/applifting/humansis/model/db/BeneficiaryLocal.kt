@@ -1,6 +1,7 @@
 package cz.applifting.humansis.model.db
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 /**
@@ -21,4 +22,8 @@ data class BeneficiaryLocal(
     val qrBooklets: List<String>?,
     val edited: Boolean,
     val commodities: List<CommodityLocal>?
-)
+) {
+    // Used in UI only
+    @Ignore
+    var currentViewing: Boolean = false
+}

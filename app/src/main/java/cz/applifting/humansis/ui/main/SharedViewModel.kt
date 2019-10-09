@@ -9,15 +9,15 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
+import cz.applifting.humansis.synchronization.ERROR_MESSAGE_KEY
+import cz.applifting.humansis.synchronization.MANUAL_SYNC_WORKER
+import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.BaseViewModel
-import cz.applifting.humansis.workers.SYNC_WORKER
-import cz.applifting.humansis.workers.SyncWorker
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -48,7 +48,7 @@ class SharedViewModel @Inject constructor(
 
     init {
         lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
-        workInfosLD = workManager.getWorkInfosForUniqueWorkLiveData(SYNC_WORKER)
+        workInfosLD = workManager.getWorkInfosForUniqueWorkLiveData(MANUAL_SYNC_WORKER)
         syncWorkerIsLoadingLD.addSource(
             workInfosLD
         ) {
@@ -63,18 +63,22 @@ class SharedViewModel @Inject constructor(
         
         snackbarLD.addSource(workInfosLD) {
             if (it.isNullOrEmpty()) {
+                snackbarLD.value = null
                 return@addSource
             }
 
             if (it.first().state == WorkInfo.State.FAILED) {
-                snackbarLD.value = context.getString(R.string.error_message)
+                val errors = it.first().outputData.getStringArray(ERROR_MESSAGE_KEY)
+                val error = errors?.joinToString("\n")
+
+                snackbarLD.value = error
             }
         }
     }
 
     fun synchronize() {
         launch {
-            workManager.beginUniqueWork(SYNC_WORKER, ExistingWorkPolicy.KEEP, OneTimeWorkRequest.from(SyncWorker::class.java)).enqueue()
+            workManager.beginUniqueWork(MANUAL_SYNC_WORKER, ExistingWorkPolicy.KEEP, OneTimeWorkRequest.from(SyncWorker::class.java)).enqueue()
             forceOfflineReloadLD.value = true
 
         }
