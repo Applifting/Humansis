@@ -13,8 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.R
@@ -61,7 +61,7 @@ class MainFragment : BaseFragment() {
         // Define Observers
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
             if (it == null) {
-                activity?.finishAffinity()
+                findNavController().navigate(R.id.logout)
                 return@Observer
             }
 

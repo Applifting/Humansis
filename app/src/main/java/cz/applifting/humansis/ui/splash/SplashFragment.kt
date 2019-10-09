@@ -9,6 +9,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.BaseFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 11, September, 2019
@@ -45,7 +47,10 @@ class SplashFragment: BaseFragment() {
     }
 
     private fun goToLoginScreen() {
-        val action = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
-        this.findNavController().navigate(action)
+        launch {
+            delay(1000)
+            val action = SplashFragmentDirections.actionSplashFragmentToLoginFragment()
+            findNavController().navigate(action)
+        }
     }
 }
