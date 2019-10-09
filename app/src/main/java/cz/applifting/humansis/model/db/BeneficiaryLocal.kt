@@ -19,5 +19,6 @@ data class BeneficiaryLocal(
     val vulnerabilities: List<String>,
     val reliefIDs: List<Int>,
     val qrBooklets: List<String>?,
-    val edited: Boolean
+    val edited: Boolean,
+    val commodities: List<CommodityLocal>?
 )

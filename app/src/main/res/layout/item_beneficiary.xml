@@ -42,7 +42,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
-                app:layout_constraintEnd_toStartOf="@+id/ll_vulnerabilities_holder"
+                app:layout_constraintEnd_toStartOf="@+id/ll_commodities_holder"
                 app:layout_constraintStart_toStartOf="@+id/tv_name"
                 app:layout_constraintTop_toBottomOf="@id/tv_name"
                 tools:text="ID: 2" />
@@ -55,17 +55,17 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/ll_vulnerabilities_holder"
+                app:layout_constraintEnd_toStartOf="@+id/ll_commodities_holder"
                 app:layout_constraintStart_toStartOf="@+id/tv_name"
                 app:layout_constraintTop_toBottomOf="@id/tv_id"
                 tools:text="Humansis ID: 2" />
 
         <LinearLayout
-                android:id="@+id/ll_vulnerabilities_holder"
+                android:id="@+id/ll_commodities_holder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">

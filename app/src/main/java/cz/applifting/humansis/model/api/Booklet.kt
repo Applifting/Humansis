@@ -1,3 +1,3 @@
 package cz.applifting.humansis.model.api
 
-data class Booklet(val id: Int, val code: String, val status: Int)
+data class Booklet(val id: Int, val code: String, val currency: String, val status: Int, val vouchers: List<Voucher>)

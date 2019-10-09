@@ -1,6 +1,7 @@
 package cz.applifting.humansis.model.ui
 
 import cz.applifting.humansis.model.Target
+import cz.applifting.humansis.model.db.CommodityLocal
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -11,7 +12,7 @@ data class DistributionModel(
     val id: Int,
     val name: String,
     val numberOfBeneficiaries: Int,
-    val commodities: List<String>,
+    val commodities: List<CommodityLocal>,
     val dateOfDistribution: String,
     val projectId: Int,
     val target: Target,

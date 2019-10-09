@@ -3,11 +3,10 @@ package cz.applifting.humansis.ui.main.distribute.beneficiaries
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
-import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -61,7 +60,7 @@ class BeneficiariesAdapter(
         val tvHumansisId = view.tv_humansis_id
         val tvName = view.tv_name
         val ivDistributionState = view.iv_distribution_state
-        val llVulnerabilitiesHolder = view.ll_vulnerabilities_holder
+        val llCommoditiesHolder = view.ll_commodities_holder
         val ivOffline = view.iv_offline
         val context = view.context
 
@@ -77,13 +76,13 @@ class BeneficiariesAdapter(
 
             val color = if (beneficiaryLocal.distributed) R.color.orange else R.color.light_blue
             ivDistributionState.tintedDrawable(R.drawable.ic_circle, color)
-            llVulnerabilitiesHolder.removeAllViews()
+            llCommoditiesHolder.removeAllViews()
 
-            beneficiaryLocal.vulnerabilities.forEach {
-                getVulnerabilityDrawable(it)?.let { drawableRes ->
-                    val vulnerabilityImage = ImageView(view.context)
-                    vulnerabilityImage.simpleDrawable(drawableRes)
-                    llVulnerabilitiesHolder.addView(vulnerabilityImage)
+            if (beneficiaryLocal.distributed) {
+                beneficiaryLocal.commodities?.forEach { commodity ->
+                    val bookletValue = TextView(view.context)
+                    bookletValue.text = "${commodity.value}  ${commodity.unit}"
+                    llCommoditiesHolder.addView(bookletValue)
                 }
             }
 

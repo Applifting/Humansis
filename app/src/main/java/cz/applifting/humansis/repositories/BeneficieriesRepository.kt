@@ -4,8 +4,10 @@ import android.content.Context
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
+import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
+import cz.applifting.humansis.model.db.CommodityLocal
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,6 +20,9 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     val db: HumansisDB by lazy { dbProvider.get() }
 
     suspend fun getBeneficieriesOnline(distributionId: Int, skip: List<Int> = listOf()): List<BeneficiaryLocal>? {
+
+        val distribution = dbProvider.get().distributionsDao().getById(distributionId)
+
         val result = service
             .getDistributionBeneficiaries(distributionId)
             .filter { !skip.contains(it.id) }
@@ -32,7 +37,8 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                     parseVulnerabilities(it.beneficiary.vulnerabilities),
                     parseReliefs(it.reliefs),
                     parseQRBooklets(it.booklets),
-                    false
+                    false,
+                    parseCommodity(it.booklets, distribution?.commodities)
                 )
             }
 
@@ -88,6 +94,19 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
 
     private fun parseQRBooklets(booklets: List<Booklet>): List<String> {
         return booklets.map { it.code }
+    }
+
+    private fun parseCommodity(booklets: List<Booklet>, commodities: List<CommodityLocal>?): List<CommodityLocal> {
+
+        if (booklets.isNotEmpty()) {
+            return booklets.map { booklet ->
+                val bookletValue = booklet.vouchers.sumBy { it.value }
+                CommodityLocal(CommodityType.QR_VOUCHER.name, bookletValue, booklet.currency)
+            }
+        }
+
+        return commodities ?: mutableListOf()
+
     }
 
     private fun isReliefDistributed(reliefs: List<Relief>): Boolean {

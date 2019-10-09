@@ -76,7 +76,7 @@ class DistributionsAdapter(
             llComoditiesHolder.removeAllViews()
 
             distribution.commodities.forEach {
-                getCommodityResource(it)?.let { drawableRes ->
+                getCommodityResource(it.type)?.let { drawableRes ->
                     val vulnerabilityImage = ImageView(context)
                     vulnerabilityImage.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
                     vulnerabilityImage.simpleDrawable(drawableRes)
