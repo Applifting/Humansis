@@ -38,7 +38,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                     parseReliefs(it.reliefs),
                     parseQRBooklets(it.booklets),
                     false,
-                    parseCommodity(it.booklets, distribution?.commodities)
+                    parseCommodities(it.booklets, distribution?.commodities)
                 )
             }
 
@@ -96,7 +96,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return booklets.map { it.code }
     }
 
-    private fun parseCommodity(booklets: List<Booklet>, commodities: List<CommodityLocal>?): List<CommodityLocal> {
+    private fun parseCommodities(booklets: List<Booklet>, commodities: List<CommodityLocal>?): List<CommodityLocal> {
 
         if (booklets.isNotEmpty()) {
             return booklets.map { booklet ->

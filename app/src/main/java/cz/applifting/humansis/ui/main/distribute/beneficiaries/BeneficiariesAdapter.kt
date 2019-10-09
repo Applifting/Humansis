@@ -3,12 +3,17 @@ package cz.applifting.humansis.ui.main.distribute.beneficiaries
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout.HORIZONTAL
+import android.widget.LinearLayout.VERTICAL
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
 
@@ -81,27 +86,25 @@ class BeneficiariesAdapter(
             if (beneficiaryLocal.distributed) {
                 beneficiaryLocal.commodities?.forEach { commodity ->
                     val bookletValue = TextView(view.context)
-                    bookletValue.text = "${commodity.value}  ${commodity.unit}"
+                    bookletValue.text = view.context.getString(R.string.commodity_value, commodity.value, commodity.unit)
+                    llCommoditiesHolder.orientation = VERTICAL
                     llCommoditiesHolder.addView(bookletValue)
+                }
+            } else {
+                beneficiaryLocal.commodities?.forEach { commodity ->
+                    try {
+                        val commodityImage = ImageView(view.context)
+                        commodityImage.simpleDrawable(CommodityType.valueOf(commodity.type).drawableResId)
+                        llCommoditiesHolder.orientation = HORIZONTAL
+                        llCommoditiesHolder.addView(commodityImage)
+                    } catch (e: IllegalArgumentException) {
+                        // do not show, unknown type
+                    }
                 }
             }
 
             ivOffline.visible(beneficiaryLocal.edited)
-
             view.setOnClickListener { onItemClick(beneficiaryLocal) }
         }
-
-        private fun getVulnerabilityDrawable(vulnerability: String): Int? {
-            // values from https://api-demo.humansis.org/api/wsse/vulnerability_criteria
-            return when (vulnerability) {
-                "disabled" -> R.drawable.ic_vulnerability_disabled
-                "soloParent" -> R.drawable.ic_vulnerability_solo_parent
-                "lactating" -> R.drawable.ic_vulnerability_lactating
-                "pregnant" -> R.drawable.ic_vulnerability_pregnant
-                "nutritionalIssues" -> R.drawable.ic_vulnerability_nutritional_issues
-                else -> null
-            }
-        }
     }
-
 }
