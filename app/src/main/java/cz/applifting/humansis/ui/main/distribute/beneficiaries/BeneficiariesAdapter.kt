@@ -58,6 +58,7 @@ class BeneficiariesAdapter(
     inner class BeneficiaryViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         val tvId = view.tv_id
+        val tvHumansisId = view.tv_humansis_id
         val tvName = view.tv_name
         val ivDistributionState = view.iv_distribution_state
         val llVulnerabilitiesHolder = view.ll_vulnerabilities_holder
@@ -67,6 +68,7 @@ class BeneficiariesAdapter(
         fun bind(beneficiaryLocal: BeneficiaryLocal) {
 
             tvId.text = view.context.getString(R.string.beneficiary_id, beneficiaryLocal.beneficiaryId)
+            tvHumansisId.text = view.context.getString(R.string.humansis_id, beneficiaryLocal.id)
             tvName.text = view.context.getString(
                 R.string.beneficiary_name,
                 beneficiaryLocal.givenName,
