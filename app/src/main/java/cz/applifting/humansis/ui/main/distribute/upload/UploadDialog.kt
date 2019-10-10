@@ -54,7 +54,7 @@ class UploadDialog : DialogFragment() {
         })
 
         sharedViewModel.lastDownloadLD.observe(viewLifecycleOwner, Observer {
-            tvCurrentDataDate.text = it.format()
+            tvCurrentDataDate.text = it?.format()
         })
 
         sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
