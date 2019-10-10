@@ -18,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
+import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.R.id.snackbar_text
@@ -82,6 +83,9 @@ class MainFragment : BaseFragment() {
         sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
 
         })
+
+        val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_app_version)
+        tvAppVersion.text = BuildConfig.VERSION_NAME
 
         btn_logout.setOnClickListener {
             AlertDialog.Builder(context!!)

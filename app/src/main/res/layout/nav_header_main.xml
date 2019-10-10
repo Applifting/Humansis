@@ -22,6 +22,15 @@
             app:srcCompat="@drawable/bms_logo" />
 
     <TextView
+            android:id="@+id/tv_app_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/darkGreyColor"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            tools:text="1.0.0" />
+
+    <TextView
             android:id="@+id/tv_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -10,8 +10,8 @@ android {
         applicationId "cz.applifting.humansis"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode readVersionCode()
+        versionName readVersionName()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -118,4 +118,36 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
+
+def readVersionName() {
+    def version = readVersion()
+    return "${version["major"]}.${version["minor"]}.${version["patch"]}"
+}
+
+def readVersionCode() {
+    def version = readVersion()
+    def patch = version["patch"] as int
+    def minor = version["minor"] as int
+    def major = version["major"] as int
+    return major * 1000000 + minor * 1000 + patch
+}
+
+def readVersion() {
+    def versionFile = new File(project.rootDir, "version.properties")
+    def version = new Properties()
+    def stream
+    try {
+        stream = new FileInputStream(versionFile)
+        version.load(stream)
+    } catch (FileNotFoundException ignore) {
+    } finally {
+        if (stream != null) stream.close()
+    }
+
+    // defaults
+    if (!version["major"]) version["major"] = "1"
+    if (!version["minor"]) version["minor"] = "0"
+    if (!version["patch"]) version["patch"] = "0"
+    return version
 }
