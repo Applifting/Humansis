@@ -1,5 +1,6 @@
 package cz.applifting.humansis.ui.main.distribute.projects
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.ui.ProjectModel
 import cz.applifting.humansis.repositories.DistributionsRepository
@@ -11,7 +12,7 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
-class ProjectsViewModel @Inject constructor(val projectsRepository: ProjectsRepository, val distributionsRepository: DistributionsRepository) : BaseListViewModel() {
+class ProjectsViewModel @Inject constructor(val projectsRepository: ProjectsRepository, val distributionsRepository: DistributionsRepository, context: Context) : BaseListViewModel(context) {
 
     val projectsLD: MutableLiveData<List<ProjectModel>> = MutableLiveData()
 

@@ -1,5 +1,6 @@
 package cz.applifting.humansis.ui.main.distribute.distributions
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.ui.DistributionModel
 import cz.applifting.humansis.repositories.BeneficieriesRepository
@@ -13,8 +14,9 @@ import javax.inject.Inject
  */
 class DistributionsViewModel @Inject constructor(
     private val distributionsRepository: DistributionsRepository,
-    private val beneficiariesRepository: BeneficieriesRepository
-) : BaseListViewModel() {
+    private val beneficiariesRepository: BeneficieriesRepository,
+    context: Context
+) : BaseListViewModel(context) {
 
     val distributionsLD: MutableLiveData<List<DistributionModel>> = MutableLiveData()
 

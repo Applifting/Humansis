@@ -1,14 +1,11 @@
 <resources>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
     <string name="menu_home">Projects</string>
     <string name="menu_test">Test</string>
-    <string name="beneficiary_managment_system">Beneficiary Management System</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
@@ -67,5 +64,7 @@
     <string name="error_unknown">Unknown error</string>
     <string name="error_db_not_initialized">Database was not initialized</string>
     <string name="error_missing_user_id">User id in response missing</string>
+    <string name="downloading">Downloading…</string>
+    <string name="no_data_message">Nothing here, try to reload.</string>
 
 </resources>

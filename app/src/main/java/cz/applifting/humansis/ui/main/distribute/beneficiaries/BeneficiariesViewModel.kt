@@ -1,5 +1,6 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiaries
 
+import android.content.Context
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -15,8 +16,9 @@ import javax.inject.Inject
  * @since 5. 9. 2019
  */
 class BeneficiariesViewModel @Inject constructor(
-    private val beneficieriesRepository: BeneficieriesRepository
-) : BaseListViewModel() {
+    private val beneficieriesRepository: BeneficieriesRepository,
+    context: Context
+) : BaseListViewModel(context) {
 
     private val beneficiariesLD = MutableLiveData<List<BeneficiaryLocal>>()
     internal val beneficiariesViewStateLD: MutableLiveData<ListComponentState> = MutableLiveData()
