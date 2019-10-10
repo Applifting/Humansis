@@ -3,6 +3,7 @@ package cz.applifting.humansis.db
 import android.content.Context
 import androidx.room.Room
 import com.commonsware.cwac.saferoom.SafeHelperFactory
+import cz.applifting.humansis.R
 import cz.applifting.humansis.misc.HumansisError
 
 /**
@@ -25,7 +26,7 @@ class DbProvider(val context: Context) {
     }
 
     fun get(): HumansisDB {
-        if (!::db.isInitialized) throw HumansisError("Db was not initialized")
+        if (!::db.isInitialized) throw HumansisError(context.getString(R.string.error_db_not_initialized))
         return db
     }
 

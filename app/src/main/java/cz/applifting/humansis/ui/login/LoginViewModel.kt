@@ -1,8 +1,10 @@
 package cz.applifting.humansis.ui.login
 
+import android.content.Context
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.api.HumansisService
+import cz.applifting.humansis.api.parseError
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.misc.hashAndSaltPassword
@@ -19,7 +21,8 @@ import javax.inject.Inject
  */
 class LoginViewModel @Inject constructor(
     private val service: HumansisService,
-    private val loginManager: LoginManager
+    private val loginManager: LoginManager,
+    private val context: Context
 ) : BaseViewModel() {
 
     val viewStateLD = MutableLiveData<LoginViewState>()
@@ -60,7 +63,7 @@ class LoginViewModel @Inject constructor(
             } catch (e: HumansisError) {
                 viewStateLD.value = LoginViewState(errorMessage = e.message)
             } catch (e: HttpException) {
-                val message = e.response()?.errorBody()?.string()
+                val message = parseError(e, context)
                 viewStateLD.value = LoginViewState(errorMessage = message)
             }
         }

@@ -3,6 +3,7 @@ package cz.applifting.humansis.managers
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import cz.applifting.humansis.R
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.extensions.suspendCommit
@@ -51,7 +52,7 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
             db.clearAllTables()
         }
 
-        val id = userResponse.id?.toInt() ?: throw HumansisError("User id in response missing")
+        val id = userResponse.id?.toInt() ?: throw HumansisError(context.getString(R.string.error_missing_user_id))
         val user = User(id, userResponse.username, userResponse.email, userResponse.password)
         db.userDao().insert(user)
 
