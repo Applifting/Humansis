@@ -60,4 +60,9 @@ class LoginFragment : BaseFragment() {
             et_password.setText("Tester123")
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.viewStateLD.value = LoginViewState()
+    }
 }
