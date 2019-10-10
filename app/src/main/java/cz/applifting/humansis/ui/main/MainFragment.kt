@@ -70,7 +70,8 @@ class MainFragment : BaseFragment() {
                 return@Observer
             }
 
-            tv_username?.text = it.username
+            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
+            tvUsername.text = it.username
         })
 
         sharedViewModel.snackbarLD.observe(viewLifecycleOwner, Observer {
