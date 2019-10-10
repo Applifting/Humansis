@@ -1,6 +1,7 @@
 package cz.applifting.humansis.repositories
 
 import android.content.Context
+import android.util.Log
 import cz.applifting.humansis.R
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
@@ -25,6 +26,7 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
             .getDistributions(projectId)
             .filter { it.validated && !it.archived && !it.completed }
             .map {
+                Log.d("distributionx", it.commodities.toString())
                 DistributionLocal(
                     it.id,
                     it.name,
@@ -37,6 +39,7 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
                 )
             }
 
+        //Log.d("distributionx", result.toString())
         db.distributionsDao().deleteByProject(projectId)
         db.distributionsDao().insertAll(result)
 
@@ -61,7 +64,8 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
 
     private fun parseCommodities(commodities: List<Commodity>): List<CommodityLocal> {
         return commodities.map {
-            CommodityLocal(it.modalityType.name?.name ?: context.getString(R.string.unknown), it.value, it.unit)
+            Log.d("commodityx", it.toString())
+            CommodityLocal(it?.modalityType.name?.name ?: context.getString(R.string.unknown), it.value, it.unit)
         }
     }
 }

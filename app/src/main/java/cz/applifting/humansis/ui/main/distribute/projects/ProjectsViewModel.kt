@@ -1,6 +1,7 @@
 package cz.applifting.humansis.ui.main.distribute.projects
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.ui.ProjectModel
 import cz.applifting.humansis.repositories.DistributionsRepository
@@ -26,6 +27,7 @@ class ProjectsViewModel @Inject constructor(val projectsRepository: ProjectsRepo
 
             val projects = if (download) projectsRepository.getProjectsOnline() else projectsRepository.getProjectsOffline()
 
+            Log.d("projectsx", projects.toString())
             val projectsModel = projects?.map {
                 //todo find better solution to count uncompleted distributions
                 val uncompleteDistributions = distributionsRepository.getUncompletedDistributions(it.id)

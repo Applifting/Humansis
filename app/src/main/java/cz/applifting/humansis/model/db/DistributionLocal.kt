@@ -1,10 +1,7 @@
 package cz.applifting.humansis.model.db
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
+import androidx.room.*
 import androidx.room.ForeignKey.CASCADE
-import androidx.room.Ignore
-import androidx.room.PrimaryKey
 import cz.applifting.humansis.model.Target
 
 /**
@@ -21,11 +18,11 @@ import cz.applifting.humansis.model.Target
 )
 data class DistributionLocal(
     @PrimaryKey val id: Int,
-    val name: String,
-    val numberOfBeneficiaries: Int,
-    val commodities: List<CommodityLocal>,
-    val dateOfDistribution: String,
-    val projectId: Int,
-    val target: Target,
-    val completed: Boolean
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "numberOfBeneficiaries") val numberOfBeneficiaries: Int,
+    @ColumnInfo(name = "commodities") val commodities: List<CommodityLocal>,
+    @ColumnInfo(name = "dateOfDistribution") val dateOfDistribution: String,
+    @ColumnInfo(name = "projectId") val projectId: Int,
+    @ColumnInfo(name = "target") val target: Target,
+    @ColumnInfo(name = "completed") val completed: Boolean
 )

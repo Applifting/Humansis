@@ -1,3 +1,5 @@
 package cz.applifting.humansis.model.api
 
-data class Voucher(val value: Int)
+import com.google.gson.annotations.SerializedName
+
+data class Voucher(@SerializedName("value") val value: Int)

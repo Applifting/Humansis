@@ -1,3 +1,9 @@
 package cz.applifting.humansis.model.api
 
-data class Booklet(val id: Int, val code: String, val currency: String, val status: Int, val vouchers: List<Voucher>)
+import com.google.gson.annotations.SerializedName
+
+data class Booklet(@SerializedName("id") val id: Int,
+                   @SerializedName("code") val code: String,
+                   @SerializedName("currency") val currency: String,
+                   @SerializedName("status") val status: Int,
+                   @SerializedName("vouchers") val vouchers: List<Voucher>)

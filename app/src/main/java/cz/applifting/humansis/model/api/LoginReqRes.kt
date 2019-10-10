@@ -8,12 +8,12 @@ import cz.applifting.humansis.model.Role
  */
 data class LoginReqRes(
     @SerializedName("change_password") val changePassword: Boolean,
-    val email: String,
-    val id: String?,
-    val language: String?,
-    val password: String,
-    val roles: List<Role>?,
-    val username: String,
-    val vendor: String?,
-    val projects: List<Project>?
+    @SerializedName("email") val email: String,
+    @SerializedName("id") val id: String?,
+    @SerializedName("language") val language: String?,
+    @SerializedName("password") val password: String,
+    @SerializedName("roles") val roles: List<Role>?,
+    @SerializedName("username") val username: String,
+    @SerializedName("vendor") val vendor: String?,
+    @SerializedName("projects") val projects: List<Project>?
 )

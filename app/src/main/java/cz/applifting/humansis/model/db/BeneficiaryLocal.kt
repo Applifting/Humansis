@@ -1,5 +1,6 @@
 package cz.applifting.humansis.model.db
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
@@ -12,16 +13,16 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "beneficiaries")
 data class BeneficiaryLocal(
     @PrimaryKey val id: Int,
-    val beneficiaryId: Int,
-    val givenName: String?,
-    val familyName: String?,
-    val distributionId: Int,
-    val distributed: Boolean,
-    val vulnerabilities: List<String>,
-    val reliefIDs: List<Int>,
-    val qrBooklets: List<String>?,
-    val edited: Boolean,
-    val commodities: List<CommodityLocal>?
+    @ColumnInfo(name = "beneficiaryId") val beneficiaryId: Int,
+    @ColumnInfo(name = "givenName") val givenName: String?,
+    @ColumnInfo(name = "familyName") val familyName: String?,
+    @ColumnInfo(name = "distributionId") val distributionId: Int,
+    @ColumnInfo(name = "distributed") val distributed: Boolean,
+    @ColumnInfo(name = "vulnerabilities") val vulnerabilities: List<String>,
+    @ColumnInfo(name = "reliefIDs") val reliefIDs: List<Int>,
+    @ColumnInfo(name = "qrBooklets") val qrBooklets: List<String>?,
+    @ColumnInfo(name = "edited") val edited: Boolean,
+    @ColumnInfo(name = "commodities") val commodities: List<CommodityLocal>?
 ) {
     // Used in UI only
     @Ignore

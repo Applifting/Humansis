@@ -1,3 +1,5 @@
 package cz.applifting.humansis.model.api
 
-data class DistributedReliefRequest(val ids: List<Int>)
+import com.google.gson.annotations.SerializedName
+
+data class DistributedReliefRequest(@SerializedName("ids") val ids: List<Int>)

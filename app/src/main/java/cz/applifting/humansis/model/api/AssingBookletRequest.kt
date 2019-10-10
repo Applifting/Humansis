@@ -1,3 +1,5 @@
 package cz.applifting.humansis.model.api
 
-data class AssingBookletRequest(val code: String)
+import com.google.gson.annotations.SerializedName
+
+data class AssingBookletRequest(@SerializedName("code") val code: String)

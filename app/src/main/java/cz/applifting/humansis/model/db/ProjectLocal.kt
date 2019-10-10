@@ -1,5 +1,6 @@
 package cz.applifting.humansis.model.db
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -9,6 +10,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "projects")
 data class ProjectLocal(
     @PrimaryKey val id: Int,
-    val name: String,
-    val numberOfHouseholds: Int
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "numberOfHouseholds") val numberOfHouseholds: Int
 )
