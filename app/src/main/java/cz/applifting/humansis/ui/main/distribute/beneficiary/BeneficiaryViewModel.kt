@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.ui.BaseViewModel
+import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.ALREADY_ASSIGNED
+import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.INVALID_CODE
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,6 +18,8 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
     BaseViewModel() {
 
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
+    val scannedIdLD = MutableLiveData<String>()
+    private val BOOKLET_REGEX = "^\\d{2}-\\d{2}-\\d{2}$".toRegex()
 
     fun loadBeneficiary(id: Int) {
         launch {
@@ -50,6 +54,20 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
 
             beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
             beneficiaryLD.value = updatedBeneficiary
+        }
+    }
+
+    internal fun checkScannedId(scannedId: String) {
+
+        launch {
+            val assigned = beneficieriesRepository.checkBoookletAssignedLocally(scannedId)
+
+            val bookletId = when {
+                assigned -> ALREADY_ASSIGNED
+                BOOKLET_REGEX.matches(scannedId) -> scannedId
+                else -> INVALID_CODE
+            }
+            scannedIdLD.value = bookletId
         }
     }
 }

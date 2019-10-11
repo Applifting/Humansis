@@ -76,6 +76,18 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         }
     }
 
+    suspend fun checkBoookletAssignedLocally(bookletId: String): Boolean {
+        val booklets = db.beneficiariesDao().getAllBooklets()
+
+        booklets?.forEach {
+            if (it.contains(bookletId)) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     private suspend fun setDistributedRelief(ids: List<Int>) {
         service.setDistributedRelief(DistributedReliefRequest(ids))
     }

@@ -25,4 +25,7 @@ interface BeneficiaryDao {
 
     @Query("SELECT COUNT(id) FROM beneficiaries WHERE distributionId = :distributionId AND distributed = 1")
     suspend fun countReachedBeneficiaries(distributionId: Int): Int
+
+    @Query("SELECT qrBooklets FROM beneficiaries")
+    suspend fun getAllBooklets(): List<String>?
 }

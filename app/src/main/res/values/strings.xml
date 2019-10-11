@@ -66,5 +66,7 @@
     <string name="error_missing_user_id">User id in response missing</string>
     <string name="downloading">Downloading…</string>
     <string name="no_data_message">Nothing here, try to reload.</string>
+    <string name="invalid_code">Invalid code</string>
+    <string name="already_assigned">Already assigned code</string>
 
 </resources>

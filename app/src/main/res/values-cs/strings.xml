@@ -34,7 +34,7 @@
     <string name="project">Projekt</string>
     <string name="confirm_distribution">Potvrdit</string>
     <string name="distribution_confirmation_message">%1$s potvrzeno</string>
-    <string name="rescan_qr">Znovu skenovat QR</string>
+    <string name="rescan_qr">Znovu skenovat</string>
     <string name="booklet_id">Booklet ID</string>
     <string name="camera_permission_dialog_title">Oprávnění k fotoaparátu</string>
     <string name="camera_permission_dialog_message">Pokud chcete skenovat QR kód, musíte přidělit oprávnění k fotoaparátu.</string>
@@ -67,4 +67,6 @@
     <string name="error_missing_user_id">Chybí ID uživatele</string>
     <string name="downloading">Stahuji…</string>
     <string name="no_data_message">Žádné záznamy, zkuste synchronizovat data.</string>
+    <string name="invalid_code">Nesprávný kód</string>
+    <string name="already_assigned">Již přiřazený kód</string>
 </resources>

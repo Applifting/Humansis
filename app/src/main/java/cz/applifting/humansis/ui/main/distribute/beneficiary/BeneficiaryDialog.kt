@@ -38,8 +38,8 @@ import javax.inject.Inject
 class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     companion object {
         private const val CAMERA_REQUEST_CODE = 0
-        private val BOOKLET_REGEX = "^\\d{2}-\\d{2}-\\d{2}$".toRegex()
-        private const val INVALID_CODE = "Invalid code"
+        val INVALID_CODE = "Invalid code"
+        val ALREADY_ASSIGNED = "Already assigned"
     }
 
     @Inject
@@ -110,8 +110,12 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
 
                     tv_booklet.setStatus(it.distributed)
-                    tv_booklet.setValue(booklet)
-                    view.btn_action.isEnabled = (booklet != null && booklet != INVALID_CODE)
+                    tv_booklet.setValue(when(booklet){
+                        INVALID_CODE -> getString(R.string.invalid_code)
+                        ALREADY_ASSIGNED -> getString(R.string.already_assigned)
+                        else -> booklet
+                    })
+                    view.btn_action.isEnabled = (booklet != null && booklet != INVALID_CODE && booklet != ALREADY_ASSIGNED)
 
                     if (booklet == null) {
                         qr_scanner_holder.visibility = View.VISIBLE
@@ -145,21 +149,17 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             }
         })
 
+        viewModel.scannedIdLD.observe(viewLifecycleOwner, Observer {
+            viewModel.scanQRBooklet(it)
+        })
+
         return view
     }
 
     override fun handleResult(rawResult: Result?) {
         qr_scanner_holder?.visibility = View.GONE
-        val result = rawResult.toString()
-
-        val scannedId = if (BOOKLET_REGEX.matches(result)) {
-            result
-        } else {
-            INVALID_CODE
-        }
-
-        viewModel.scanQRBooklet(scannedId)
-        Toast.makeText(context, scannedId, Toast.LENGTH_SHORT).show()
+        val scannedId = rawResult.toString()
+        viewModel.checkScannedId(scannedId)
     }
 
     override fun onResume() {
