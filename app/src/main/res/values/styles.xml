@@ -16,7 +16,7 @@
 
     </style>
 
-    <style name="ErrorTextView" parent="Widget.AppCompat.AutoCompleteTextView">
+    <style name="ErrorTextView" parent="@android:style/Widget.Material.TextView">
         <item name="android:textColor">@color/error</item>
     </style>
 
