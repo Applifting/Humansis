@@ -7,7 +7,7 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "cz.applifting.humansis"
+        applicationId "org.humansis.app.user"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode readVersionCode()
@@ -57,7 +57,6 @@ android {
 
         prod {
             dimension "environment"
-            applicationIdSuffix ".prod"
             buildConfigField "String", "API_BASE_URL", "\"https://api.bmstaging.info/api/wsse/\""
             resValue "string", "app_name", "Humansis"
         }
