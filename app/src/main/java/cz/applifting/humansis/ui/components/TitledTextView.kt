@@ -52,6 +52,10 @@ class TitledTextView @JvmOverloads constructor(context: Context, attrs: Attribut
 
     }
 
+    fun getValue(): String {
+        return tv_value.text.toString()
+    }
+
     fun setStatus(distributed: Boolean) {
         val color = if (distributed) R.color.orange else R.color.light_blue
         iv_status.tintedDrawable(R.drawable.ic_circle, color)

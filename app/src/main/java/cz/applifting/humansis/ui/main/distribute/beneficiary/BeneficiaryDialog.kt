@@ -100,7 +100,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                 // Handle QR voucher
                 if (args.isQRVoucher) {
-                    val booklet = (it.qrBooklets?.firstOrNull())
+                    val booklet = (it.qrBooklets?.firstOrNull()) ?: viewModel.scannedBooklet
+                    viewModel.scannedBooklet = null
 
                     if (!it.distributed) {
                         tv_booklet.setRescanActionListener {
@@ -173,6 +174,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         if (args.isQRVoucher) {
             qr_scanner.stopCamera()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        viewModel.scannedBooklet = if (tv_booklet.getValue().isNotEmpty()) tv_booklet.getValue() else null
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
