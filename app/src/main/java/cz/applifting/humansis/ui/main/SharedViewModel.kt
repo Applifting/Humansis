@@ -67,6 +67,7 @@ class SharedViewModel @Inject constructor(
         
         toastLD.addSource(workInfosLD) {
 
+            lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
             lastSyncFailedLD.value = sp.getDate(LAST_SYNC_FAILED_KEY)
 
             if (it.isNullOrEmpty()) {
@@ -87,7 +88,6 @@ class SharedViewModel @Inject constructor(
         launch {
             workManager.beginUniqueWork(MANUAL_SYNC_WORKER, ExistingWorkPolicy.KEEP, OneTimeWorkRequest.from(SyncWorker::class.java)).enqueue()
             forceOfflineReloadLD.value = true
-
         }
     }
 
