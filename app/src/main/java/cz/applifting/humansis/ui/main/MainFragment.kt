@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -17,11 +18,9 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
-import cz.applifting.humansis.R.id.snackbar_text
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.misc.HumansisError
@@ -30,9 +29,6 @@ import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.menu_status_button.view.*
-import kotlinx.android.synthetic.main.nav_header_main.*
-
-
 
 
 /**
@@ -66,17 +62,17 @@ class MainFragment : BaseFragment() {
         // Define Observers
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
             if (it == null) {
-                findNavController().navigate(R.id.logout)
+                findNavController().navigate(cz.applifting.humansis.R.id.logout)
                 return@Observer
             }
 
-            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
+            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(cz.applifting.humansis.R.id.tv_username)
             tvUsername.text = it.username
         })
 
-        sharedViewModel.snackbarLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.toastLD.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                showSnackbar(it)
+                showToast(it)
                 sharedViewModel.showSnackbar(null)
             }
         })
@@ -85,7 +81,7 @@ class MainFragment : BaseFragment() {
 
         })
 
-        val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_app_version)
+        val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(cz.applifting.humansis.R.id.tv_app_version)
         tvAppVersion.text = BuildConfig.VERSION_NAME
 
         btn_logout.setOnClickListener {
@@ -155,11 +151,14 @@ class MainFragment : BaseFragment() {
         }
     }
 
-    private fun showSnackbar(text: String) {
-        val snackbar = Snackbar.make(view!!, text, Snackbar.LENGTH_SHORT)
-        val layout = snackbar.view as Snackbar.SnackbarLayout
-        val textView = layout.findViewById(snackbar_text) as TextView
-        textView.maxLines = 5  // show multiple line
-        snackbar.show()
+    private fun showToast(text: String) {
+        val toastView = layoutInflater.inflate(R.layout.custom_toast, null)
+        val tvMessage = toastView.findViewById<TextView>(R.id.tv_toast)
+        tvMessage.text = text
+        val toast = Toast(context)
+        toast.setGravity(Gravity.BOTTOM, 0, 50)
+        toast.duration = Toast.LENGTH_LONG
+        toast.view = toastView
+        toast.show()
     }
 }

@@ -36,7 +36,7 @@ class SharedViewModel @Inject constructor(
     context: Context
 ) : BaseViewModel() {
 
-    val snackbarLD = MediatorLiveData<String>()
+    val toastLD = MediatorLiveData<String>()
     val forceOfflineReloadLD = MutableLiveData<Boolean>()
     val lastDownloadLD = MutableLiveData<Date>()
     val lastSyncFailedLD = MutableLiveData<Date>()
@@ -64,12 +64,12 @@ class SharedViewModel @Inject constructor(
         // TODO check if this is a correct usage of mediator liveData
         pendingChangesLD.addSource(workInfosLD) { refreshPendingChanges() }
         
-        snackbarLD.addSource(workInfosLD) {
+        toastLD.addSource(workInfosLD) {
 
             lastSyncFailedLD.value = sp.getDate(LAST_SYNC_FAILED_KEY)
 
             if (it.isNullOrEmpty()) {
-                snackbarLD.value = null
+                toastLD.value = null
                 return@addSource
             }
 
@@ -77,7 +77,7 @@ class SharedViewModel @Inject constructor(
                 val errors = it.first().outputData.getStringArray(ERROR_MESSAGE_KEY)
                 val error = errors?.joinToString("\n")
 
-                snackbarLD.value = error
+                toastLD.value = error
             }
         }
     }
@@ -98,7 +98,7 @@ class SharedViewModel @Inject constructor(
 
 
     fun showSnackbar(text: String?) {
-        snackbarLD.value = text
+        toastLD.value = text
     }
 
     fun forceOfflineReload(force: Boolean) {

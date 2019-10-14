@@ -22,4 +22,5 @@
     <color name="orange">#E3661F</color>
     <color name="black">#000000</color>
     <color name="screenBackgroundColor">@color/black</color>
+    <color name="toastBackgroundColor">#65AFF7</color>
 </resources>
