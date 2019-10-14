@@ -68,5 +68,6 @@
     <string name="no_data_message">Nothing here, try to reload.</string>
     <string name="invalid_code">Invalid code</string>
     <string name="already_assigned">Already assigned code</string>
+    <string name="last_update_failed">Last update failed</string>
 
 </resources>

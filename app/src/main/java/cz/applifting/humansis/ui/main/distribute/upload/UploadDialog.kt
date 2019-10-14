@@ -41,6 +41,8 @@ class UploadDialog : DialogFragment() {
         val ivConnectionStatus = rootView.findViewById<ImageView>(R.id.iv_connection_status)
         val tvConnectionStatus = rootView.findViewById<TextView>(R.id.tv_connectoin_status)
         val btnSync = rootView.findViewById<Button>(R.id.btn_sync)
+        val tvSyncFailed = rootView.findViewById<TextView>(R.id.tv_sync_failed)
+        val tvSyncFailedDate = rootView.findViewById<TextView>(R.id.tv_sync_failed_date)
 
         val online = context?.isNetworkConnected() ?: false
         btnSync.isEnabled = online
@@ -55,6 +57,12 @@ class UploadDialog : DialogFragment() {
 
         sharedViewModel.lastDownloadLD.observe(viewLifecycleOwner, Observer {
             tvCurrentDataDate.text = it?.format()
+        })
+
+        sharedViewModel.lastSyncFailedLD.observe(viewLifecycleOwner, Observer {
+            tvSyncFailed.visible(it != null)
+            tvSyncFailedDate.visible(it != null)
+            tvSyncFailedDate.text = it?.format()
         })
 
         sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {

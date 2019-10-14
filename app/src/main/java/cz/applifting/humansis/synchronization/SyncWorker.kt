@@ -14,6 +14,7 @@ import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
+import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import retrofit2.HttpException
@@ -89,6 +90,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
                 val lastDownloadAt = Date()
                 sp.setDate(LAST_DOWNLOAD_KEY, lastDownloadAt)
+                sp.setDate(LAST_SYNC_FAILED_KEY, null)
 
             } catch (e: Throwable) {
                 errors.add(e.message)
@@ -97,6 +99,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             if (errors.isEmpty()) {
                 Result.success()
             } else {
+                sp.setDate(LAST_SYNC_FAILED_KEY, Date())
                 Result.failure(reason.putStringArray(ERROR_MESSAGE_KEY, errors.toTypedArray()).build())
             }
         }

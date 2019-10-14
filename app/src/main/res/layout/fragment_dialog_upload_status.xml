@@ -69,6 +69,32 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_current_data"
                 tools:text="20-09-2019 13:30" />
 
+        <TextView
+                android:id="@+id/tv_sync_failed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/last_update_failed"
+                android:textAllCaps="true"
+                android:textSize="14sp"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_current_data_date" />
+
+        <TextView
+                android:id="@+id/tv_sync_failed_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_sync_failed"
+                tools:text="20-09-2019 13:30" />
+
         <Button
                 android:id="@+id/btn_sync"
                 android:layout_width="wrap_content"
@@ -85,7 +111,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_current_data_date" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_sync_failed_date" />
 
         <ProgressBar
                 android:id="@+id/pb_upload"

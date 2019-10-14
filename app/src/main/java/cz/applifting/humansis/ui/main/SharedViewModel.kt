@@ -26,6 +26,7 @@ import javax.inject.Inject
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 10, September, 2019
  */
 const val LAST_DOWNLOAD_KEY = "lastDownloadKey"
+const val LAST_SYNC_FAILED_KEY = "lastSyncFailedKey"
 
 class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
@@ -38,6 +39,7 @@ class SharedViewModel @Inject constructor(
     val snackbarLD = MediatorLiveData<String>()
     val forceOfflineReloadLD = MutableLiveData<Boolean>()
     val lastDownloadLD = MutableLiveData<Date>()
+    val lastSyncFailedLD = MutableLiveData<Date>()
     val pendingChangesLD = MediatorLiveData<Boolean>()
 
     val syncWorkerIsLoadingLD: MediatorLiveData<Boolean> = MediatorLiveData()
@@ -48,6 +50,7 @@ class SharedViewModel @Inject constructor(
 
     init {
         lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
+        lastSyncFailedLD.value = sp.getDate(LAST_SYNC_FAILED_KEY)
         workInfosLD = workManager.getWorkInfosForUniqueWorkLiveData(MANUAL_SYNC_WORKER)
         syncWorkerIsLoadingLD.addSource(
             workInfosLD
@@ -62,6 +65,9 @@ class SharedViewModel @Inject constructor(
         pendingChangesLD.addSource(workInfosLD) { refreshPendingChanges() }
         
         snackbarLD.addSource(workInfosLD) {
+
+            lastSyncFailedLD.value = sp.getDate(LAST_SYNC_FAILED_KEY)
+
             if (it.isNullOrEmpty()) {
                 snackbarLD.value = null
                 return@addSource
