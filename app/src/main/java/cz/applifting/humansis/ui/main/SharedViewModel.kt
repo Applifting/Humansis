@@ -41,6 +41,7 @@ class SharedViewModel @Inject constructor(
     val lastDownloadLD = MutableLiveData<Date>()
     val lastSyncFailedLD = MutableLiveData<Date>()
     val pendingChangesLD = MediatorLiveData<Boolean>()
+    val networkStatus = MutableLiveData<Boolean>()
 
     val syncWorkerIsLoadingLD: MediatorLiveData<Boolean> = MediatorLiveData()
     private val workInfosLD: LiveData<List<WorkInfo>>

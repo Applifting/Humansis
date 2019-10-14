@@ -146,6 +146,7 @@ class MainFragment : BaseFragment() {
     private val networkReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             context?.let {
+                sharedViewModel.networkStatus.value = context.isNetworkConnected()
                 activity?.invalidateOptionsMenu()
             }
         }

@@ -50,6 +50,12 @@ class UploadDialog : DialogFragment() {
         ivConnectionStatus.simpleDrawable(if (online) R.drawable.ic_online else R.drawable.ic_offline)
         tvConnectionStatus.text = getString(if (online) R.string.online else R.string.offline)
 
+        sharedViewModel.networkStatus.observe(viewLifecycleOwner, Observer {
+            btnSync.isEnabled = it
+            ivConnectionStatus.simpleDrawable(if (it) R.drawable.ic_online else R.drawable.ic_offline)
+            tvConnectionStatus.text = getString(if (it) R.string.online else R.string.offline)
+        })
+
         sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
             tvChanges.text = getString(if (it) R.string.pending_local_changes else R.string.no_pending_changes)
             tvChanges.setTextColor(ContextCompat.getColor(context!!, if (it) R.color.negativeColor else R.color.light_blue))
