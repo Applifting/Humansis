@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -95,7 +94,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                         btn_action.visible(false)
                     }
                 } else {
-                    btn_action.text = context.getString(R.string.confirm_distribution)
+                    btn_action.text = context.getString(if (args.isQRVoucher) R.string.confirm_distribution else R.string.assign)
                     btn_action.background = context.getDrawable(R.drawable.background_confirm_btn)
                 }
 
@@ -110,11 +109,13 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
 
                     tv_booklet.setStatus(it.distributed)
-                    tv_booklet.setValue(when(booklet){
-                        INVALID_CODE -> getString(R.string.invalid_code)
-                        ALREADY_ASSIGNED -> getString(R.string.already_assigned)
-                        else -> booklet
-                    })
+                    tv_booklet.setValue(
+                        when (booklet) {
+                            INVALID_CODE -> getString(R.string.invalid_code)
+                            ALREADY_ASSIGNED -> getString(R.string.already_assigned)
+                            else -> booklet
+                        }
+                    )
                     view.btn_action.isEnabled = (booklet != null && booklet != INVALID_CODE && booklet != ALREADY_ASSIGNED)
 
                     if (booklet == null) {

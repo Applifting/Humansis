@@ -21,7 +21,7 @@
     <string name="beneficiaries_reached">%1$d of %2$d beneficiaries reached</string>
     <string name="beneficiary_name">%1$s %2$s</string>
     <string name="sort_alphabetically">Sort alphabetically</string>
-    <string name="search_beneficiary_hint">Enter name</string>
+    <string name="search_beneficiary_hint">Search names</string>
     <string name="distributions">Distributions</string>
     <string name="unknown">Unknown</string>
     <string name="assign_booklet">Assign booklet</string>
@@ -45,9 +45,9 @@
     <string name="online">Online</string>
     <string name="pending_local_changes">Pending local changes</string>
     <string name="no_pending_changes">No pending changes</string>
-    <string name="current_data">Current data</string>
+    <string name="current_data">Latest update</string>
     <string name="sync">Upload &amp; Download</string>
-    <string name="revert">Revert</string>
+    <string name="revert">Undo Assignment</string>
     <string name="logout_alert_text">Are you sure you want to log out?</string>
     <string name="error_message">There was an error during sync.</string>
     <string name="humansis_id">Humansis ID: %1$d</string>
@@ -69,5 +69,6 @@
     <string name="invalid_code">Invalid code</string>
     <string name="already_assigned">Already assigned code</string>
     <string name="last_update_failed">Last update failed</string>
+    <string name="assign">Assign</string>
 
 </resources>
