@@ -13,6 +13,7 @@ buildscript {
         // in the individual module build.gradle files
         def nav_version = "2.2.0-alpha01"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+        classpath 'com.google.gms:google-services:4.3.2'
     }
 }
 

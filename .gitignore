@@ -11,3 +11,5 @@
 /build
 /captures
 .externalNativeBuild
+/fastlane/README.md
+/fastlane/report.xml

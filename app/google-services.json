@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "180061719576",
+    "firebase_url": "https://humansis-15234.firebaseio.com",
+    "project_id": "humansis-15234",
+    "storage_bucket": "humansis-15234.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180061719576:android:87b6cba2ef928618cd876d",
+        "android_client_info": {
+          "package_name": "cz.applifting.humansis.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "180061719576-5eir1qjrgjibgrsoqcjb71s32snmmro3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTq66fTw_ag3L6yF04hELYEGQbuhznZ8A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "180061719576-5eir1qjrgjibgrsoqcjb71s32snmmro3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
