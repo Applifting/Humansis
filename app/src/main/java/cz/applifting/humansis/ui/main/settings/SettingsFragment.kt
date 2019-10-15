@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.R
-import cz.applifting.humansis.extensions.showSoftKeyboard
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_settings.*
+
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -35,12 +37,29 @@ class SettingsFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        (activity as HumansisActivity).supportActionBar?.title = getString(R.string.action_settings)
+        (activity as HumansisActivity).supportActionBar?.title = getString(cz.applifting.humansis.R.string.action_settings)
         (activity as HumansisActivity).supportActionBar?.subtitle = ""
 
-        viewModel.countryLD.observe(viewLifecycleOwner, Observer {
-            et_country.isEnabled = false
-            et_country.setText(it)
+        val countries = resources.getStringArray(R.array.countries)
+
+        val adapter = ArrayAdapter.createFromResource(context!!, R.array.countries, R.layout.item_country)
+        adapter.setDropDownViewResource(R.layout.item_country_dropdown)
+        spinner_country.adapter = adapter
+
+        spinner_country.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val country = parent?.getItemAtPosition(position) as String
+                viewModel.updateCountrySettings(country)
+            }
+        }
+
+
+        viewModel.countryLD.observe(viewLifecycleOwner, Observer<String> {
+            spinner_country.setSelection(countries.indexOf(it))
         })
 
         viewModel.savedLD.observe(viewLifecycleOwner, Observer<Boolean> {
@@ -58,18 +77,5 @@ class SettingsFragment : BaseFragment() {
             }
 
         })
-
-        btn_edit.setOnClickListener {
-            et_country.isEnabled = !et_country.isEnabled
-            if (et_country.isEnabled) {
-                et_country.requestFocus()
-                et_country.setSelection(et_country.text.length)
-                et_country.showSoftKeyboard()
-                btn_edit.text = getString(R.string.settings_save)
-            } else {
-                btn_edit.text = getString(R.string.settings_edit)
-                viewModel.updateCountrySettings(et_country.text.toString())
-            }
-        }
     }
 }

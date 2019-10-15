@@ -35,6 +35,11 @@ class SettingsViewModel @Inject constructor(
             return
         }
 
+        val oldCountry = sp.getString(SP_COUNTRY, null)
+        if (oldCountry == country) {
+            return
+        }
+
         launch {
             with(sp.edit()) {
                 putString(SP_COUNTRY, country.toUpperCase(Locale.getDefault()))
