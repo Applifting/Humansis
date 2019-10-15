@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.component_list.view.*
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
-class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(context, attrs) {
+class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
 
     fun init(viewAdapter: RecyclerView.Adapter<*>) {
         View.inflate(context, R.layout.component_list, this)
@@ -51,6 +51,10 @@ class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(con
         swrl_swipe_to_refresh.setOnRefreshListener(listener)
     }
 
+    fun scrollToTop() {
+        rv_list.layoutManager?.scrollToPosition(0)
+    }
+
     inner class VerticalMarginItemDecoration() : RecyclerView.ItemDecoration() {
         override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
 
@@ -60,7 +64,7 @@ class ListComponent(context: Context, attrs: AttributeSet): ConstraintLayout(con
                 if (parent.getChildAdapterPosition(view) == 0) {
                     top = margin
                 }
-                left =  margin
+                left = margin
                 right = margin
                 bottom = margin
             }

@@ -44,14 +44,15 @@
             android:layout_height="wrap_content"
             android:background="@drawable/background_dark_component">
 
-        <ImageView
+        <TextView
                 android:id="@+id/btn_sort"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/sort_alphabetically"
                 android:padding="16dp"
-                android:tint="@color/white"
+                android:textSize="18sp"
+                android:text="@string/sort_az"
+                android:textColor="@color/white"
                 app:srcCompat="@drawable/ic_sort_by_alpha" />
 
     </FrameLayout>

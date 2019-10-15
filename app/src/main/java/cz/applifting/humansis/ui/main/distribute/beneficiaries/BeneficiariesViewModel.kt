@@ -20,14 +20,22 @@ class BeneficiariesViewModel @Inject constructor(
     context: Context
 ) : BaseListViewModel(context) {
 
+    enum class Sort {
+        DEFAULT,
+        AZ,
+        ZA
+    }
+
     private val beneficiariesLD = MutableLiveData<List<BeneficiaryLocal>>()
     internal val beneficiariesViewStateLD: MutableLiveData<ListComponentState> = MutableLiveData()
     internal val statsLD: MutableLiveData<Pair<Int, Int>> = MutableLiveData()
     internal val searchResultsLD = MediatorLiveData<List<BeneficiaryLocal>>()
+    internal val currentSort = MutableLiveData<Sort>()
 
     init {
+        currentSort.value = Sort.DEFAULT
         searchResultsLD.addSource(beneficiariesLD) { list ->
-            searchResultsLD.value = list?.sort()
+            searchResultsLD.value = list?.defaultSort()
         }
     }
 
@@ -58,11 +66,10 @@ class BeneficiariesViewModel @Inject constructor(
         val query = input.toLowerCase(Locale.getDefault())
 
         if (query.isEmpty()) {
-            searchResultsLD.value = it.sort()
+            searchResultsLD.value = it.defaultSort()
             return@let
         }
 
-        //todo find out what is expected behaviour for filtering and sorting
         searchResultsLD.value = it.filter { beneficiary ->
 
             val familyName = beneficiary.familyName?.toLowerCase(Locale.getDefault()) ?: ""
@@ -79,19 +86,50 @@ class BeneficiariesViewModel @Inject constructor(
 
             matched.contains(true)
 
-        }.sort()
+        }.defaultSort()
 
+    }
+
+    internal fun sortBeneficiaries() = searchResultsLD.value?.let { list ->
+        currentSort.value = nextSort()
+        searchResultsLD.value = list.run {
+            when (currentSort.value) {
+                Sort.DEFAULT -> defaultSort()
+                Sort.AZ -> sortAZ()
+                Sort.ZA -> sortZA()
+                else -> defaultSort()
+            }
+        }
     }
 
     /**
      * Sorts currently displayed beneficiaries by family name, undistributed puts first.
      */
-    internal fun sortBeneficiaries() = searchResultsLD.value?.let { list ->
-        searchResultsLD.value = list.sort()
+    private fun List<BeneficiaryLocal>.defaultSort(): List<BeneficiaryLocal> {
+        return this.sortedWith(compareBy({ it.distributed }, { it.familyName }))
     }
 
-    private fun List<BeneficiaryLocal>.sort(): List<BeneficiaryLocal> {
-        return this.sortedWith(compareBy({ it.distributed }, { it.familyName }))
+    /**
+     * Sorts currently displayed beneficiaries by family name A to Z
+     */
+    private fun List<BeneficiaryLocal>.sortAZ(): List<BeneficiaryLocal> {
+        return this.sortedWith(compareBy { it.familyName })
+    }
+
+    /**
+     * Sorts currently displayed beneficiaries by family name Z to A
+     */
+    private fun List<BeneficiaryLocal>.sortZA(): List<BeneficiaryLocal> {
+        return this.sortedWith(compareBy { it.familyName }).reversed()
+    }
+
+    private fun nextSort(): Sort {
+        return when (currentSort.value) {
+            Sort.DEFAULT -> Sort.AZ
+            Sort.AZ -> Sort.ZA
+            Sort.ZA -> Sort.AZ
+            else -> Sort.DEFAULT
+        }
     }
 
 }

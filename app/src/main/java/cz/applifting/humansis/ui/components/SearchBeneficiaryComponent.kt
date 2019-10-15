@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.hideSoftKeyboard
+import cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesViewModel
 import kotlinx.android.synthetic.main.component_search_beneficiary.view.*
 
 class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
@@ -50,6 +51,16 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
 
     internal fun onSort(sort: () -> Unit) {
         btn_sort.setOnClickListener { sort() }
+    }
+
+    internal fun changeSortIcon(sort: BeneficiariesViewModel.Sort) {
+        val textResId = when (sort) {
+            BeneficiariesViewModel.Sort.DEFAULT -> R.string.sort_az
+            BeneficiariesViewModel.Sort.AZ -> R.string.sort_za
+            BeneficiariesViewModel.Sort.ZA -> R.string.sort_az
+        }
+
+        btn_sort.text = context.getString(textResId)
     }
 
 }
