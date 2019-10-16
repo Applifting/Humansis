@@ -89,8 +89,8 @@ class MainFragment : BaseFragment() {
             val pendingChanges = sharedViewModel.pendingChangesLD.value ?: false
 
             AlertDialog.Builder(context!!)
-                .setTitle(if (!pendingChanges) R.string.logout_alert_title else R.string.logout_alert_pending_changes)
-                .setMessage(getString(cz.applifting.humansis.R.string.logout_alert_text))
+                .setTitle(if (!pendingChanges) R.string.logout_alert_title else R.string.logout_alert_pending_changes_title)
+                .setMessage(getString(if (!pendingChanges) R.string.logout_alert_text else R.string.logout_alert_pending_changes_text))
                 .setPositiveButton(android.R.string.yes) { _, _ ->
                     viewModel.logout()
                 }

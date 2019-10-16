@@ -74,6 +74,7 @@
     <string name="sort_za">ZA</string>
     <string name="error_service_unavailable">Service is unavailable</string>
     <string name="logout_alert_title">Log out</string>
-    <string name="logout_alert_pending_changes">Pending changes!</string>
+    <string name="logout_alert_pending_changes_title">Pending changes!</string>
+    <string name="logout_alert_pending_changes_text">Are you sure you want to log out? All application data will be erased. Pending changes need to be synchronized before log out or the changes will be lost.</string>
 
 </resources>
