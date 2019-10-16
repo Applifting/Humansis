@@ -85,13 +85,17 @@ class MainFragment : BaseFragment() {
         tvAppVersion.text = BuildConfig.VERSION_NAME
 
         btn_logout.setOnClickListener {
+
+            val pendingChanges = sharedViewModel.pendingChangesLD.value ?: false
+
             AlertDialog.Builder(context!!)
+                .setTitle(if (!pendingChanges) R.string.logout_alert_title else R.string.logout_alert_pending_changes)
                 .setMessage(getString(cz.applifting.humansis.R.string.logout_alert_text))
                 .setPositiveButton(android.R.string.yes) { _, _ ->
                     viewModel.logout()
                 }
                 .setNegativeButton(android.R.string.no, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setIcon(R.drawable.ic_warning)
                 .show()
         }
 

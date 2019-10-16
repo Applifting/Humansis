@@ -48,7 +48,7 @@
     <string name="current_data">Latest update</string>
     <string name="sync">Upload &amp; Download</string>
     <string name="revert">Undo Assignment</string>
-    <string name="logout_alert_text">Are you sure you want to log out?</string>
+    <string name="logout_alert_text">Are you sure you want to log out? All application data will be erased.</string>
     <string name="error_message">There was an error during sync.</string>
     <string name="humansis_id">Humansis ID: %1$d</string>
     <string name="settings_country_hint">Enter country ISO3</string>
@@ -73,5 +73,7 @@
     <string name="sort_az">AZ</string>
     <string name="sort_za">ZA</string>
     <string name="error_service_unavailable">Service is unavailable</string>
+    <string name="logout_alert_title">Log out</string>
+    <string name="logout_alert_pending_changes">Pending changes!</string>
 
 </resources>
