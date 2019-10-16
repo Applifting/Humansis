@@ -10,6 +10,7 @@ fun parseError(e: HttpException, context: Context): String {
         "This username doesn't exist" -> context.getString(R.string.error_invalid_username)
         "Wrong password" -> context.getString(R.string.error_invalid_password)
         "No internet connection" -> context.getString(R.string.error_no_internet_connection)
+        "Service unavailable" -> context.getString(R.string.error_service_unavailable)
         else -> context.getString(R.string.error_unknown)
     }
 }

@@ -72,5 +72,6 @@
     <string name="assign">Assign</string>
     <string name="sort_az">AZ</string>
     <string name="sort_za">ZA</string>
+    <string name="error_service_unavailable">Service is unavailable</string>
 
 </resources>

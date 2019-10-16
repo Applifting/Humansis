@@ -42,28 +42,27 @@ class AppModule {
                 val oldRequest = chain.request()
 
                 if (context.isNetworkConnected()) {
-                    runBlocking {
-                        val headersBuilder = oldRequest.headers().newBuilder()
+                    try {
+                        runBlocking {
+                            val headersBuilder = oldRequest.headers().newBuilder()
 
-                        sp.getString(SP_COUNTRY, null)?.let {
-                            headersBuilder.add("country", it)
+                            sp.getString(SP_COUNTRY, null)?.let {
+                                headersBuilder.add("country", it)
+                            }
+
+                            loginManager.getAuthHeader()?.let {
+                                headersBuilder.add("x-wsse", it)
+                            }
+
+                            val request = oldRequest.newBuilder().headers(headersBuilder.build()).build()
+                            chain.proceed(request)
                         }
-
-                        loginManager.getAuthHeader()?.let {
-                            headersBuilder.add("x-wsse", it)
-                        }
-
-                        val request = oldRequest.newBuilder().headers(headersBuilder.build()).build()
-                        chain.proceed(request)
+                    } catch (e: Exception) {
+                        buildErrorResponse(oldRequest, HttpURLConnection.HTTP_UNAVAILABLE, "Service unavailable")
                     }
+
                 } else {
-                    Response.Builder()
-                        .protocol(Protocol.HTTP_2)
-                        .request(oldRequest)
-                        .code(HttpURLConnection.HTTP_UNAVAILABLE)
-                        .message("No internet connection")
-                        .body(ResponseBody.create(MediaType.parse("text/plain"), "No internet connection"))
-                        .build()
+                    buildErrorResponse(oldRequest, HttpURLConnection.HTTP_UNAVAILABLE, "No internet connection")
                 }
             }
             .build()
@@ -73,6 +72,16 @@ class AppModule {
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().serializeNulls().create()))
             .client(client)
             .build().create()
+    }
+
+    private fun buildErrorResponse(oldRequest: Request, errorCode: Int, errorMessage: String): Response {
+        return Response.Builder()
+            .protocol(Protocol.HTTP_2)
+            .request(oldRequest)
+            .code(errorCode)
+            .message(errorMessage)
+            .body(ResponseBody.create(MediaType.parse("text/plain"), errorMessage))
+            .build()
     }
 
     @Provides
