@@ -31,6 +31,7 @@ class BeneficiariesViewModel @Inject constructor(
     internal val statsLD: MutableLiveData<Pair<Int, Int>> = MutableLiveData()
     internal val searchResultsLD = MediatorLiveData<List<BeneficiaryLocal>>()
     internal val currentSort = MutableLiveData<Sort>()
+    private var searchText: String? = null
 
     init {
         currentSort.value = Sort.DEFAULT
@@ -55,6 +56,12 @@ class BeneficiariesViewModel @Inject constructor(
             beneficiariesLD.value = beneficiaries
             statsLD.value = Pair(beneficiaries?.count { it.distributed } ?: 0, beneficiaries?.size ?: 0)
             finishLoading(beneficiaries)
+
+            searchText?.let {
+                if (it.isNotEmpty()) {
+                    search(it)
+                }
+            }
         }
     }
 
@@ -62,7 +69,7 @@ class BeneficiariesViewModel @Inject constructor(
      * Filters beneficiaries by provided query.
      */
     internal fun search(input: String) = beneficiariesLD.value?.let {
-
+        searchText = input
         val query = input.toLowerCase(Locale.getDefault())
 
         if (query.isEmpty()) {
