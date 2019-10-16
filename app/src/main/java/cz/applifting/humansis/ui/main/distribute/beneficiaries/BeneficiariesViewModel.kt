@@ -78,7 +78,7 @@ class BeneficiariesViewModel @Inject constructor(
             val id = beneficiary.id.toString()
 
             val matched = mutableListOf<Boolean>()
-            val splitQuery = query.split(" ")
+            val splitQuery = query.split(" ").filter { subQuery -> subQuery.isNotEmpty() }
 
             splitQuery.forEach { subQuery ->
                 matched.add(familyName.startsWith(subQuery) || givenName.startsWith(subQuery) || id == subQuery || beneficiaryId == subQuery)
