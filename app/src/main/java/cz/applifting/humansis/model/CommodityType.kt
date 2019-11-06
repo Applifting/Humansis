@@ -12,5 +12,6 @@ enum class CommodityType(val drawableResId: Int) {
     @SerializedName("RTE Kit") RTE_KIT(R.drawable.ic_commodity_rte_kit),
     @SerializedName("Paper Voucher") PAPER_VOUCHER(R.drawable.ic_commodity_paper_voucher),
     @SerializedName("Food") FOOD(R.drawable.ic_commodity_food),
-    @SerializedName("QR Code Voucher") QR_VOUCHER(R.drawable.ic_commodity_voucher)
+    @SerializedName("QR Code Voucher") QR_VOUCHER(R.drawable.ic_commodity_voucher),
+    @SerializedName("Mobile Money") MOBILE_MONEY(0)
 }
