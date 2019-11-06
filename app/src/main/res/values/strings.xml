@@ -17,7 +17,7 @@
     <string name="commodities">Commodities: </string>
     <string name="households">Households: %1$d</string>
     <string name="beneficiaries_title">Beneficiaries</string>
-    <string name="beneficiary_id">ID: %1$d</string>
+    <string name="national_id">National ID: %1$s</string>
     <string name="beneficiaries_reached">%1$d of %2$d beneficiaries reached</string>
     <string name="beneficiary_name">%1$s %2$s</string>
     <string name="sort_alphabetically">Sort alphabetically</string>

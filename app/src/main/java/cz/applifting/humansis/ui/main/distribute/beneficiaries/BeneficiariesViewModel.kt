@@ -82,13 +82,18 @@ class BeneficiariesViewModel @Inject constructor(
             val familyName = beneficiary.familyName?.toLowerCase(Locale.getDefault()) ?: ""
             val givenName = beneficiary.givenName?.toLowerCase(Locale.getDefault()) ?: ""
             val beneficiaryId = beneficiary.beneficiaryId.toString()
-            val id = beneficiary.id.toString()
+            val nationalId = beneficiary.nationalId
 
             val matched = mutableListOf<Boolean>()
             val splitQuery = query.split(" ").filter { subQuery -> subQuery.isNotEmpty() }
 
             splitQuery.forEach { subQuery ->
-                matched.add(familyName.startsWith(subQuery) || givenName.startsWith(subQuery) || id == subQuery || beneficiaryId == subQuery)
+                matched.add(
+                    familyName.startsWith(subQuery) ||
+                            givenName.startsWith(subQuery) ||
+                            beneficiaryId == subQuery ||
+                            nationalId?.startsWith(subQuery) == true
+                )
             }
 
             matched.contains(true)

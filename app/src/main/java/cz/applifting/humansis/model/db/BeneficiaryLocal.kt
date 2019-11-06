@@ -21,7 +21,8 @@ data class BeneficiaryLocal(
     val reliefIDs: List<Int>,
     val qrBooklets: List<String>?,
     val edited: Boolean,
-    val commodities: List<CommodityLocal>?
+    val commodities: List<CommodityLocal>?,
+    val nationalId: String?
 ) {
     // Used in UI only
     @Ignore

@@ -38,7 +38,8 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                     parseReliefs(it.reliefs),
                     parseQRBooklets(it.booklets),
                     false,
-                    parseCommodities(it.booklets, distribution?.commodities)
+                    parseCommodities(it.booklets, distribution?.commodities),
+                    it.beneficiary.nationalIds?.getOrNull(0)?.idNumber
                 )
             }
 
