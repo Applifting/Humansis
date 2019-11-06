@@ -45,8 +45,8 @@
     <string name="online">Online</string>
     <string name="pending_local_changes">Pending local changes</string>
     <string name="no_pending_changes">No pending changes</string>
-    <string name="current_data">Latest update</string>
-    <string name="sync">Upload &amp; Download</string>
+    <string name="current_data">Last update</string>
+    <string name="sync">Sync Data</string>
     <string name="revert">Undo Assignment</string>
     <string name="logout_alert_text">Are you sure you want to log out? All application data will be erased.</string>
     <string name="error_message">There was an error during sync.</string>
