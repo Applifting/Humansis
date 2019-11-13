@@ -50,6 +50,8 @@ class SharedViewModel @Inject constructor(
     private val workManager = WorkManager.getInstance(context)
 
     init {
+        syncWorkerIsLoadingLD.value = false
+
         lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
         lastSyncFailedLD.value = sp.getDate(LAST_SYNC_FAILED_KEY)
         workInfosLD = workManager.getWorkInfosForUniqueWorkLiveData(MANUAL_SYNC_WORKER)
