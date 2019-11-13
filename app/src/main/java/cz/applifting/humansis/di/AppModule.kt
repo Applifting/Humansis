@@ -18,6 +18,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import java.net.HttpURLConnection
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -37,6 +38,8 @@ class AppModule {
         }
 
         val client: OkHttpClient = OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.MINUTES)
+            .callTimeout(10, TimeUnit.MINUTES)
             .addInterceptor(logging)
             .addInterceptor { chain ->
 
