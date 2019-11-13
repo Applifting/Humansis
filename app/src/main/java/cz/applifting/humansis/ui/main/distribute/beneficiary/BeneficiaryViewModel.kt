@@ -19,7 +19,7 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
 
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
     val scannedIdLD = MutableLiveData<String>()
-    private val BOOKLET_REGEX = "^\\d{2}-\\d{2}-\\d{2}$".toRegex()
+    private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex()
     var scannedBooklet: String? = null
 
     fun loadBeneficiary(id: Int) {
