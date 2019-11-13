@@ -2,7 +2,6 @@ package cz.applifting.humansis.ui
 
 import android.app.Application
 import androidx.work.*
-import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.di.AppComponent
 import cz.applifting.humansis.di.DaggerAppComponent
 import cz.applifting.humansis.extensions.isNetworkConnected
@@ -22,7 +21,6 @@ class App : Application() {
 
         appComponent = DaggerAppComponent.builder()
             .context(this)
-            .baseUrl(BuildConfig.API_BASE_URL)
             .build()
 
 

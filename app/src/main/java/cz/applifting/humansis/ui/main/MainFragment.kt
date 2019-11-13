@@ -40,7 +40,7 @@ class MainFragment : BaseFragment() {
     private lateinit var mainNavController: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(cz.applifting.humansis.R.layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -139,7 +139,7 @@ class MainFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             action_open_status_dialog -> {
-                mainNavController.navigate(cz.applifting.humansis.R.id.uploadDialog)
+                mainNavController.navigate(R.id.uploadDialog)
                 return true
             }
         }

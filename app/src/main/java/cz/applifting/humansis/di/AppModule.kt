@@ -18,6 +18,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import java.net.HttpURLConnection
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -30,7 +31,7 @@ class AppModule {
 
     @Provides
     @Reusable
-    fun retrofitProvider(baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences): HumansisService {
+    fun retrofitProvider(@Named(BASE_URL) baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences): HumansisService {
         val logging = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }

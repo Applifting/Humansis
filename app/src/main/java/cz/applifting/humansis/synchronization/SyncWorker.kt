@@ -2,12 +2,12 @@ package cz.applifting.humansis.synchronization
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.managers.LoginManager
+import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
@@ -42,6 +42,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     lateinit var sp: SharedPreferences
     @Inject
     lateinit var loginManager: LoginManager
+    @Inject
+    lateinit var logger: Logger
 
 
     init {
@@ -52,16 +54,16 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         return coroutineScope {
             val unsuccessfullyUploaded = mutableListOf<Int>()
             val errors = mutableListOf<String?>()
-
-            Log.d("asdf", "uploadig...")
-
             val reason = Data.Builder()
+
+            logger.logToFile(applicationContext, "Started Sync")
 
             if (!loginManager.tryInitDB()) {
                 reason.putStringArray(
                     ERROR_MESSAGE_KEY,
                     arrayOf("Could not read DB.")
                 )
+                logger.logToFile(applicationContext, "Failed to read db")
                 return@coroutineScope Result.failure(reason.build())
             }
 
@@ -72,7 +74,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                         try {
                             beneficieriesRepository.distribute(it.id)
                         } catch (e: HttpException) {
-                            errors.add("${it.id}: ${e.response()?.errorBody()?.string()}")
+                            val errBody = "${e.response()?.errorBody()?.string()}"
+                            errors.add("${it.id}: $errBody")
+                            logger.logToFile(applicationContext, "Failed uploading: ${it.id}: $errBody")
                             unsuccessfullyUploaded.add(it.id)
                         }
 
@@ -94,11 +98,14 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             } catch (e: Throwable) {
                 errors.add(e.message)
+                logger.logToFile(applicationContext, "Failed downloading: ${e.message}}")
             }
 
             if (errors.isEmpty()) {
+                logger.logToFile(applicationContext, "Sync finished successfully")
                 Result.success()
             } else {
+                logger.logToFile(applicationContext, "Sync finished with failure")
                 sp.setDate(LAST_SYNC_FAILED_KEY, Date())
                 Result.failure(reason.putStringArray(ERROR_MESSAGE_KEY, errors.toTypedArray()).build())
             }

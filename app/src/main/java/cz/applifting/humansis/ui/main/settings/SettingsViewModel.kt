@@ -9,6 +9,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
+
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
  * @since 9. 10. 2019
