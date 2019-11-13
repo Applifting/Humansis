@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
@@ -37,6 +38,10 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
 
         pb_loading.visible(state.isRetrieving)
         swrl_swipe_to_refresh.isRefreshing = state.isRefreshing
+
+        val itemAnimator = DefaultItemAnimator()
+        itemAnimator.addDuration = 300
+        rv_list.itemAnimator = itemAnimator
 
         if (state.text != null && !state.isRetrieving && !state.isRetrieving) {
             tv_info.text = state.text
