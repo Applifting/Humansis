@@ -46,7 +46,7 @@ class ProjectsFragment : BaseFragment() {
         sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
             if (it) {
                 viewModel.showRefreshing()
-            } else if(sharedViewModel.needsReload[DataSource.PROJECTS] == true) {
+            } else if(sharedViewModel.needsReload[DataSource.PROJECTS] == true || viewModel.projectsLD.value.isNullOrEmpty()) {
                 viewModel.loadProjects()
                 sharedViewModel.markAsLoaded(DataSource.PROJECTS)
             }
