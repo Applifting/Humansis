@@ -21,12 +21,19 @@ import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 10, September, 2019
  */
 const val LAST_DOWNLOAD_KEY = "lastDownloadKey"
 const val LAST_SYNC_FAILED_KEY = "lastSyncFailedKey"
+
+enum class DataSource {
+    PROJECTS,
+    DISTRIBUTIONS,
+    BENEFICIARIES
+}
 
 class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
@@ -46,14 +53,16 @@ class SharedViewModel @Inject constructor(
     val syncWorkerIsLoadingLD: MediatorLiveData<Boolean> = MediatorLiveData()
     private val workInfosLD: LiveData<List<WorkInfo>>
 
-
     private val workManager = WorkManager.getInstance(context)
+
+    val needsReload: HashMap<DataSource, Boolean> = HashMap(3)
 
     init {
         syncWorkerIsLoadingLD.value = false
 
         lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
         lastSyncFailedLD.value = sp.getDate(LAST_SYNC_FAILED_KEY)
+
         workInfosLD = workManager.getWorkInfosForUniqueWorkLiveData(MANUAL_SYNC_WORKER)
         syncWorkerIsLoadingLD.addSource(
             workInfosLD
@@ -62,11 +71,12 @@ class SharedViewModel @Inject constructor(
                 return@addSource
             }
             syncWorkerIsLoadingLD.value = !it.first().state.isFinished
+            setNeedForReload()
         }
 
         // TODO check if this is a correct usage of mediator liveData
         pendingChangesLD.addSource(workInfosLD) { refreshPendingChanges() }
-        
+
         toastLD.addSource(workInfosLD) {
 
             lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
@@ -84,6 +94,8 @@ class SharedViewModel @Inject constructor(
                 toastLD.value = error
             }
         }
+
+        setNeedForReload()
     }
 
     fun synchronize() {
@@ -105,7 +117,12 @@ class SharedViewModel @Inject constructor(
     }
 
     fun forceOfflineReload(force: Boolean) {
+        needsReload[DataSource.BENEFICIARIES] = true
         forceOfflineReloadLD.value = force
+    }
+
+    fun markAsLoaded(dataSource: DataSource) {
+        needsReload[dataSource] = false
     }
 
     fun refreshPendingChanges() {
@@ -119,6 +136,17 @@ class SharedViewModel @Inject constructor(
 
             pendingChangesLD.value = false
         }
+    }
+
+    private fun setNeedForReload() {
+        /*
+         Note: I am totally not happy with this implementation. It fixes an issue, in which are items reloaded multiple times and recycler view is populated multiple times
+         This way, the items are reloaded only once. I think, that the only better solution would be to do it using either coroutines flow or move liveData objects from
+         viewmodels to repository
+        */
+        needsReload[DataSource.PROJECTS] = true
+        needsReload[DataSource.DISTRIBUTIONS] = true
+        needsReload[DataSource.BENEFICIARIES] = true
     }
 
     private suspend fun getAllBeneficiaries(): List<BeneficiaryLocal> {

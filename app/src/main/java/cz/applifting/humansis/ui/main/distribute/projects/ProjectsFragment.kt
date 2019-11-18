@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import cz.applifting.humansis.R
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
+import cz.applifting.humansis.ui.main.DataSource
 import kotlinx.android.synthetic.main.fragment_projects.*
 
 
@@ -45,8 +46,9 @@ class ProjectsFragment : BaseFragment() {
         sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
             if (it) {
                 viewModel.showRefreshing()
-            } else {
+            } else if(sharedViewModel.needsReload[DataSource.PROJECTS] == true) {
                 viewModel.loadProjects()
+                sharedViewModel.markAsLoaded(DataSource.PROJECTS)
             }
         })
     }

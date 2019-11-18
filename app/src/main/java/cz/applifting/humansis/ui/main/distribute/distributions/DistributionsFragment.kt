@@ -12,6 +12,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
+import cz.applifting.humansis.ui.main.DataSource
 import kotlinx.android.synthetic.main.fragment_distributions.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,8 +60,11 @@ class DistributionsFragment : BaseFragment() {
 
                 else -> launch {
                     // Load after animation finishes to avoid drop in frame rate
-                    delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
-                    viewModel.loadDistributions(args.projectId)
+                    if(sharedViewModel.needsReload[DataSource.DISTRIBUTIONS] == true || viewModel.distributionsLD.value.isNullOrEmpty()) {
+                        delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
+                        viewModel.loadDistributions(args.projectId)
+                        sharedViewModel.markAsLoaded(DataSource.DISTRIBUTIONS)
+                    }
                 }
             }
         })

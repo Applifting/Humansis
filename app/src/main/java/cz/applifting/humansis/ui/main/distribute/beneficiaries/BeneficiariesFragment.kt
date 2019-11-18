@@ -14,6 +14,7 @@ import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
+import cz.applifting.humansis.ui.main.DataSource
 import kotlinx.android.synthetic.main.component_search_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiaries.*
 import kotlinx.coroutines.delay
@@ -86,8 +87,11 @@ class BeneficiariesFragment : BaseFragment() {
 
                 else -> launch {
                     // Load after animation finishes to avoid drop in frame rate
-                    delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
-                    viewModel.loadBeneficiaries(args.distributionId)
+                    if(sharedViewModel.needsReload[DataSource.BENEFICIARIES] == true || viewModel.searchResultsLD.value.isNullOrEmpty()) {
+                        delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
+                        viewModel.loadBeneficiaries(args.distributionId)
+                        sharedViewModel.markAsLoaded(DataSource.BENEFICIARIES)
+                    }
                 }
             }
         })
