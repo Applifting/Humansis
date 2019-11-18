@@ -91,7 +91,7 @@ class BeneficiariesViewModel @Inject constructor(
                 matched.add(
                     familyName.startsWith(subQuery) ||
                             givenName.startsWith(subQuery) ||
-                            beneficiaryId == subQuery ||
+                            beneficiaryId.startsWith(subQuery) ||
                             nationalId?.startsWith(subQuery) == true
                 )
             }
