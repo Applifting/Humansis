@@ -10,6 +10,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import cz.applifting.humansis.extensions.getDate
+import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
@@ -39,6 +40,7 @@ class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val distributionsRepository: DistributionsRepository,
     private val beneficieriesRepository: BeneficieriesRepository,
+    private val logger: Logger,
     private val sp: SharedPreferences,
     context: Context
 ) : BaseViewModel() {
@@ -70,6 +72,8 @@ class SharedViewModel @Inject constructor(
             if (it.isNullOrEmpty()) {
                 return@addSource
             }
+            launch { logger.logToFile(context, "Worker state: ${it.first().state}") }
+
             syncWorkerIsLoadingLD.value = !it.first().state.isFinished
             setNeedForReload()
         }
