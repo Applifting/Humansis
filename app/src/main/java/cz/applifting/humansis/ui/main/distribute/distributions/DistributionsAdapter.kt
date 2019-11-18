@@ -79,8 +79,16 @@ class DistributionsAdapter(
                 try {
                     val commodityImage = ImageView(context)
                     commodityImage.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                    commodityImage.simpleDrawable(CommodityType.valueOf(it.type).drawableResId)
-                    llComoditiesHolder.addView(commodityImage)
+
+                    try {
+                        val commodityDrawable = CommodityType.valueOf(it.type).drawableResId
+
+                        commodityImage.simpleDrawable(commodityDrawable)
+                        llComoditiesHolder.addView(commodityImage)
+                    } catch (e: IllegalArgumentException) {
+                        // Todo add unknown commodity image
+                    }
+
                 } catch (e: IllegalArgumentException) {
                     // do not show, unknown type
                 }
