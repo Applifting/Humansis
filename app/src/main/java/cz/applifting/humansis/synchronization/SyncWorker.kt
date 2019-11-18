@@ -9,6 +9,7 @@ import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.model.db.BeneficiaryLocal
+import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
@@ -16,7 +17,7 @@ import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.supervisorScope
 import retrofit2.HttpException
 import java.util.*
 import javax.inject.Inject
@@ -51,7 +52,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     }
 
     override suspend fun doWork(): Result {
-        return coroutineScope {
+        return supervisorScope {
             val unsuccessfullyUploaded = mutableListOf<Int>()
             val errors = mutableListOf<String?>()
             val reason = Data.Builder()
@@ -64,7 +65,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     arrayOf("Could not read DB.")
                 )
                 logger.logToFile(applicationContext, "Failed to read db")
-                return@coroutineScope Result.failure(reason.build())
+                return@supervisorScope Result.failure(reason.build())
             }
 
             // Upload all changes
@@ -88,15 +89,28 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 projectsRepository
                     .getProjectsOnline().orEmpty()
                     .map { async { distributionsRepository.getDistributionsOnline(it.id) } }
-                    .flatMap { it.await() ?: listOf() }
+                    .flatMap {
+                        try {
+                            it.await() ?: listOf()
+                        } catch (e: HttpException) {
+                            logger.logToFile(applicationContext, "Failed downloading distribution ${e.code()}")
+                            listOf<DistributionLocal>()
+                        }
+                    }
                     .map { async { beneficieriesRepository.getBeneficieriesOnline(it.id, unsuccessfullyUploaded) } }
-                    .map { it.await() }
+                    .map {
+                        try {
+                            it.await()
+                        } catch (e: HttpException) {
+                            logger.logToFile(applicationContext, "Failed downloading beneficiaries ${e.code()}")
+                        }
+                    }
 
                 val lastDownloadAt = Date()
                 sp.setDate(LAST_DOWNLOAD_KEY, lastDownloadAt)
                 sp.setDate(LAST_SYNC_FAILED_KEY, null)
 
-            } catch (e: Throwable) {
+            } catch (e: HttpException) {
                 errors.add(e.message)
                 logger.logToFile(applicationContext, "Failed downloading: ${e.message}}")
             }
