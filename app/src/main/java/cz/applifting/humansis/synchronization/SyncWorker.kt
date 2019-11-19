@@ -93,7 +93,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                         try {
                             it.await() ?: listOf()
                         } catch (e: HttpException) {
-                            logger.logToFile(applicationContext, "Failed downloading distribution ${e.code()}")
+                            logger.logToFile(applicationContext, "Failed downloading distribution ${e.code()} ${e.message()} ${e.response().toString()}")
                             listOf<DistributionLocal>()
                         }
                     }
@@ -102,7 +102,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                         try {
                             it.await()
                         } catch (e: HttpException) {
-                            logger.logToFile(applicationContext, "Failed downloading beneficiaries ${e.code()}")
+                            logger.logToFile(applicationContext, "Failed downloading beneficiaries  ${e.code()} ${e.message()} ${e.response().toString()}")
                         }
                     }
 
