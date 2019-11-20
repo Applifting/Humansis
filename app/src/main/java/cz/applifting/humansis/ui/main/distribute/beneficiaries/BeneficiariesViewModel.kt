@@ -7,6 +7,7 @@ import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.ui.components.listComponent.ListComponentState
 import cz.applifting.humansis.ui.main.BaseListViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -40,28 +41,23 @@ class BeneficiariesViewModel @Inject constructor(
         }
     }
 
-    fun loadBeneficiaries(distributionId: Int, download: Boolean = false) {
+    fun init(distributionId: Int) {
         launch {
-            if (download) {
-                showRefreshing()
-            } else {
-                showRetrieving()
-            }
+            showRetrieving()
 
-            val beneficiaries = if (download) {
-                beneficieriesRepository.getBeneficieriesOnline(distributionId)
-            } else {
-                beneficieriesRepository.getBeneficieriesOffline(distributionId)
-            }
-            beneficiariesLD.value = beneficiaries
-            statsLD.value = Pair(beneficiaries?.count { it.distributed } ?: 0, beneficiaries?.size ?: 0)
-            finishLoading(beneficiaries)
+            beneficieriesRepository
+                .getBeneficieriesOffline(distributionId)
+                .collect { newBeneficiaries ->
+                    beneficiariesLD.value = newBeneficiaries
+                    statsLD.value = Pair(newBeneficiaries.count { it.distributed }, newBeneficiaries.size)
+                    finishLoading(newBeneficiaries)
 
-            searchText?.let {
-                if (it.isNotEmpty()) {
-                    search(it)
+                    searchText?.let {
+                        if (it.isNotEmpty()) {
+                            search(it)
+                        }
+                    }
                 }
-            }
         }
     }
 

@@ -83,12 +83,13 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
                     }
                 }
-
             // Download updated data
             try {
                 projectsRepository
                     .getProjectsOnline().orEmpty()
-                    .map { async { distributionsRepository.getDistributionsOnline(it.id) } }
+                    .map {
+                        async { distributionsRepository.getDistributionsOnline(it.id) }
+                    }
                     .flatMap {
                         try {
                             it.await() ?: listOf()
@@ -128,8 +129,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     private suspend fun getAllBeneficiaries(): List<BeneficiaryLocal> {
         return projectsRepository
-            .getProjectsOffline()
-            .flatMap { distributionsRepository.getDistributionsOffline(it.id) }
-            .flatMap { beneficieriesRepository.getBeneficieriesOffline(it.id) }
+            .getProjectsOfflineSuspend()
+            .flatMap { distributionsRepository.getDistributionsOfflineSuspend(it.id) }
+            .flatMap { beneficieriesRepository.getBeneficieriesOfflineSuspend(it.id) }
     }
 }

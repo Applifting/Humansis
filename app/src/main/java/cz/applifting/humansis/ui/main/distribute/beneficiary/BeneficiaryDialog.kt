@@ -138,8 +138,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
                 // Close dialog and notify shareViewModel after beneficiary is saved to db
                 if (!it.currentViewing) {
-                    sharedViewModel.refreshPendingChanges()
-                    sharedViewModel.forceOfflineReload(true)
+                    //sharedViewModel.forceOfflineReload(true)
                     val text = if (it.distributed) {
                         "Item was successfully distributed."
                     } else {

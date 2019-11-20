@@ -2,11 +2,15 @@ package cz.applifting.humansis.db.daos
 
 import androidx.room.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BeneficiaryDao {
     @Query("SELECT * FROM beneficiaries where distributionId = :distributionId")
-    suspend fun getByDistribution(distributionId: Int): List<BeneficiaryLocal>?
+    fun getByDistribution(distributionId: Int): Flow<List<BeneficiaryLocal>>
+
+    @Query("SELECT * FROM beneficiaries where distributionId = :distributionId")
+    suspend fun getByDistributionSuspend(distributionId: Int): List<BeneficiaryLocal>
 
     @Query("SELECT * FROM beneficiaries where id = :beneficiaryId")
     suspend fun findById(beneficiaryId: Int): BeneficiaryLocal

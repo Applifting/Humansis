@@ -6,6 +6,8 @@ import cz.applifting.humansis.model.ui.DistributionModel
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.ui.main.BaseListViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,41 +22,45 @@ class DistributionsViewModel @Inject constructor(
 
     val distributionsLD: MutableLiveData<List<DistributionModel>> = MutableLiveData()
 
-    fun loadDistributions(projectId: Int, download: Boolean = false) {
-        launch {
-            if (download) {
-                showRefreshing()
-            } else {
-                showRetrieving()
-            }
+    private var projectId: Int? = null
 
-            val distributions = if (download) {
-                distributionsRepository.getDistributionsOnline(projectId)
-            } else {
-                distributionsRepository.getDistributionsOffline(projectId)
-            }
-
-            val distributionsModel = distributions?.map {
-
-                // todo maybe count on db layer
-                val reachedBeneficiaries = beneficiariesRepository.countReachedBeneficiariesOffline(it.id)
-                val distributionModel = DistributionModel(
-                    it.id,
-                    it.name,
-                    it.numberOfBeneficiaries,
-                    it.commodities,
-                    it.dateOfDistribution,
-                    it.projectId,
-                    it.target,
-                    it.completed,
-                    reachedBeneficiaries
-                )
-
-                distributionModel
-            }
-
-            distributionsLD.value = distributionsModel
-            finishLoading(distributions)
+    fun init(projectId: Int) {
+        if (this.projectId != null) {
+            return
         }
+        this.projectId = projectId
+
+        launch {
+            showRetrieving()
+            distributionsRepository
+                .getDistributionsOffline(projectId)
+                .map { newDistributions ->
+                    newDistributions.map {
+
+                        // todo maybe count on db layer
+                        val reachedBeneficiaries = beneficiariesRepository.countReachedBeneficiariesOffline(it.id)
+                        val distributionModel = DistributionModel(
+                            it.id,
+                            it.name,
+                            it.numberOfBeneficiaries,
+                            it.commodities,
+                            it.dateOfDistribution,
+                            it.projectId,
+                            it.target,
+                            it.completed,
+                            reachedBeneficiaries
+                        )
+
+                        distributionModel
+                    }
+
+                }
+                .collect {
+                    distributionsLD.value = it
+                    finishLoading(it)
+                }
+        }
+
+
     }
 }

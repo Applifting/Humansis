@@ -1,6 +1,7 @@
 package cz.applifting.humansis.repositories
 
 import android.content.Context
+import android.util.Log
 import cz.applifting.humansis.R
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
@@ -9,6 +10,7 @@ import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.Commodity
 import cz.applifting.humansis.model.db.CommodityLocal
 import cz.applifting.humansis.model.db.DistributionLocal
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,7 +21,6 @@ import javax.inject.Singleton
 class DistributionsRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
     private val db: HumansisDB by lazy { dbProvider.get() }
-    private val distributionsCache: HashMap<Int, List<DistributionLocal>> = HashMap()
 
     suspend fun getDistributionsOnline(projectId: Int): List<DistributionLocal>? {
         val result = service
@@ -46,19 +47,15 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
         db.distributionsDao().deleteByProject(projectId)
         db.distributionsDao().insertAll(result)
 
-        distributionsCache[projectId] = result
-
         return result
     }
 
-    suspend fun getDistributionsOffline(projectId: Int): List<DistributionLocal> {
-        if (distributionsCache.containsKey(projectId)) {
-            return distributionsCache[projectId] ?: listOf()
-        } else {
-            val distributions = db.distributionsDao().getByProject(projectId) ?: listOf()
-            distributionsCache[projectId] = distributions
-            return distributions
-        }
+    fun getDistributionsOffline(projectId: Int): Flow<List<DistributionLocal>> {
+        return db.distributionsDao().getByProject(projectId)
+    }
+
+    suspend fun getDistributionsOfflineSuspend(projectId: Int): List<DistributionLocal> {
+        return db.distributionsDao().getByProjectSuspend(projectId)
     }
 
     suspend fun getUncompletedDistributions(projectId: Int): List<DistributionLocal> {

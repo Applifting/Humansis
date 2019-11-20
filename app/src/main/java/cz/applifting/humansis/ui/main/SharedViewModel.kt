@@ -11,7 +11,6 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.misc.Logger
-import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
@@ -75,11 +74,10 @@ class SharedViewModel @Inject constructor(
             launch { logger.logToFile(context, "Worker state: ${it.first().state}") }
 
             syncWorkerIsLoadingLD.value = !it.first().state.isFinished
-            setNeedForReload()
         }
 
         // TODO check if this is a correct usage of mediator liveData
-        pendingChangesLD.addSource(workInfosLD) { refreshPendingChanges() }
+        // pendingChangesLD.addSource(workInfosLD) { refreshPendingChanges() }
 
         toastLD.addSource(workInfosLD) {
 
@@ -99,7 +97,6 @@ class SharedViewModel @Inject constructor(
             }
         }
 
-        setNeedForReload()
     }
 
     fun synchronize() {
@@ -120,43 +117,52 @@ class SharedViewModel @Inject constructor(
         toastLD.value = text
     }
 
-    fun forceOfflineReload(force: Boolean) {
-        needsReload[DataSource.BENEFICIARIES] = true
-        forceOfflineReloadLD.value = force
-    }
+//    fun forceOfflineReload(force: Boolean) {
+//        needsReload[DataSource.BENEFICIARIES] = true
+//        forceOfflineReloadLD.value = force
+//    }
+//
+//    fun markAsLoaded(dataSource: DataSource) {
+//        needsReload[dataSource] = false
+//    }
 
-    fun markAsLoaded(dataSource: DataSource) {
-        needsReload[dataSource] = false
-    }
+//    fun refreshPendingChanges() {
+//        launch {
+//            for (beneficiary in getAllBeneficiaries()) {
+//                if (beneficiary.edited) {
+//                    pendingChangesLD.value = true
+//                    return@launch
+//                }
+//            }
+//
+//            pendingChangesLD.value = false
+//        }
+//    }
 
-    fun refreshPendingChanges() {
-        launch {
-            for (beneficiary in getAllBeneficiaries()) {
-                if (beneficiary.edited) {
-                    pendingChangesLD.value = true
-                    return@launch
-                }
-            }
+//    private fun setNeedForReload() {
+//        /*
+//         Note: I am totally not happy with this implementation. It fixes an issue, in which are items reloaded multiple times and recycler view is populated multiple times
+//         This way, the items are reloaded only once. I think, that the only better solution would be to do it using either coroutines flow or move liveData objects from
+//         viewmodels to repository
+//        */
+//        needsReload[DataSource.PROJECTS] = true
+//        needsReload[DataSource.DISTRIBUTIONS] = true
+//        needsReload[DataSource.BENEFICIARIES] = true
+//    }
 
-            pendingChangesLD.value = false
-        }
-    }
-
-    private fun setNeedForReload() {
-        /*
-         Note: I am totally not happy with this implementation. It fixes an issue, in which are items reloaded multiple times and recycler view is populated multiple times
-         This way, the items are reloaded only once. I think, that the only better solution would be to do it using either coroutines flow or move liveData objects from
-         viewmodels to repository
-        */
-        needsReload[DataSource.PROJECTS] = true
-        needsReload[DataSource.DISTRIBUTIONS] = true
-        needsReload[DataSource.BENEFICIARIES] = true
-    }
-
-    private suspend fun getAllBeneficiaries(): List<BeneficiaryLocal> {
-        return projectsRepository
-            .getProjectsOffline()
-            .flatMap { distributionsRepository.getDistributionsOffline(it.id) }
-            .flatMap { beneficieriesRepository.getBeneficieriesOffline(it.id) }
-    }
+//    private fun getAllBeneficiaries(): List<BeneficiaryLocal> {
+////        return projectsRepository
+////            .getProjectsOffline()
+////            .map {
+////                val distributionFlows = it.map { distributionsRepository.getDistributionsOffline(it.id) }
+////                distributionFlows.asFlow()
+////            }
+////            .flattenMerge()
+////            .flattenMerge()
+////            .map { newDistributions ->
+////                newDistributions.map {
+////                    beneficieriesRepository.getBeneficieriesOffline(it.id)
+////                    it
+////                }
+////            }
 }

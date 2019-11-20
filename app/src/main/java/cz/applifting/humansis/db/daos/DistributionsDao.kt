@@ -5,17 +5,18 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import cz.applifting.humansis.model.db.DistributionLocal
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
 @Dao
 interface DistributionsDao {
-    @Query("SELECT * FROM distributions")
-    suspend fun getAll(): List<DistributionLocal>?
+    @Query("SELECT * FROM distributions WHERE projectId = :projectId")
+    fun getByProject(projectId: Int): Flow<List<DistributionLocal>>
 
     @Query("SELECT * FROM distributions WHERE projectId = :projectId")
-    suspend fun getByProject(projectId: Int): List<DistributionLocal>?
+    suspend fun getByProjectSuspend(projectId: Int): List<DistributionLocal>
 
     @Query("SELECT * FROM distributions WHERE id = :distributionId")
     suspend fun getById(distributionId: Int): DistributionLocal?

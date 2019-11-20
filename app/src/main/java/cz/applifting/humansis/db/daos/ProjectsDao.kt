@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import cz.applifting.humansis.model.db.ProjectLocal
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
@@ -12,7 +13,10 @@ import cz.applifting.humansis.model.db.ProjectLocal
 @Dao
 interface ProjectsDao {
     @Query("SELECT * FROM projects")
-    suspend fun getAll(): List<ProjectLocal>?
+    fun getAll(): Flow<List<ProjectLocal>>
+
+    @Query("SELECT * FROM projects")
+    suspend fun getAllSuspend(): List<ProjectLocal>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(projects: List<ProjectLocal>)

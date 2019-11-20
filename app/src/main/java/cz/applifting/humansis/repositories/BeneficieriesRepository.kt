@@ -8,6 +8,7 @@ import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.CommodityLocal
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -49,8 +50,12 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return result
     }
 
-    suspend fun getBeneficieriesOffline(distributionId: Int): List<BeneficiaryLocal> {
-        return db.beneficiariesDao().getByDistribution(distributionId) ?: listOf()
+    fun getBeneficieriesOffline(distributionId: Int): Flow<List<BeneficiaryLocal>> {
+        return db.beneficiariesDao().getByDistribution(distributionId)
+    }
+
+    suspend fun getBeneficieriesOfflineSuspend(distributionId: Int): List<BeneficiaryLocal> {
+        return db.beneficiariesDao().getByDistributionSuspend(distributionId)
     }
 
     suspend fun getBeneficiaryOffline(beneficiaryId: Int): BeneficiaryLocal {

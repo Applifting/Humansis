@@ -34,13 +34,13 @@ class AppModule {
     @Reusable
     fun retrofitProvider(@Named(BASE_URL) baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences): HumansisService {
         val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.HEADERS
         }
 
         val client: OkHttpClient = OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.MINUTES)
-            .callTimeout(10, TimeUnit.MINUTES)
-            .addInterceptor(logging)
+            .connectTimeout(5, TimeUnit.MINUTES)
+            .callTimeout(5, TimeUnit.MINUTES)
+            .readTimeout(5, TimeUnit.MINUTES)
             .addInterceptor { chain ->
 
                 val oldRequest = chain.request()
@@ -69,6 +69,7 @@ class AppModule {
                     buildErrorResponse(oldRequest, HttpURLConnection.HTTP_UNAVAILABLE, "No internet connection")
                 }
             }
+            .addInterceptor(logging)
             .build()
 
         return Retrofit.Builder()

@@ -6,6 +6,7 @@ import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.db.ProjectLocal
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,7 +30,11 @@ class ProjectsRepository @Inject constructor(val service: HumansisService, val d
 
     }
 
-    suspend fun getProjectsOffline(): List<ProjectLocal> {
-        return db.projectsDao().getAll() ?: listOf()
+    fun getProjectsOffline(): Flow<List<ProjectLocal>?> {
+        return db.projectsDao().getAll()
+    }
+
+    suspend fun getProjectsOfflineSuspend(): List<ProjectLocal> {
+        return db.projectsDao().getAllSuspend()
     }
 }

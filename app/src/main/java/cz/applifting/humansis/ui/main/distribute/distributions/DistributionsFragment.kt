@@ -12,10 +12,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
-import cz.applifting.humansis.ui.main.DataSource
 import kotlinx.android.synthetic.main.fragment_distributions.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
@@ -55,20 +52,11 @@ class DistributionsFragment : BaseFragment() {
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_distributions::setState))
 
         sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
-            when {
-                it -> viewModel.showRefreshing()
-
-                else -> launch {
-                    // Load after animation finishes to avoid drop in frame rate
-                    if(sharedViewModel.needsReload[DataSource.DISTRIBUTIONS] == true || viewModel.distributionsLD.value.isNullOrEmpty()) {
-                        delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
-                        viewModel.loadDistributions(args.projectId)
-                        sharedViewModel.markAsLoaded(DataSource.DISTRIBUTIONS)
-                    }
-                }
-            }
+            if (it) viewModel.showRefreshing()
         })
-    }
 
+
+        viewModel.init(args.projectId)
+    }
 
 }

@@ -99,7 +99,6 @@ class MainFragment : BaseFragment() {
                 .show()
         }
 
-        sharedViewModel.refreshPendingChanges()
         sharedViewModel.tryFirstDownload()
     }
 

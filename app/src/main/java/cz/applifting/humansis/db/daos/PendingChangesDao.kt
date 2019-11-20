@@ -8,9 +8,6 @@ import cz.applifting.humansis.model.db.PendingChangeLocal
 
 @Dao
 interface PendingChangesDao {
-    @Query("SELECT * FROM pending_changes")
-    suspend fun getAll(): List<PendingChangeLocal>?
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(pendingChange: PendingChangeLocal)
 

@@ -74,12 +74,12 @@ class BeneficiariesFragment : BaseFragment() {
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
 
-        sharedViewModel.forceOfflineReloadLD.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                viewModel.loadBeneficiaries(args.distributionId)
-                sharedViewModel.forceOfflineReload(false)
-            }
-        })
+//        sharedViewModel.forceOfflineReloadLD.observe(viewLifecycleOwner, Observer {
+//            if (it) {
+//                viewModel.loadBeneficiaries(args.distributionId)
+//                sharedViewModel.forceOfflineReload(false)
+//            }
+//        })
 
         sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
             when {
@@ -89,8 +89,8 @@ class BeneficiariesFragment : BaseFragment() {
                     // Load after animation finishes to avoid drop in frame rate
                     if(sharedViewModel.needsReload[DataSource.BENEFICIARIES] == true || viewModel.searchResultsLD.value.isNullOrEmpty()) {
                         delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
-                        viewModel.loadBeneficiaries(args.distributionId)
-                        sharedViewModel.markAsLoaded(DataSource.BENEFICIARIES)
+//                        viewModel.loadBeneficiaries(args.distributionId)
+//                        sharedViewModel.markAsLoaded(DataSource.BENEFICIARIES)
                     }
                 }
             }
@@ -99,6 +99,8 @@ class BeneficiariesFragment : BaseFragment() {
         viewModel.currentSort.observe(viewLifecycleOwner, Observer<BeneficiariesViewModel.Sort> {
             cmp_search_beneficiary.changeSortIcon(it)
         })
+
+        viewModel.init(args.distributionId)
 
         findNavController().addOnDestinationChangedListener { _, _, _ -> et_search?.hideSoftKeyboard() }
     }
