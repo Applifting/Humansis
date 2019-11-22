@@ -104,10 +104,20 @@ class SettingsFragment : BaseFragment() {
             view?.let { view ->
                 Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
             }
-
         })
     }
 
+
+//    private fun confirmCountryDialog(country: String) {
+//        val alertDialogBuilder = AlertDialog.Builder(context!!)
+//        alertDialogBuilder.setTitle(getString(R.string.warning))
+//        alertDialogBuilder.setMessage("Changing country will erase all data on next sync, are you sure you want to proceed?")
+//        alertDialogBuilder.setPositiveButton("Yes") { dialog, _ ->
+//            viewModel.updateCountrySettings(country)
+//        }
+//        alertDialogBuilder.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+//        alertDialogBuilder.create().show()
+//    }
 
     private fun getAndroidVersion(): String {
         val release = Build.VERSION.RELEASE

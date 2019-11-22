@@ -58,7 +58,7 @@ class DistributionsViewModel @Inject constructor(
                 }
                 .collect {
                     distributionsLD.value = it
-                    showRetrieving(false)
+                    showRetrieving(false, it.isNotEmpty())
                 }
         }
 

@@ -28,7 +28,7 @@ class ProjectsViewModel @Inject constructor(
             projectsRepository
                 .getProjectsOffline()
                 .map { newProjects ->
-                    newProjects?.map {
+                    newProjects.map {
                         //todo find better solution to count uncompleted distributions
                         val uncompleteDistributions = distributionsRepository.getUncompletedDistributionsSuspend(it.id)
                         val projectModel = ProjectModel(it.id, it.name, it.numberOfHouseholds, uncompleteDistributions.isEmpty())
@@ -37,7 +37,7 @@ class ProjectsViewModel @Inject constructor(
                 }
                 .collect {
                     projectsLD.value = it
-                    showRetrieving(false)
+                    showRetrieving(false, it.isNotEmpty())
                 }
         }
 

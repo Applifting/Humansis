@@ -30,7 +30,7 @@ class ProjectsRepository @Inject constructor(val service: HumansisService, val d
 
     }
 
-    fun getProjectsOffline(): Flow<List<ProjectLocal>?> {
+    fun getProjectsOffline(): Flow<List<ProjectLocal>> {
         return db.projectsDao().getAll()
     }
 

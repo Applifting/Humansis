@@ -57,7 +57,7 @@ class BeneficiariesViewModel @Inject constructor(
                         }
                     }
 
-                    showRetrieving(false)
+                    showRetrieving(false, newBeneficiaries.isNotEmpty())
                 }
         }
     }
