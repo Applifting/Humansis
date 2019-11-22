@@ -82,7 +82,8 @@ class BeneficiariesViewModel @Inject constructor(
             val nationalId = beneficiary.nationalId
 
             val fullName = "$givenName $familyName"
-            fullName.contains(query) || beneficiaryId.startsWith(query) || nationalId?.startsWith(query) == true
+            val fullNameReversed = "$familyName $givenName"
+            fullName.contains(query) || fullNameReversed.contains(query) || beneficiaryId.startsWith(query) || nationalId?.startsWith(query) == true
         }.defaultSort()
 
     }
