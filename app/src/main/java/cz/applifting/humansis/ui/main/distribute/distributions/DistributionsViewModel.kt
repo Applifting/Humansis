@@ -31,7 +31,8 @@ class DistributionsViewModel @Inject constructor(
         this.projectId = projectId
 
         launch {
-            showRetrieving()
+            showRetrieving(true)
+
             distributionsRepository
                 .getDistributionsOffline(projectId)
                 .map { newDistributions ->
@@ -57,7 +58,7 @@ class DistributionsViewModel @Inject constructor(
                 }
                 .collect {
                     distributionsLD.value = it
-                    finishLoading(it)
+                    showRetrieving(false)
                 }
         }
 

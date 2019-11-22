@@ -52,7 +52,7 @@ class DistributionsFragment : BaseFragment() {
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_distributions::setState))
 
         sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
-            if (it) viewModel.showRefreshing()
+            viewModel.showRefreshing(it)
         })
 
 

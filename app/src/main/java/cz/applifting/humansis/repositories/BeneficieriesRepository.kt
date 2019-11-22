@@ -50,6 +50,10 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return result
     }
 
+    fun getAllBeneficieriesOffline(): Flow<List<BeneficiaryLocal>> {
+        return db.beneficiariesDao().getAllBeneficieries()
+    }
+
     fun getBeneficieriesOffline(distributionId: Int): Flow<List<BeneficiaryLocal>> {
         return db.beneficiariesDao().getByDistribution(distributionId)
     }

@@ -31,5 +31,8 @@ interface DistributionsDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM distributions WHERE projectId = :projectId AND completed = 0")
-    suspend fun findUncompletedDistributions(projectId: Int): List<DistributionLocal>?
+    suspend fun findUncompletedDistributionsSuspend(projectId: Int): List<DistributionLocal>
+
+    @Query("SELECT * FROM distributions")
+    fun getAll(): Flow<List<DistributionLocal>>
 }

@@ -18,6 +18,7 @@ import cz.applifting.humansis.synchronization.ERROR_MESSAGE_KEY
 import cz.applifting.humansis.synchronization.MANUAL_SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.BaseViewModel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -72,15 +73,10 @@ class SharedViewModel @Inject constructor(
                 return@addSource
             }
             launch { logger.logToFile(context, "Worker state: ${it.first().state}") }
-
             syncWorkerIsLoadingLD.value = !it.first().state.isFinished
         }
 
-        // TODO check if this is a correct usage of mediator liveData
-        // pendingChangesLD.addSource(workInfosLD) { refreshPendingChanges() }
-
         toastLD.addSource(workInfosLD) {
-
             lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
             lastSyncFailedLD.value = sp.getDate(LAST_SYNC_FAILED_KEY)
 
@@ -97,6 +93,15 @@ class SharedViewModel @Inject constructor(
             }
         }
 
+
+        launch {
+            beneficieriesRepository
+                .getAllBeneficieriesOffline()
+                .collect {
+                    val edited = it.find { it.edited }
+                    pendingChangesLD.value = edited != null
+                }
+        }
     }
 
     fun synchronize() {
@@ -112,57 +117,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-
     fun showSnackbar(text: String?) {
         toastLD.value = text
     }
-
-//    fun forceOfflineReload(force: Boolean) {
-//        needsReload[DataSource.BENEFICIARIES] = true
-//        forceOfflineReloadLD.value = force
-//    }
-//
-//    fun markAsLoaded(dataSource: DataSource) {
-//        needsReload[dataSource] = false
-//    }
-
-//    fun refreshPendingChanges() {
-//        launch {
-//            for (beneficiary in getAllBeneficiaries()) {
-//                if (beneficiary.edited) {
-//                    pendingChangesLD.value = true
-//                    return@launch
-//                }
-//            }
-//
-//            pendingChangesLD.value = false
-//        }
-//    }
-
-//    private fun setNeedForReload() {
-//        /*
-//         Note: I am totally not happy with this implementation. It fixes an issue, in which are items reloaded multiple times and recycler view is populated multiple times
-//         This way, the items are reloaded only once. I think, that the only better solution would be to do it using either coroutines flow or move liveData objects from
-//         viewmodels to repository
-//        */
-//        needsReload[DataSource.PROJECTS] = true
-//        needsReload[DataSource.DISTRIBUTIONS] = true
-//        needsReload[DataSource.BENEFICIARIES] = true
-//    }
-
-//    private fun getAllBeneficiaries(): List<BeneficiaryLocal> {
-////        return projectsRepository
-////            .getProjectsOffline()
-////            .map {
-////                val distributionFlows = it.map { distributionsRepository.getDistributionsOffline(it.id) }
-////                distributionFlows.asFlow()
-////            }
-////            .flattenMerge()
-////            .flattenMerge()
-////            .map { newDistributions ->
-////                newDistributions.map {
-////                    beneficieriesRepository.getBeneficieriesOffline(it.id)
-////                    it
-////                }
-////            }
 }

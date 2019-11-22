@@ -14,11 +14,8 @@ import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
-import cz.applifting.humansis.ui.main.DataSource
 import kotlinx.android.synthetic.main.component_search_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiaries.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -74,33 +71,15 @@ class BeneficiariesFragment : BaseFragment() {
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
 
-//        sharedViewModel.forceOfflineReloadLD.observe(viewLifecycleOwner, Observer {
-//            if (it) {
-//                viewModel.loadBeneficiaries(args.distributionId)
-//                sharedViewModel.forceOfflineReload(false)
-//            }
-//        })
-
-        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
-            when {
-                it -> viewModel.showRefreshing()
-
-                else -> launch {
-                    // Load after animation finishes to avoid drop in frame rate
-                    if(sharedViewModel.needsReload[DataSource.BENEFICIARIES] == true || viewModel.searchResultsLD.value.isNullOrEmpty()) {
-                        delay(context?.resources?.getInteger(R.integer.animationTime)?.toLong() ?: 0)
-//                        viewModel.loadBeneficiaries(args.distributionId)
-//                        sharedViewModel.markAsLoaded(DataSource.BENEFICIARIES)
-                    }
-                }
-            }
-        })
-
         viewModel.currentSort.observe(viewLifecycleOwner, Observer<BeneficiariesViewModel.Sort> {
             cmp_search_beneficiary.changeSortIcon(it)
         })
 
         viewModel.init(args.distributionId)
+
+        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
+            viewModel.showRefreshing(it)
+        })
 
         findNavController().addOnDestinationChangedListener { _, _, _ -> et_search?.hideSoftKeyboard() }
     }
@@ -109,7 +88,6 @@ class BeneficiariesFragment : BaseFragment() {
         cmp_reached_beneficiaries.visible(show)
         cmp_search_beneficiary.visible(show)
     }
-
 
     private fun showBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
         (findNavController().currentDestination?.id == R.id.beneficiariesFragment).let { safeToNavigate ->

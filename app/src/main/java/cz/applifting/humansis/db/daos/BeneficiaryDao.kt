@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BeneficiaryDao {
+    @Query("SELECT * FROM beneficiaries")
+    fun getAllBeneficieries(): Flow<List<BeneficiaryLocal>>
+
     @Query("SELECT * FROM beneficiaries where distributionId = :distributionId")
     fun getByDistribution(distributionId: Int): Flow<List<BeneficiaryLocal>>
 

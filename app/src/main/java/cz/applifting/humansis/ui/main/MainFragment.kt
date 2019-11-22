@@ -47,11 +47,11 @@ class MainFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
 
         val appBarConfiguration = AppBarConfiguration(
-            setOf(cz.applifting.humansis.R.id.projectsFragment, cz.applifting.humansis.R.id.settingsFragment),
+            setOf(R.id.projectsFragment, R.id.settingsFragment),
             drawer_layout
         )
 
-        val fragmentContainer = view?.findViewById<View>(cz.applifting.humansis.R.id.nav_host_fragment) ?: throw HumansisError("Cannot find nav host in main")
+        val fragmentContainer = view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError("Cannot find nav host in main")
         mainNavController = Navigation.findNavController(fragmentContainer)
 
         (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
@@ -62,11 +62,11 @@ class MainFragment : BaseFragment() {
         // Define Observers
         viewModel.userLD.observe(viewLifecycleOwner, Observer {
             if (it == null) {
-                findNavController().navigate(cz.applifting.humansis.R.id.logout)
+                findNavController().navigate(R.id.logout)
                 return@Observer
             }
 
-            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(cz.applifting.humansis.R.id.tv_username)
+            val tvUsername = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_username)
             tvUsername.text = it.username
         })
 
@@ -81,7 +81,7 @@ class MainFragment : BaseFragment() {
 
         })
 
-        val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(cz.applifting.humansis.R.id.tv_app_version)
+        val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_app_version)
         tvAppVersion.text = BuildConfig.VERSION_NAME
 
         btn_logout.setOnClickListener {
@@ -125,8 +125,8 @@ class MainFragment : BaseFragment() {
         val item = menu.findItem(action_open_status_dialog)
         item.actionView.setOnClickListener { onOptionsItemSelected(item) }
 
-        val ivStatus = item.actionView.findViewById<ImageView>(cz.applifting.humansis.R.id.iv_status)
-        ivStatus.simpleDrawable(if (context?.isNetworkConnected() == true) cz.applifting.humansis.R.drawable.ic_online else cz.applifting.humansis.R.drawable.ic_offline)
+        val ivStatus = item.actionView.findViewById<ImageView>(R.id.iv_status)
+        ivStatus.simpleDrawable(if (context?.isNetworkConnected() == true) R.drawable.ic_online else R.drawable.ic_offline)
 
         sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE

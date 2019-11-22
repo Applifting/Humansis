@@ -43,20 +43,21 @@ class BeneficiariesViewModel @Inject constructor(
 
     fun init(distributionId: Int) {
         launch {
-            showRetrieving()
+            showRetrieving(true)
 
             beneficieriesRepository
                 .getBeneficieriesOffline(distributionId)
                 .collect { newBeneficiaries ->
                     beneficiariesLD.value = newBeneficiaries
                     statsLD.value = Pair(newBeneficiaries.count { it.distributed }, newBeneficiaries.size)
-                    finishLoading(newBeneficiaries)
 
                     searchText?.let {
                         if (it.isNotEmpty()) {
                             search(it)
                         }
                     }
+
+                    showRetrieving(false)
                 }
         }
     }
