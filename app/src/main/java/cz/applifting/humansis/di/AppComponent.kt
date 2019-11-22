@@ -30,7 +30,7 @@ interface AppComponent {
 
     fun inject(settingsFragment: SettingsFragment)
 
-    fun inject(loginActivity: LoginFragment)
+    fun inject(loginFragment: LoginFragment)
 
     fun inject(mainFragment: MainFragment)
 

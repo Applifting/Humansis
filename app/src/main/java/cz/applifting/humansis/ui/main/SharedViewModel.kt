@@ -22,19 +22,12 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 10, September, 2019
  */
 const val LAST_DOWNLOAD_KEY = "lastDownloadKey"
 const val LAST_SYNC_FAILED_KEY = "lastSyncFailedKey"
-
-enum class DataSource {
-    PROJECTS,
-    DISTRIBUTIONS,
-    BENEFICIARIES
-}
 
 class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
@@ -56,8 +49,6 @@ class SharedViewModel @Inject constructor(
     private val workInfosLD: LiveData<List<WorkInfo>>
 
     private val workManager = WorkManager.getInstance(context)
-
-    val needsReload: HashMap<DataSource, Boolean> = HashMap(3)
 
     init {
         syncWorkerIsLoadingLD.value = false
@@ -95,6 +86,7 @@ class SharedViewModel @Inject constructor(
 
 
         launch {
+
             beneficieriesRepository
                 .getAllBeneficieriesOffline()
                 .collect {
