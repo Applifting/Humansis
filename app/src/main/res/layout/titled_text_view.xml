@@ -36,6 +36,7 @@
             android:layout_marginEnd="16dp"
             android:textColor="@color/textColor"
             android:textSize="18sp"
+            android:textIsSelectable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btn_action"
             app:layout_constraintStart_toEndOf="@+id/iv_status"

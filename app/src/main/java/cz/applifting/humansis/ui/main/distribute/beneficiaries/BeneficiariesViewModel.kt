@@ -81,20 +81,8 @@ class BeneficiariesViewModel @Inject constructor(
             val beneficiaryId = beneficiary.beneficiaryId.toString()
             val nationalId = beneficiary.nationalId
 
-            val matched = mutableListOf<Boolean>()
-            val splitQuery = query.split(" ").filter { subQuery -> subQuery.isNotEmpty() }
-
-            splitQuery.forEach { subQuery ->
-                matched.add(
-                    familyName.startsWith(subQuery) ||
-                            givenName.startsWith(subQuery) ||
-                            beneficiaryId.startsWith(subQuery) ||
-                            nationalId?.startsWith(subQuery) == true
-                )
-            }
-
-            matched.contains(true)
-
+            val fullName = "$givenName $familyName"
+            fullName.contains(query) || beneficiaryId.startsWith(query) || nationalId?.startsWith(query) == true
         }.defaultSort()
 
     }
