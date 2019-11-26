@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.BaseFragment
@@ -65,10 +66,15 @@ class SettingsFragment : BaseFragment() {
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val country = parent?.getItemAtPosition(position) as String
-                viewModel.updateCountrySettings(country)
+                if ((activity as HumansisActivity).isNetworkConnected()) {
+                    viewModel.updateCountrySettings(country)
+                }
             }
-
         }
+
+        sharedViewModel.networkStatus.observe(viewLifecycleOwner, Observer {
+            spinner_country.isEnabled = it
+        })
 
         btn_show_dev_logs.setOnClickListener {
             launch {
