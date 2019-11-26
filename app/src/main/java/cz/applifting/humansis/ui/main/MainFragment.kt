@@ -8,6 +8,7 @@ import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -23,6 +24,7 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.R.id.action_open_status_dialog
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.extensions.simpleDrawable
+import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.misc.HumansisError
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
@@ -135,11 +137,16 @@ class MainFragment : BaseFragment() {
         val item = menu.findItem(action_open_status_dialog)
         item.actionView.setOnClickListener { onOptionsItemSelected(item) }
 
+        val pbSyncProgress = item.actionView.findViewById<ProgressBar>(R.id.pb_sync_progress)
         val ivStatus = item.actionView.findViewById<ImageView>(R.id.iv_status)
         ivStatus.simpleDrawable(if (context?.isNetworkConnected() == true) R.drawable.ic_online else R.drawable.ic_offline)
 
         sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
+        })
+
+        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
+            pbSyncProgress.visible(it)
         })
 
         super.onCreateOptionsMenu(menu, inflater)
