@@ -88,15 +88,25 @@ class MainFragment : BaseFragment() {
 
             val pendingChanges = sharedViewModel.pendingChangesLD.value ?: false
 
-            AlertDialog.Builder(context!!)
-                .setTitle(if (!pendingChanges) R.string.logout_alert_title else R.string.logout_alert_pending_changes_title)
-                .setMessage(getString(if (!pendingChanges) R.string.logout_alert_text else R.string.logout_alert_pending_changes_text))
-                .setPositiveButton(android.R.string.yes) { _, _ ->
-                    viewModel.logout()
-                }
-                .setNegativeButton(android.R.string.no, null)
-                .setIcon(R.drawable.ic_warning)
-                .show()
+            if (!pendingChanges){
+                AlertDialog.Builder(context!!)
+                    .setTitle(R.string.logout_alert_title)
+                    .setMessage(getString(R.string.logout_alert_text))
+                    .setPositiveButton(android.R.string.yes) { _, _ ->
+                        viewModel.logout()
+                    }
+                    .setNegativeButton(android.R.string.no, null)
+                    .setIcon(R.drawable.ic_warning)
+                    .show()
+            } else {
+                AlertDialog.Builder(context!!)
+                    .setTitle(R.string.logout_alert_pending_changes_title)
+                    .setMessage(getString(R.string.logout_alert_pending_changes_text))
+                    .setNegativeButton(R.string.close, null)
+                    .setIcon(R.drawable.ic_warning)
+                    .show()
+            }
+
         }
 
         sharedViewModel.tryFirstDownload()
