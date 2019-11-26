@@ -54,7 +54,7 @@ class ProjectsAdapter(
             tvName.text = project.name
             tvHouseHolds.text = context.getString(R.string.households, project.numberOfHouseholds)
             layout.setOnClickListener { onItemClick(project) }
-            flCompleted.setBackgroundColor(ContextCompat.getColor(context, if (project.completed) R.color.orange else R.color.light_blue))
+            flCompleted.setBackgroundColor(ContextCompat.getColor(context, if (project.completed) R.color.green else R.color.darkBlue))
         }
     }
 }

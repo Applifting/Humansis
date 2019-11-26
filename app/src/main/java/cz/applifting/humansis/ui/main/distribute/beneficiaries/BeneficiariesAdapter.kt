@@ -81,7 +81,7 @@ class BeneficiariesAdapter(
                 beneficiaryLocal.familyName
             )
 
-            val color = if (beneficiaryLocal.distributed) R.color.orange else R.color.light_blue
+            val color = if (beneficiaryLocal.distributed) R.color.green else R.color.darkBlue
             ivDistributionState.tintedDrawable(R.drawable.ic_circle, color)
             llCommoditiesHolder.removeAllViews()
 

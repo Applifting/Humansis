@@ -5,7 +5,7 @@
         style="android:Widget.TextView.SpinnerItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/darkGrey"
+        android:background="@color/green"
         android:padding="16dp"
         android:textColor="@color/white"
         tools:text="KHM" />

@@ -58,7 +58,7 @@ class UploadDialog : DialogFragment() {
 
         sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
             tvChanges.text = getString(if (it) R.string.pending_local_changes else R.string.no_pending_changes)
-            tvChanges.setTextColor(ContextCompat.getColor(context!!, if (it) R.color.negativeColor else R.color.light_blue))
+            tvChanges.setTextColor(ContextCompat.getColor(context!!, if (it) R.color.red else R.color.green))
         })
 
         sharedViewModel.lastDownloadLD.observe(viewLifecycleOwner, Observer {
