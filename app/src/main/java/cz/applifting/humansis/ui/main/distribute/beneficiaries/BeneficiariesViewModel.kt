@@ -104,28 +104,28 @@ class BeneficiariesViewModel @Inject constructor(
      * Sorts currently displayed beneficiaries by family name, undistributed puts first.
      */
     private fun List<BeneficiaryLocal>.defaultSort(): List<BeneficiaryLocal> {
-        return this.sortedWith(compareBy({ it.distributed }, { it.familyName }))
+        return this.sortedWith(compareBy({ it.distributed }, { it.givenName }, { it.familyName }))
     }
 
     /**
      * Sorts currently displayed beneficiaries by family name A to Z
      */
     private fun List<BeneficiaryLocal>.sortAZ(): List<BeneficiaryLocal> {
-        return this.sortedWith(compareBy { it.familyName })
+        return this.sortedWith(compareBy({ it.givenName }, { it.familyName }))
     }
 
     /**
      * Sorts currently displayed beneficiaries by family name Z to A
      */
     private fun List<BeneficiaryLocal>.sortZA(): List<BeneficiaryLocal> {
-        return this.sortedWith(compareBy { it.familyName }).reversed()
+        return sortAZ().reversed()
     }
 
     private fun nextSort(): Sort {
         return when (currentSort.value) {
             Sort.DEFAULT -> Sort.AZ
             Sort.AZ -> Sort.ZA
-            Sort.ZA -> Sort.AZ
+            Sort.ZA -> Sort.DEFAULT
             else -> Sort.DEFAULT
         }
     }

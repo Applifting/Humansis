@@ -57,7 +57,7 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
         val textResId = when (sort) {
             BeneficiariesViewModel.Sort.DEFAULT -> R.string.sort_az
             BeneficiariesViewModel.Sort.AZ -> R.string.sort_za
-            BeneficiariesViewModel.Sort.ZA -> R.string.sort_az
+            BeneficiariesViewModel.Sort.ZA -> R.string.sort_default
         }
 
         btn_sort.text = context.getString(textResId)

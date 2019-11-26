@@ -70,7 +70,8 @@
     <string name="already_assigned">Already assigned code</string>
     <string name="last_update_failed">Last update failed</string>
     <string name="assign">Assign</string>
-    <string name="sort_az">AZ</string>
+    <string name="sort_default">Grouped</string>
+    <string name="sort_az">︎AZ</string>
     <string name="sort_za">ZA</string>
     <string name="error_service_unavailable">Service is unavailable</string>
     <string name="logout_alert_title">Log out</string>
