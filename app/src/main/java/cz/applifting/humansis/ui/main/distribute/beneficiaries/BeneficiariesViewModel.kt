@@ -67,7 +67,7 @@ class BeneficiariesViewModel @Inject constructor(
      */
     internal fun search(input: String) = beneficiariesLD.value?.let {
         searchText = input
-        val query = input.toLowerCase(Locale.getDefault())
+        val query = input.normalize()
 
         if (query.isEmpty()) {
             searchResultsLD.value = it.defaultSort()
@@ -76,8 +76,8 @@ class BeneficiariesViewModel @Inject constructor(
 
         searchResultsLD.value = it.filter { beneficiary ->
 
-            val familyName = beneficiary.familyName?.toLowerCase(Locale.getDefault()) ?: ""
-            val givenName = beneficiary.givenName?.toLowerCase(Locale.getDefault()) ?: ""
+            val familyName = beneficiary.familyName?.normalize() ?: ""
+            val givenName = beneficiary.givenName?.normalize() ?: ""
             val beneficiaryId = beneficiary.beneficiaryId.toString()
             val nationalId = beneficiary.nationalId
 
@@ -130,4 +130,7 @@ class BeneficiariesViewModel @Inject constructor(
         }
     }
 
+    private fun String.normalize(): String {
+        return this.toLowerCase(Locale.getDefault()).trim().replace("\\s+".toRegex(), " ")
+    }
 }
