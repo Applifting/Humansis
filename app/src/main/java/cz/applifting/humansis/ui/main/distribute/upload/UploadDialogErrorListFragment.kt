@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_dialog_upload_status_error_info.*
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 27, November, 2019
  */
-class ErrorListFragment : BaseFragment() {
+class UploadDialogErrorListFragment : BaseFragment() {
 
     private lateinit var uploadDialogViewModel: UploadDialogViewModel
 

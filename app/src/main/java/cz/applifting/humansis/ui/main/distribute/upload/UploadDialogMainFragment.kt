@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_dialog_upload_status_main.*
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 27, November, 2019
  */
-class MainFragment : BaseFragment() {
+class UploadDialogMainFragment : BaseFragment() {
 
     private lateinit var uploadDialogViewModel: UploadDialogViewModel
 

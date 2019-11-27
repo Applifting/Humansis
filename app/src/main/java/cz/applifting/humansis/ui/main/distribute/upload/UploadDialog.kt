@@ -36,9 +36,9 @@ class UploadDialog : DialogFragment() {
         uploadDialogViewModel.currentScreenLD.observe(viewLifecycleOwner, Observer {
             val fragmentTransaction = fragmentManager.beginTransaction()
             val fragment = if (it == Screen.MAIN) {
-                MainFragment()
+                UploadDialogMainFragment()
             } else {
-                ErrorListFragment()
+                UploadDialogErrorListFragment()
             }
 
             fragmentTransaction.replace(R.id.fc_container, fragment)
