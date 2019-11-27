@@ -149,7 +149,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     } else {
                         "Distribution was successfully reverted."
                     }
-                    sharedViewModel.showSnackbar(text)
+                    sharedViewModel.showToast(text)
                     dismiss()
                 }
             }

@@ -10,8 +10,11 @@ import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
+import cz.applifting.humansis.model.db.ProjectLocal
+import cz.applifting.humansis.model.db.SyncError
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
+import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
@@ -45,6 +48,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     lateinit var loginManager: LoginManager
     @Inject
     lateinit var logger: Logger
+    @Inject
+    lateinit var errorsRepository: ErrorsRepository
 
 
     init {
@@ -53,7 +58,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     override suspend fun doWork(): Result {
         return supervisorScope {
-            val unsuccessfullyUploaded = mutableListOf<Int>()
             val errors = mutableListOf<String?>()
             val reason = Data.Builder()
 
@@ -68,6 +72,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 return@supervisorScope Result.failure(reason.build())
             }
 
+            errorsRepository.clearAll()
+
             // Upload all changes
             getAllBeneficiaries()
                 .forEach {
@@ -78,15 +84,36 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                             val errBody = "${e.response()?.errorBody()?.string()}"
                             errors.add("${it.id}: $errBody")
                             logger.logToFile(applicationContext, "Failed uploading: ${it.id}: $errBody")
-                            unsuccessfullyUploaded.add(it.id)
-                        }
 
+                            // Mark conflicts in DB
+                            val distributionName = distributionsRepository.getNameById(it.distributionId)
+                            val projectName = projectsRepository.getNameByDistributionId(it.distributionId)
+                            val beneficiaryName = "${it.givenName} ${it.familyName}"
+
+                            val syncError = SyncError(
+                                it.id,
+                                "$projectName → $distributionName → $beneficiaryName",
+                                "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
+                                "${e.code()}: $errBody"
+                            )
+
+                            errorsRepository.insert(syncError)
+                        }
                     }
                 }
+
             // Download updated data
-            try {
-                projectsRepository
-                    .getProjectsOnline().orEmpty()
+            if (errors.isEmpty()) {
+
+                val projects = try {
+                    projectsRepository.getProjectsOnline()
+                } catch (e: HttpException) {
+                    errors.add(e.message)
+                    logger.logToFile(applicationContext, "Failed downloading projects: ${e.message}}")
+                    emptyList<ProjectLocal>()
+                }
+
+                projects.orEmpty()
                     .map {
                         async { distributionsRepository.getDistributionsOnline(it.id) }
                     }
@@ -98,7 +125,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                             listOf<DistributionLocal>()
                         }
                     }
-                    .map { async { beneficieriesRepository.getBeneficieriesOnline(it.id, unsuccessfullyUploaded) } }
+                    .map { async { beneficieriesRepository.getBeneficieriesOnline(it.id) } }
                     .map {
                         try {
                             it.await()
@@ -110,11 +137,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 val lastDownloadAt = Date()
                 sp.setDate(LAST_DOWNLOAD_KEY, lastDownloadAt)
                 sp.setDate(LAST_SYNC_FAILED_KEY, null)
-
-            } catch (e: HttpException) {
-                errors.add(e.message)
-                logger.logToFile(applicationContext, "Failed downloading: ${e.message}}")
             }
+
 
             if (errors.isEmpty()) {
                 logger.logToFile(applicationContext, "Sync finished successfully")

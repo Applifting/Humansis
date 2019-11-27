@@ -75,7 +75,7 @@ class MainFragment : BaseFragment() {
         sharedViewModel.toastLD.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 showToast(it)
-                sharedViewModel.showSnackbar(null)
+                sharedViewModel.showToast(null)
             }
         })
 
@@ -178,7 +178,7 @@ class MainFragment : BaseFragment() {
         tvMessage.text = text
         val toast = Toast(context)
         toast.setGravity(Gravity.BOTTOM, 0, 50)
-        toast.duration = Toast.LENGTH_LONG
+        toast.duration = Toast.LENGTH_SHORT
         toast.view = toastView
         toast.show()
     }

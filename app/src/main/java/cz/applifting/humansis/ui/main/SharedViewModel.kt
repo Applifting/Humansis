@@ -109,7 +109,7 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun showSnackbar(text: String?) {
+    fun showToast(text: String?) {
         toastLD.value = text
     }
 }

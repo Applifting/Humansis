@@ -10,6 +10,7 @@ import cz.applifting.humansis.ui.main.distribute.beneficiaries.BeneficiariesView
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryViewModel
 import cz.applifting.humansis.ui.main.distribute.distributions.DistributionsViewModel
 import cz.applifting.humansis.ui.main.distribute.projects.ProjectsViewModel
+import cz.applifting.humansis.ui.main.distribute.upload.UploadDialogViewModel
 import cz.applifting.humansis.ui.main.settings.SettingsViewModel
 import cz.applifting.humansis.ui.splash.SplashViewModel
 import dagger.Binds
@@ -70,6 +71,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SettingsViewModel::class)
     internal abstract fun bindSettingsViewModel(viewModel: SettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UploadDialogViewModel::class)
+    internal abstract fun bindUploadDialogViewModel(viewModel: UploadDialogViewModel): ViewModel
 
     //Add more ViewModels here
 }

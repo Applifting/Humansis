@@ -61,8 +61,8 @@ class BeneficiariesAdapter(
     inner class BeneficiaryViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         val tvNationalId = view.tv_id
-        val tvHumansisId = view.tv_humansis_id
-        val tvName = view.tv_name
+        val tvHumansisId = view.tv_info
+        val tvName = view.tv_location
         val ivDistributionState = view.iv_distribution_state
         val tlCommoditiesHolder = view.tl_commodities_holder
         val ivOffline = view.iv_offline

@@ -37,4 +37,8 @@ class ProjectsRepository @Inject constructor(val service: HumansisService, val d
     suspend fun getProjectsOfflineSuspend(): List<ProjectLocal> {
         return db.projectsDao().getAllSuspend()
     }
+
+    suspend fun getNameByDistributionId(distributionId: Int): String {
+        return db.projectsDao().getNameByDistributionId(distributionId)
+    }
 }

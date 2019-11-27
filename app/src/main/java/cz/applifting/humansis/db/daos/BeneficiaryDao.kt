@@ -24,8 +24,8 @@ interface BeneficiaryDao {
     @Update
     suspend fun update(beneficiaryLocal: BeneficiaryLocal)
 
-    @Query("DELETE FROM beneficiaries WHERE distributionId = :distributionId AND id NOT IN (:skip)")
-    suspend fun deleteByDistribution(distributionId: Int, skip: List<Int>)
+    @Query("DELETE FROM beneficiaries WHERE distributionId = :distributionId")
+    suspend fun deleteByDistribution(distributionId: Int)
 
     @Query("DELETE FROM beneficiaries")
     suspend fun deleteAll()

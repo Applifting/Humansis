@@ -46,7 +46,7 @@ class ProjectsAdapter(
 
     inner class ProjectViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
         val context = layout.context
-        val tvName = layout.tv_name
+        val tvName = layout.tv_location
         val tvHouseHolds = layout.tv_households
         val flCompleted = layout.fl_completed
 

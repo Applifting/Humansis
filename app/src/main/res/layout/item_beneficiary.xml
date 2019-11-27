@@ -22,7 +22,7 @@
                 app:srcCompat="@drawable/ic_circle" />
 
         <TextView
-                android:id="@+id/tv_name"
+                android:id="@+id/tv_location"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -35,13 +35,13 @@
                 tools:text="John Doe" />
 
         <TextView
-                android:id="@+id/tv_humansis_id"
+                android:id="@+id/tv_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toStartOf="@+id/tl_commodities_holder"
-                app:layout_constraintStart_toStartOf="@+id/tv_name"
-                app:layout_constraintTop_toBottomOf="@id/tv_name"
+                app:layout_constraintStart_toStartOf="@+id/tv_location"
+                app:layout_constraintTop_toBottomOf="@id/tv_location"
                 tools:text="Humansis ID: 2" />
 
         <TextView
@@ -49,8 +49,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toStartOf="@+id/tl_commodities_holder"
-                app:layout_constraintStart_toStartOf="@+id/tv_name"
-                app:layout_constraintTop_toBottomOf="@id/tv_humansis_id"
+                app:layout_constraintStart_toStartOf="@+id/tv_location"
+                app:layout_constraintTop_toBottomOf="@id/tv_info"
                 tools:text="ID: 2" />
 
         <TableLayout

@@ -91,5 +91,7 @@
     <string name="error_server_failure">Server failure</string>
     <string name="error_parsing_response">Response format not recognized</string>
     <string name="error_other">An unexpected error occurred</string>
+    <string name="show_error_detail">Show error detail</string>
+    <string name="the_following_items_could_not_uploaded">The following items could not uploaded:</string>
 
 </resources>

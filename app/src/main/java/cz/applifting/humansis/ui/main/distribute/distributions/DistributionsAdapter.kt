@@ -13,7 +13,7 @@ import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.Target
 import cz.applifting.humansis.model.ui.DistributionModel
 import kotlinx.android.synthetic.main.item_distribution.view.*
-import kotlinx.android.synthetic.main.item_project.view.tv_name
+import kotlinx.android.synthetic.main.item_project.view.tv_location
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
@@ -57,7 +57,7 @@ class DistributionsAdapter(
     }
 
     inner class DistributionViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
-        val tvName = layout.tv_name
+        val tvName = layout.tv_location
         val tvDate = layout.tv_date
         val tvBeneficieriesCnt = layout.tv_beneficieries_cnt
         val ivTarget = layout.iv_target

@@ -20,13 +20,12 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
 
     val db: HumansisDB by lazy { dbProvider.get() }
 
-    suspend fun getBeneficieriesOnline(distributionId: Int, skip: List<Int> = listOf()): List<BeneficiaryLocal>? {
+    suspend fun getBeneficieriesOnline(distributionId: Int): List<BeneficiaryLocal>? {
 
         val distribution = dbProvider.get().distributionsDao().getById(distributionId)
 
         val result = service
             .getDistributionBeneficiaries(distributionId)
-            .filter { !skip.contains(it.id) }
             .map {
                 BeneficiaryLocal(
                     it.id,
@@ -44,7 +43,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                 )
             }
 
-        db.beneficiariesDao().deleteByDistribution(distributionId, skip)
+        db.beneficiariesDao().deleteByDistribution(distributionId)
         db.beneficiariesDao().insertAll(result)
 
         return result
@@ -89,11 +88,12 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     suspend fun checkBoookletAssignedLocally(bookletId: String): Boolean {
         val booklets = db.beneficiariesDao().getAllBooklets()
 
-        booklets?.forEach {
-            if (it.contains(bookletId)) {
-                return true
-            }
-        }
+        // TODO temp for testing
+//        booklets?.forEach {
+//            if (it.contains(bookletId)) {
+//                return true
+//            }
+//        }
 
         return false
     }
