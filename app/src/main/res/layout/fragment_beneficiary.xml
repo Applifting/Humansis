@@ -21,10 +21,32 @@
                     android:layout_height="wrap_content"
                     android:background="@android:color/transparent"
                     android:padding="16dp"
-                    android:src="@drawable/ic_cross"
+                    android:src="@drawable/ic_arrow_back"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                    android:id="@+id/tv_screen_title"
+                    style="@style/Toolbar.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/assign_booklet"
+                    app:layout_constraintStart_toEndOf="@id/btn_close"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                    android:id="@+id/tv_screen_subtitle"
+                    style="@style/Toolbar.Subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintStart_toEndOf="@id/btn_close"
+                    app:layout_constraintTop_toBottomOf="@id/tv_screen_title"
+                    tools:text="John Wick" />
+
 
             <Button
                     android:id="@+id/btn_action"
