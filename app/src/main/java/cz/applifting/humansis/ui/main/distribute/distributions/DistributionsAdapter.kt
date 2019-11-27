@@ -10,7 +10,6 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
-import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.Target
 import cz.applifting.humansis.model.ui.DistributionModel
 import kotlinx.android.synthetic.main.item_distribution.view.*
@@ -63,7 +62,7 @@ class DistributionsAdapter(
         val tvBeneficieriesCnt = layout.tv_beneficieries_cnt
         val ivTarget = layout.iv_target
         val ivStatus = layout.iv_status
-        val llComoditiesHolder = layout.ll_commodities_holder
+        val llComoditiesHolder = layout.tl_commodities_holder
         val pbDistributionProgress = layout.pb_distribution_progress
         val context = layout.context
 
@@ -81,7 +80,7 @@ class DistributionsAdapter(
                     commodityImage.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
 
                     try {
-                        val commodityDrawable = CommodityType.valueOf(it.type).drawableResId
+                        val commodityDrawable = it.type.drawableResId
 
                         commodityImage.simpleDrawable(commodityDrawable)
                         llComoditiesHolder.addView(commodityImage)

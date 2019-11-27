@@ -39,7 +39,7 @@ class DistributionsFragment : BaseFragment() {
                 it.id,
                 it.name,
                 args.projectName,
-                it.commodities.any { commodity -> commodity.type == CommodityType.QR_VOUCHER.toString() })
+                it.commodities.any { commodity -> commodity.type == CommodityType.QR_VOUCHER })
             this.findNavController().navigate(action)
         }
 

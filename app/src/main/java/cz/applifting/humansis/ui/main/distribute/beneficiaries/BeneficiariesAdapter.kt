@@ -4,8 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout.HORIZONTAL
-import android.widget.LinearLayout.VERTICAL
+import android.widget.TableRow
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -65,7 +64,7 @@ class BeneficiariesAdapter(
         val tvHumansisId = view.tv_humansis_id
         val tvName = view.tv_name
         val ivDistributionState = view.iv_distribution_state
-        val llCommoditiesHolder = view.ll_commodities_holder
+        val tlCommoditiesHolder = view.tl_commodities_holder
         val ivOffline = view.iv_offline
         val context = view.context
 
@@ -83,25 +82,40 @@ class BeneficiariesAdapter(
 
             val color = if (beneficiaryLocal.distributed) R.color.green else R.color.darkBlue
             ivDistributionState.tintedDrawable(R.drawable.ic_circle, color)
-            llCommoditiesHolder.removeAllViews()
+            tlCommoditiesHolder.removeAllViews()
 
-            if (beneficiaryLocal.distributed && !beneficiaryLocal.edited) {
+            /*
+             There are a few possible states:
+                1. The item is not distributed - do not show any icon
+                2. The item is distributed:
+                    2.1) it's a QR voucher
+                        2.1.1) It's offline -  show just an icon, as we do not know the value
+                        2.1.2) Online - show icon with booklet value
+                    2.2) it's a normal commodity - show commodity and value
+             */
+
+            if (beneficiaryLocal.distributed) {
                 beneficiaryLocal.commodities?.forEach { commodity ->
-                    val bookletValue = TextView(view.context)
-                    bookletValue.text = view.context.getString(R.string.commodity_value, commodity.value, commodity.unit)
-                    llCommoditiesHolder.orientation = VERTICAL
-                    llCommoditiesHolder.addView(bookletValue)
-                }
-            } else if (!beneficiaryLocal.distributed) {
-                beneficiaryLocal.commodities?.forEach { commodity ->
-                    try {
-                        val commodityImage = ImageView(view.context)
-                        commodityImage.simpleDrawable(CommodityType.valueOf(commodity.type).drawableResId)
-                        llCommoditiesHolder.orientation = HORIZONTAL
-                        llCommoditiesHolder.addView(commodityImage)
-                    } catch (e: IllegalArgumentException) {
-                        // do not show, unknown type
+                    val row = TableRow(context)
+
+                    val commodityImage = ImageView(context)
+                    commodityImage.simpleDrawable(commodity.type.drawableResId)
+                    commodityImage.layoutParams = TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
+
+                    val txtValue = TextView(context)
+                    txtValue.text = context.getString(R.string.commodity_value, commodity.value, commodity.unit)
+
+                    if (commodity.type == CommodityType.QR_VOUCHER &&
+                        beneficiaryLocal.distributed &&
+                        beneficiaryLocal.edited
+                    ) {
+                        row.addView(commodityImage)
+                    } else {
+                        row.addView(commodityImage)
+                        row.addView(txtValue)
                     }
+
+                    tlCommoditiesHolder.addView(row)
                 }
             }
 

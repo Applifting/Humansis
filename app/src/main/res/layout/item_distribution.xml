@@ -72,7 +72,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_beneficieries_cnt" />
 
             <LinearLayout
-                    android:id="@+id/ll_commodities_holder"
+                    android:id="@+id/tl_commodities_holder"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:orientation="horizontal"
@@ -94,7 +94,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/ll_commodities_holder" />
+                app:layout_constraintTop_toBottomOf="@id/tl_commodities_holder" />
 
         <ImageView
                 android:id="@+id/iv_target"

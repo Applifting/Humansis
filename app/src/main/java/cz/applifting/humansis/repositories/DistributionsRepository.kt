@@ -67,7 +67,7 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
 
     private fun parseCommodities(commodities: List<Commodity>): List<CommodityLocal> {
         return commodities.map {
-            CommodityLocal(it.modalityType.name?.name ?: context.getString(R.string.unknown), it.value, it.unit)
+            CommodityLocal(CommodityType.valueOf(it.modalityType.name?.name ?: context.getString(R.string.unknown)), it.value, it.unit)
         }
     }
 }
