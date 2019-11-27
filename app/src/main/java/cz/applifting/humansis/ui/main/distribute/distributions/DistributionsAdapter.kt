@@ -12,6 +12,7 @@ import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.Target
 import cz.applifting.humansis.model.ui.DistributionModel
+import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_distribution.view.*
 import kotlinx.android.synthetic.main.item_project.view.tv_location
 
@@ -20,7 +21,7 @@ import kotlinx.android.synthetic.main.item_project.view.tv_location
  */
 class DistributionsAdapter(
     private val onItemClick: (distribution: DistributionModel) -> Unit
-) : RecyclerView.Adapter<DistributionsAdapter.DistributionViewHolder>() {
+) : ListComponentAdapter<DistributionsAdapter.DistributionViewHolder>() {
 
     private val distributions: MutableList<DistributionModel> = mutableListOf()
 
@@ -102,7 +103,7 @@ class DistributionsAdapter(
                 }
             ivTarget.setImageDrawable(targetImage)
 
-            layout.setOnClickListener { onItemClick(distributions[position]) }
+            layout.setOnClickListener { if (clickable) onItemClick(distributions[position]) }
 
             val statusColor = if (completed) R.color.green else R.color.darkBlue
             ivStatus.tintedDrawable(R.drawable.ic_circle, statusColor)

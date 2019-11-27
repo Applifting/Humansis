@@ -14,6 +14,7 @@ import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
+import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_beneficiary.view.*
 
 
@@ -24,7 +25,7 @@ import kotlinx.android.synthetic.main.item_beneficiary.view.*
 
 class BeneficiariesAdapter(
     val onItemClick: (beneficiary: BeneficiaryLocal) -> Unit
-) : RecyclerView.Adapter<BeneficiariesAdapter.BeneficiaryViewHolder>() {
+) : ListComponentAdapter<BeneficiariesAdapter.BeneficiaryViewHolder>() {
 
     private var beneficiaries = listOf<BeneficiaryLocal>()
 
@@ -120,7 +121,7 @@ class BeneficiariesAdapter(
             }
 
             ivOffline.visible(beneficiaryLocal.edited)
-            view.setOnClickListener { onItemClick(beneficiaryLocal) }
+            view.setOnClickListener { if (clickable) onItemClick(beneficiaryLocal) }
         }
     }
 }

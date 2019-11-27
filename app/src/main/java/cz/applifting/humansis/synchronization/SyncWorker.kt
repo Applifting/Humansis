@@ -2,6 +2,7 @@ package cz.applifting.humansis.synchronization
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
@@ -29,7 +30,7 @@ import javax.inject.Inject
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 05, October, 2019
  */
 const val MANUAL_SYNC_WORKER = "manual-sync-worker"
-const val PERIODIC_SYNC_WORKER = "periodic-sync-worker"
+const val ON_START_SYNC_WORKER = "periodic-sync-worker"
 const val WHEN_ON_WIFI_SYNC_WORKER = "when-on-wifi-sync-worker"
 
 const val ERROR_MESSAGE_KEY = "error-message-key"
@@ -57,6 +58,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     }
 
     override suspend fun doWork(): Result {
+        Log.d("asdf", "asdf")
+
         return supervisorScope {
             val errors = mutableListOf<String?>()
             val reason = Data.Builder()

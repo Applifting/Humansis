@@ -17,9 +17,12 @@ import kotlinx.android.synthetic.main.component_list.view.*
  */
 class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(context, attrs) {
 
-    fun init(viewAdapter: RecyclerView.Adapter<*>) {
+    lateinit var adapter: ListComponentAdapter<*>
+
+    fun init(viewAdapter: ListComponentAdapter<*>) {
         View.inflate(context, R.layout.component_list, this)
 
+        adapter = viewAdapter
         val viewManager = LinearLayoutManager(context)
 
         rv_list.apply {
@@ -49,6 +52,8 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
         } else {
             tv_info.visible(false)
         }
+
+        adapter.clickable = !state.isRefreshing
     }
 
     fun setOnRefreshListener(listener: () -> Unit) {

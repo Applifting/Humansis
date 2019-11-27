@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
 import cz.applifting.humansis.model.ui.ProjectModel
+import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_project.view.*
 
 
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.item_project.view.*
  */
 class ProjectsAdapter(
     private val onItemClick: (project: ProjectModel) -> Unit
-) : RecyclerView.Adapter<ProjectsAdapter.ProjectViewHolder>() {
+) : ListComponentAdapter<ProjectsAdapter.ProjectViewHolder>() {
 
     private val projects: MutableList<ProjectModel> = mutableListOf()
 
@@ -53,7 +54,9 @@ class ProjectsAdapter(
         fun bind(project: ProjectModel) {
             tvName.text = project.name
             tvHouseHolds.text = context.getString(R.string.households, project.numberOfHouseholds)
-            layout.setOnClickListener { onItemClick(project) }
+            layout.setOnClickListener {
+                if (clickable) onItemClick(project)
+            }
             flCompleted.setBackgroundColor(ContextCompat.getColor(context, if (project.completed) R.color.green else R.color.darkBlue))
         }
     }
