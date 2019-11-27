@@ -50,7 +50,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(STYLE_NORMAL, R.style.FullscreenDialog)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            setStyle(STYLE_NORMAL, R.style.FullscreenDialogDarkStatusBar)
+        } else {
+            setStyle(STYLE_NORMAL, R.style.FullscreenDialog)
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -85,7 +89,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_beneficiary.setValue("${it.givenName} ${it.familyName}")
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)
-                tv_screen_subtitle.text = getString(R.string.beneficiary_name, it.givenName, it. familyName)
+                tv_screen_subtitle.text = getString(R.string.beneficiary_name, it.givenName, it.familyName)
 
                 if (it.distributed) {
                     if (it.edited) {

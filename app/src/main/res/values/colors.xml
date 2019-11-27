@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">@color/screenBackgroundColor</color>
-    <color name="colorPrimaryDark">@color/black</color>
+    <color name="colorPrimaryDark">@color/screenBackgroundColor</color>
     <color name="colorAccent">@color/green</color>
     <color name="colorAccentDark">#DD5060</color>
 

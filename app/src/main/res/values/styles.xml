@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" >
@@ -47,5 +48,10 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowAnimationStyle">@style/MyAnimation.Window</item>
+        <item name="android:statusBarColor">@color/screenBackgroundColor</item>
+    </style>
+
+    <style name="FullscreenDialogDarkStatusBar" parent="FullscreenDialog">
+        <item name="android:statusBarColor">@color/black</item>
     </style>
 </resources>
