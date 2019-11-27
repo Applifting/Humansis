@@ -88,12 +88,11 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     suspend fun checkBoookletAssignedLocally(bookletId: String): Boolean {
         val booklets = db.beneficiariesDao().getAllBooklets()
 
-        // TODO temp for testing
-//        booklets?.forEach {
-//            if (it.contains(bookletId)) {
-//                return true
-//            }
-//        }
+        booklets?.forEach {
+            if (it.contains(bookletId)) {
+                return true
+            }
+        }
 
         return false
     }
