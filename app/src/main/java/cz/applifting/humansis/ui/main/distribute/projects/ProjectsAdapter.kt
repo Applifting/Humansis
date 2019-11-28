@@ -49,7 +49,6 @@ class ProjectsAdapter(
         val context = layout.context
         val tvName = layout.tv_location
         val tvHouseHolds = layout.tv_households
-        val flCompleted = layout.fl_completed
 
         fun bind(project: ProjectModel) {
             tvName.text = project.name
@@ -57,7 +56,6 @@ class ProjectsAdapter(
             layout.setOnClickListener {
                 if (clickable) onItemClick(project)
             }
-            flCompleted.setBackgroundColor(ContextCompat.getColor(context, if (project.completed) R.color.green else R.color.darkBlue))
         }
     }
 }
