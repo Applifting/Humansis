@@ -145,9 +145,10 @@ class MainFragment : BaseFragment() {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
         })
 
-        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
-            pbSyncProgress.visible(it)
-        })
+        // TODO IMHO having 3 loaders spinning simultaneously
+//        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
+//            pbSyncProgress.visible(it)
+//        })
 
         super.onCreateOptionsMenu(menu, inflater)
     }
