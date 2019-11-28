@@ -34,7 +34,7 @@ class ProjectsViewModel @Inject constructor(
                         val uncompleteDistributions = distributionsRepository.getUncompletedDistributionsSuspend(it.id)
                         val projectModel = ProjectModel(it.id, it.name, it.numberOfHouseholds, uncompleteDistributions.isEmpty())
                         projectModel
-                    }.filter { !it.completed }
+                    }
                 }
                 .collect {
                     projectsLD.value = it

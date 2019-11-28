@@ -33,15 +33,18 @@ class ProjectsAdapter(
     }
 
     fun updateProjects(newProjects: List<ProjectModel>) {
+
+        val incompleteProjects = newProjects.filter { !it.completed }
+
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = newProjects[newItemPosition].id == projects[oldItemPosition].id
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = incompleteProjects[newItemPosition].id == projects[oldItemPosition].id
             override fun getOldListSize(): Int = projects.size
-            override fun getNewListSize(): Int = newProjects.size
+            override fun getNewListSize(): Int = incompleteProjects.size
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = false
         })
 
         this.projects.clear()
-        this.projects.addAll(newProjects)
+        this.projects.addAll(incompleteProjects)
         diffResult.dispatchUpdatesTo(this)
     }
 
