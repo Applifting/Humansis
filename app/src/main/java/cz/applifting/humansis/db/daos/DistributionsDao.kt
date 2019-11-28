@@ -1,9 +1,6 @@
 package cz.applifting.humansis.db.daos
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import cz.applifting.humansis.model.db.DistributionLocal
 import kotlinx.coroutines.flow.Flow
 
@@ -35,4 +32,10 @@ interface DistributionsDao {
 
     @Query("SELECT * FROM distributions")
     fun getAll(): Flow<List<DistributionLocal>>
+
+    @Transaction
+    suspend fun replaceByProject(projectId: Int, distributions: List<DistributionLocal>) {
+        deleteByProject(projectId)
+        insertAll(distributions)
+    }
 }

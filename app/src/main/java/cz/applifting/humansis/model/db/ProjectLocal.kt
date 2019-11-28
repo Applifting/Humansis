@@ -1,6 +1,7 @@
 package cz.applifting.humansis.model.db
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 /**
@@ -11,4 +12,7 @@ data class ProjectLocal(
     @PrimaryKey val id: Int,
     val name: String,
     val numberOfHouseholds: Int
-)
+) {
+    @Ignore
+    var isComplete: Boolean = false
+}

@@ -23,8 +23,7 @@ class ProjectsRepository @Inject constructor(val service: HumansisService, val d
             .getProjects()
             .map { ProjectLocal(it.id, it.name ?: context.getString(R.string.unknown), it.numberOfHouseholds ?: -1) }
 
-        db.projectsDao().deleteAll()
-        db.projectsDao().insertAll(result)
+        db.projectsDao().replaceProjects(result)
 
         return result
 

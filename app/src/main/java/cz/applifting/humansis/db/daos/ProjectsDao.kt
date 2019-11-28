@@ -1,9 +1,6 @@
 package cz.applifting.humansis.db.daos
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import cz.applifting.humansis.model.db.ProjectLocal
 import kotlinx.coroutines.flow.Flow
 
@@ -26,4 +23,10 @@ interface ProjectsDao {
 
     @Query("SELECT projects.name FROM projects INNER JOIN distributions ON projects.id = distributions.projectId WHERE distributions.id = :distributionId LIMIT 1")
     suspend fun getNameByDistributionId(distributionId: Int): String
+
+    @Transaction
+    suspend fun replaceProjects(projects: List<ProjectLocal>) {
+        deleteAll()
+        insertAll(projects)
+    }
 }

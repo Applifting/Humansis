@@ -43,8 +43,7 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
                 )
             }
 
-        db.distributionsDao().deleteByProject(projectId)
-        db.distributionsDao().insertAll(result)
+        db.distributionsDao().replaceByProject(projectId, result)
 
         return result
     }

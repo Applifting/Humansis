@@ -2,11 +2,12 @@ package cz.applifting.humansis.ui.main.distribute.projects
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
-import cz.applifting.humansis.model.ui.ProjectModel
+import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.main.BaseListViewModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,7 +21,7 @@ class ProjectsViewModel @Inject constructor(
     context: Context
 ) : BaseListViewModel(context) {
 
-    val projectsLD: MutableLiveData<List<ProjectModel>> = MutableLiveData()
+    val projectsLD: MutableLiveData<List<ProjectLocal>> = MutableLiveData()
 
     init {
         launch {
@@ -28,32 +29,21 @@ class ProjectsViewModel @Inject constructor(
 
             projectsRepository
                 .getProjectsOffline()
-                .map { newProjects ->
-                    newProjects.map {
-                        //todo find better solution to count uncompleted distributions
-                        val uncompleteDistributions = distributionsRepository.getUncompletedDistributionsSuspend(it.id)
-                        val projectModel = ProjectModel(it.id, it.name, it.numberOfHouseholds, uncompleteDistributions.isEmpty())
-                        projectModel
+                .flatMapMerge { projects ->
+                    distributionsRepository
+                        .getAllDistributions()
+                        .map {
+                            Pair(it, projects)
+                        }
+                }
+                .map { (distributions, projects) ->
+                    projects.filter {project ->
+                        distributions.any { it.projectId == project.id && !it.completed }
                     }
                 }
                 .collect {
                     projectsLD.value = it
                     showRetrieving(false, it.isNotEmpty())
-                }
-        }
-
-        launch {
-            // Refresh colors of projects to indicate whether they have active distributions
-            distributionsRepository
-                .getAllDistributions()
-                .collect { newDistributions ->
-                    if (projectsLD.value != null) {
-                        projectsLD.value = projectsLD.value?.map { project ->
-                            val someProjectDistribution = newDistributions.find { it.projectId == project.id }
-                            val projectModel = project.copy(completed = someProjectDistribution == null)
-                            projectModel
-                        }
-                    }
                 }
         }
     }

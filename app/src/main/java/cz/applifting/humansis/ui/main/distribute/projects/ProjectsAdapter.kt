@@ -3,11 +3,10 @@ package cz.applifting.humansis.ui.main.distribute.projects
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import cz.applifting.humansis.R
-import cz.applifting.humansis.model.ui.ProjectModel
+import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_project.view.*
 
@@ -16,10 +15,10 @@ import kotlinx.android.synthetic.main.item_project.view.*
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 14, August, 2019
  */
 class ProjectsAdapter(
-    private val onItemClick: (project: ProjectModel) -> Unit
+    private val onItemClick: (project: ProjectLocal) -> Unit
 ) : ListComponentAdapter<ProjectsAdapter.ProjectViewHolder>() {
 
-    private val projects: MutableList<ProjectModel> = mutableListOf()
+    private val projects: MutableList<ProjectLocal> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_project, parent, false) as CardView
@@ -32,19 +31,16 @@ class ProjectsAdapter(
         holder.bind(projects[position])
     }
 
-    fun updateProjects(newProjects: List<ProjectModel>) {
-
-        val incompleteProjects = newProjects.filter { !it.completed }
-
+    fun updateProjects(newProjects: List<ProjectLocal>) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = incompleteProjects[newItemPosition].id == projects[oldItemPosition].id
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = newProjects[newItemPosition].id == projects[oldItemPosition].id
             override fun getOldListSize(): Int = projects.size
-            override fun getNewListSize(): Int = incompleteProjects.size
+            override fun getNewListSize(): Int = newProjects.size
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = false
         })
 
         this.projects.clear()
-        this.projects.addAll(incompleteProjects)
+        this.projects.addAll(newProjects)
         diffResult.dispatchUpdatesTo(this)
     }
 
@@ -53,7 +49,7 @@ class ProjectsAdapter(
         val tvName = layout.tv_location
         val tvHouseHolds = layout.tv_households
 
-        fun bind(project: ProjectModel) {
+        fun bind(project: ProjectLocal) {
             tvName.text = project.name
             tvHouseHolds.text = context.getString(R.string.households, project.numberOfHouseholds)
             layout.setOnClickListener {
