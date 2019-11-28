@@ -17,7 +17,8 @@ import javax.inject.Inject
 class ProjectsViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     val distributionsRepository: DistributionsRepository,
-    context: Context) : BaseListViewModel(context) {
+    context: Context
+) : BaseListViewModel(context) {
 
     val projectsLD: MutableLiveData<List<ProjectModel>> = MutableLiveData()
 
@@ -33,7 +34,7 @@ class ProjectsViewModel @Inject constructor(
                         val uncompleteDistributions = distributionsRepository.getUncompletedDistributionsSuspend(it.id)
                         val projectModel = ProjectModel(it.id, it.name, it.numberOfHouseholds, uncompleteDistributions.isEmpty())
                         projectModel
-                    }
+                    }.filter { !it.completed }
                 }
                 .collect {
                     projectsLD.value = it
