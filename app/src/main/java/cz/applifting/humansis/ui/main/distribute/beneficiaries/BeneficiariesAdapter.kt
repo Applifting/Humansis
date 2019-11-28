@@ -27,7 +27,7 @@ class BeneficiariesAdapter(
     val onItemClick: (beneficiary: BeneficiaryLocal) -> Unit
 ) : ListComponentAdapter<BeneficiariesAdapter.BeneficiaryViewHolder>() {
 
-    private var beneficiaries = listOf<BeneficiaryLocal>()
+    private val beneficiaries = mutableListOf<BeneficiaryLocal>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BeneficiaryViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
@@ -55,7 +55,10 @@ class BeneficiariesAdapter(
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
                 beneficiaries[oldItemPosition] == newBeneficiaries[newItemPosition]
         })
-        beneficiaries = newBeneficiaries
+
+        beneficiaries.clear()
+        beneficiaries.addAll(newBeneficiaries)
+
         diffResult.dispatchUpdatesTo(this)
     }
 

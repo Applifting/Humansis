@@ -34,10 +34,12 @@ class BeneficiariesViewModel @Inject constructor(
     internal val currentSort = MutableLiveData<Sort>()
     private var searchText: String? = null
 
+
+
     init {
         currentSort.value = Sort.DEFAULT
         searchResultsLD.addSource(beneficiariesLD) { list ->
-            searchResultsLD.value = list?.defaultSort()
+            setSortedBeneficieries(list)
         }
     }
 
@@ -88,16 +90,19 @@ class BeneficiariesViewModel @Inject constructor(
 
     }
 
-    internal fun sortBeneficiaries() = searchResultsLD.value?.let { list ->
+    fun changeSort() {
         currentSort.value = nextSort()
-        searchResultsLD.value = list.run {
+    }
+
+    internal fun setSortedBeneficieries(list: List<BeneficiaryLocal>?) {
+        searchResultsLD.value = list?.run {
             when (currentSort.value) {
                 Sort.DEFAULT -> defaultSort()
                 Sort.AZ -> sortAZ()
                 Sort.ZA -> sortZA()
                 else -> defaultSort()
             }
-        }
+        } ?: emptyList()
     }
 
     /**

@@ -65,13 +65,14 @@ class BeneficiariesFragment : BaseFragment() {
 
         cmp_search_beneficiary.onTextChanged(viewModel::search)
         cmp_search_beneficiary.onSort {
-            viewModel.sortBeneficiaries()
+            viewModel.changeSort()
             lc_beneficiaries.scrollToTop()
         }
 
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
 
         viewModel.currentSort.observe(viewLifecycleOwner, Observer<BeneficiariesViewModel.Sort> {
+            viewModel.setSortedBeneficieries(viewModel.searchResultsLD.value)
             cmp_search_beneficiary.changeSortIcon(it)
         })
 
