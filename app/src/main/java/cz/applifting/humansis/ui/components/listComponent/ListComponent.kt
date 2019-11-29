@@ -36,9 +36,6 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
     }
 
     fun setState(state: ListComponentState) {
-        // Always scroll top
-        rv_list.scrollToPosition(0)
-
         pb_loading.visible(state.isRetrieving)
         swrl_swipe_to_refresh.isRefreshing = state.isRefreshing
 
