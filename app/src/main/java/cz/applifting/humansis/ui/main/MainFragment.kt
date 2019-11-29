@@ -90,7 +90,7 @@ class MainFragment : BaseFragment() {
 
             val pendingChanges = sharedViewModel.pendingChangesLD.value ?: false
 
-            if (!pendingChanges){
+            if (!pendingChanges) {
                 AlertDialog.Builder(context!!)
                     .setTitle(R.string.logout_alert_title)
                     .setMessage(getString(R.string.logout_alert_text))
@@ -145,10 +145,10 @@ class MainFragment : BaseFragment() {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
         })
 
-        // TODO IMHO having 3 loaders spinning simultaneously
-//        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
-//            pbSyncProgress.visible(it)
-//        })
+        // show sync in toolbar only on settings screen, because there is no other progress indicator when country is updated
+        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
+            pbSyncProgress.visible(it && mainNavController.currentDestination?.id == R.id.settingsFragment)
+        })
 
         super.onCreateOptionsMenu(menu, inflater)
     }
