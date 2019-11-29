@@ -2,10 +2,10 @@ package cz.applifting.humansis.synchronization
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
+import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.setDate
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.Logger
@@ -58,8 +58,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     }
 
     override suspend fun doWork(): Result {
-        Log.d("asdf", "asdf")
-
         return supervisorScope {
             val errors = mutableListOf<String?>()
             val reason = Data.Builder()
@@ -85,7 +83,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                             beneficieriesRepository.distribute(it.id)
                         } catch (e: HttpException) {
                             val errBody = "${e.response()?.errorBody()?.string()}"
-                            errors.add("${it.id}: $errBody")
+                            errors.add(getUserFriendlyErrorMessage(e.code()))
                             logger.logToFile(applicationContext, "Failed uploading: ${it.id}: $errBody")
 
                             // Mark conflicts in DB
@@ -111,7 +109,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 val projects = try {
                     projectsRepository.getProjectsOnline()
                 } catch (e: HttpException) {
-                    errors.add(e.message)
+                    errors.add(getUserFriendlyErrorMessage(e.code()))
                     logger.logToFile(applicationContext, "Failed downloading projects: ${e.message}}")
                     emptyList<ProjectLocal>()
                 }
@@ -124,6 +122,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                         try {
                             it.await() ?: listOf()
                         } catch (e: HttpException) {
+                            errors.add(getUserFriendlyErrorMessage(e.code()))
                             logger.logToFile(applicationContext, "Failed downloading distribution ${e.code()} ${e.message()} ${e.response().toString()}")
                             listOf<DistributionLocal>()
                         }
@@ -133,6 +132,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                         try {
                             it.await()
                         } catch (e: HttpException) {
+                            errors.add(getUserFriendlyErrorMessage(e.code()))
                             logger.logToFile(applicationContext, "Failed downloading beneficiaries  ${e.code()} ${e.message()} ${e.response().toString()}")
                         }
                     }
@@ -159,5 +159,24 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             .getProjectsOfflineSuspend()
             .flatMap { distributionsRepository.getDistributionsOfflineSuspend(it.id) }
             .flatMap { beneficieriesRepository.getBeneficieriesOfflineSuspend(it.id) }
+    }
+
+    private fun getErrorMessageByCode(code: Int): String {
+        return applicationContext.getString(
+            when (code) {
+                400 -> R.string.error_bad_request
+                403 -> R.string.error_user_not_allowed
+                404 -> R.string.error_resource_not_found
+                409 -> R.string.error_data_conflict
+                410 -> R.string.error_server_api_changed
+                429 -> R.string.error_too_many_requests
+                in 500..599 -> R.string.error_server_failure
+                else -> R.string.error_other
+            }
+        )
+    }
+
+    private fun getUserFriendlyErrorMessage(code: Int): String {
+        return "${applicationContext.getString(R.string.error_server)}\n${getErrorMessageByCode(code)}"
     }
 }

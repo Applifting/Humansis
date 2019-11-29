@@ -85,7 +85,8 @@ class SharedViewModel @Inject constructor(
 
             if (it.first().state == WorkInfo.State.FAILED) {
                 val errors = it.first().outputData.getStringArray(ERROR_MESSAGE_KEY)
-                val error = errors?.joinToString("\n")
+                // show only first error in toast
+                val error = errors?.first()
 
                 toastLD.value = error
             }
@@ -122,8 +123,10 @@ class SharedViewModel @Inject constructor(
     }
 
     private fun isLoading(workInfos: List<WorkInfo>): Boolean {
-        if (workInfos.isNullOrEmpty()) { return false }
+        if (workInfos.isNullOrEmpty()) {
+            return false
+        }
         launch { logger.logToFile(context, "Worker state: ${workInfos.first().state}") }
-        return workInfos.first().state ==  WorkInfo.State.RUNNING
+        return workInfos.first().state == WorkInfo.State.RUNNING
     }
 }
