@@ -55,9 +55,9 @@ class SearchBeneficiaryComponent @JvmOverloads constructor(context: Context, att
 
     internal fun changeSortIcon(sort: BeneficiariesViewModel.Sort) {
         val textResId = when (sort) {
-            BeneficiariesViewModel.Sort.DEFAULT -> R.string.sort_az
-            BeneficiariesViewModel.Sort.AZ -> R.string.sort_za
-            BeneficiariesViewModel.Sort.ZA -> R.string.sort_default
+            BeneficiariesViewModel.Sort.DEFAULT -> R.string.sort_default
+            BeneficiariesViewModel.Sort.AZ -> R.string.sort_az
+            BeneficiariesViewModel.Sort.ZA -> R.string.sort_za
         }
 
         btn_sort.text = context.getString(textResId)

@@ -37,7 +37,7 @@ class BeneficiariesViewModel @Inject constructor(
 
 
     init {
-        currentSort.value = Sort.DEFAULT
+        currentSort.value = Sort.AZ
         searchResultsLD.addSource(beneficiariesLD) { list ->
             setSortedBeneficieries(list)
         }
