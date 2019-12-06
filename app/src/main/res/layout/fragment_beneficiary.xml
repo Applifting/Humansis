@@ -29,20 +29,28 @@
             <TextView
                     android:id="@+id/tv_screen_title"
                     style="@style/Toolbar.Title"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="@string/assign_booklet"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/assign"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_action"
                     app:layout_constraintStart_toEndOf="@id/btn_close"
                     app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                     android:id="@+id/tv_screen_subtitle"
                     style="@style/Toolbar.Subtitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_action"
                     app:layout_constraintStart_toEndOf="@id/btn_close"
                     app:layout_constraintTop_toBottomOf="@id/tv_screen_title"
                     tools:text="John Wick" />

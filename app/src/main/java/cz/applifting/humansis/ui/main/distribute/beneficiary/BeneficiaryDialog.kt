@@ -91,6 +91,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_beneficiary.setValue("${it.givenName} ${it.familyName}")
                 tv_distribution.setValue(args.distributionName)
                 tv_project.setValue(args.projectName)
+                tv_screen_title.text = getString(if (it.distributed) R.string.detail else R.string.assign)
                 tv_screen_subtitle.text = getString(R.string.beneficiary_name, it.givenName, it.familyName)
 
                 if (it.distributed) {
