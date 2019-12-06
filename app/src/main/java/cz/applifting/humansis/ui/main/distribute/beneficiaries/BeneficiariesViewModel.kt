@@ -34,10 +34,8 @@ class BeneficiariesViewModel @Inject constructor(
     internal val currentSort = MutableLiveData<Sort>()
     private var searchText: String? = null
 
-
-
     init {
-        currentSort.value = Sort.AZ
+        currentSort.value = Sort.DEFAULT
         searchResultsLD.addSource(beneficiariesLD) { list ->
             setSortedBeneficieries(list)
         }
@@ -76,8 +74,7 @@ class BeneficiariesViewModel @Inject constructor(
             return@let
         }
 
-        searchResultsLD.value = it.filter { beneficiary ->
-
+        setSortedBeneficieries(it.filter { beneficiary ->
             val familyName = beneficiary.familyName?.normalize() ?: ""
             val givenName = beneficiary.givenName?.normalize() ?: ""
             val beneficiaryId = beneficiary.beneficiaryId.toString()
@@ -86,8 +83,7 @@ class BeneficiariesViewModel @Inject constructor(
             val fullName = "$givenName $familyName"
             val fullNameReversed = "$familyName $givenName"
             fullName.contains(query) || fullNameReversed.contains(query) || beneficiaryId.startsWith(query) || nationalId?.startsWith(query) == true
-        }.defaultSort()
-
+        })
     }
 
     fun changeSort() {
