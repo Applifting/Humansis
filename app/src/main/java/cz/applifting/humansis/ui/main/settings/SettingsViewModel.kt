@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.SP_COUNTRY
+import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import java.util.*
@@ -16,7 +17,8 @@ import javax.inject.Inject
  */
 
 class SettingsViewModel @Inject constructor(
-    private val sp: SharedPreferences
+    private val sp: SharedPreferences,
+    private val projectsRepository: ProjectsRepository
 ) : BaseViewModel() {
 
     val countryLD: MutableLiveData<String> = MutableLiveData()
@@ -47,6 +49,8 @@ class SettingsViewModel @Inject constructor(
                 suspendCommit()
             }
 
+            // Delete all projects to not show old data when connection breaks during switch
+            projectsRepository.deleteAll()
             savedLD.value = true
         }
     }

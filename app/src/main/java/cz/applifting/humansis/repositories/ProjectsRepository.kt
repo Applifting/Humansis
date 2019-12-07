@@ -40,4 +40,8 @@ class ProjectsRepository @Inject constructor(val service: HumansisService, val d
     suspend fun getNameByDistributionId(distributionId: Int): String {
         return db.projectsDao().getNameByDistributionId(distributionId)
     }
+
+    suspend fun deleteAll() {
+        db.projectsDao().deleteAll()
+    }
 }
