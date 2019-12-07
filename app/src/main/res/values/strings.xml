@@ -1,4 +1,5 @@
 <resources>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -95,5 +96,8 @@
     <string name="show_error_detail">Show error detail</string>
     <string name="the_following_items_could_not_uploaded">The following items could not uploaded:</string>
     <string name="detail">Detail</string>
+
+    <string name="KHM">KHM</string>
+    <string name="SYR">SYR</string>
 
 </resources>

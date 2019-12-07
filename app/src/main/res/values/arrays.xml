@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="countries">
-        <item>KHM</item>
-        <item>SYR</item>
+        <item>@string/KHM</item>
+        <item>@string/SYR</item>
     </string-array>
 </resources>
