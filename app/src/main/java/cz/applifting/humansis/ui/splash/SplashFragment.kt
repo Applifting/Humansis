@@ -39,7 +39,7 @@ class SplashFragment:  Fragment(), CoroutineScope {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        if (viewModel.shouldLogin()) {
+        if (!viewModel.initDB()) {
             goToLoginScreen()
         } else {
             viewModel.getUser()

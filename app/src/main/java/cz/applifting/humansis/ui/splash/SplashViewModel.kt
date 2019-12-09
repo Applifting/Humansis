@@ -16,8 +16,8 @@ class SplashViewModel @Inject constructor(private val dbProvider: DbProvider, pr
 
     val userLD = MutableLiveData<User>()
 
-    fun shouldLogin(): Boolean {
-        return !loginManager.tryInitDB()
+    fun initDB(): Boolean {
+        return loginManager.tryInitDB()
     }
 
     fun getUser() {

@@ -131,7 +131,7 @@ class MainFragment : BaseFragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(cz.applifting.humansis.R.menu.menu_status, menu)
+        inflater.inflate(R.menu.menu_status, menu)
         // A fix for action with custom layout
         // https://stackoverflow.com/a/35265797
         val item = menu.findItem(action_open_status_dialog)

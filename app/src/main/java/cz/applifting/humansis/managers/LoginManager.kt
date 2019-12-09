@@ -3,6 +3,7 @@ package cz.applifting.humansis.managers
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import com.commonsware.cwac.saferoom.SafeHelperFactory
 import cz.applifting.humansis.R
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
@@ -12,8 +13,10 @@ import cz.applifting.humansis.model.api.LoginReqRes
 import cz.applifting.humansis.model.db.User
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
 
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
@@ -44,7 +47,7 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
             suspendCommit()
         }
 
-        dbProvider.init(dbPass)
+        dbProvider.init(dbPass, "default".toByteArray())
 
         val db = dbProvider.get()
 
@@ -62,12 +65,14 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
     suspend fun logout() {
         // TODO clear all other data
         db.apply {
-            userDao().deleteAll()
-            distributionsDao().deleteAll()
-            projectsDao().deleteAll()
-            beneficiariesDao().deleteAll()
-            sp.edit().putString(LAST_DOWNLOAD_KEY, null).suspendCommit()
+            clearAllTables()
         }
+
+        SafeHelperFactory.rekey(db.openHelper.readableDatabase, "default".toCharArray())
+
+        //deleteDatabaseFile(context, DB_NAME)
+        sp.edit().putString(LAST_DOWNLOAD_KEY, null).suspendCommit()
+        sp.edit().putString(SP_DB_PASS_KEY, null).suspendCommit()
     }
 
     // Initializes DB if the key is available. Otherwise returns false.
@@ -83,7 +88,13 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
 
     suspend fun retrieveUser(): User? {
         val db = dbProvider.get()
-        return db.userDao().getUser()
+        return supervisorScope {
+            try {
+                db.userDao().getUser()
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
 
     suspend fun getAuthHeader(): String? {
