@@ -1,5 +1,4 @@
 <resources>
-    <string name="name">النص</string>
     <string name="navigation_drawer_open">افتح قائمة التنقل</string>
     <string name="navigation_drawer_close">اغلق قائمة التنقل </string>
     <string name="nav_header_desc">عنوان التنقل الرئيسي</string>
