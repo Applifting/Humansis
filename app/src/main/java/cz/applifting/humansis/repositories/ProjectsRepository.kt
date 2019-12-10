@@ -4,7 +4,6 @@ import android.content.Context
 import cz.applifting.humansis.R
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.db.ProjectLocal
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -16,32 +15,31 @@ import javax.inject.Singleton
 @Singleton
 class ProjectsRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
-    val db: HumansisDB by lazy { dbProvider.get() }
 
     suspend fun getProjectsOnline(): List<ProjectLocal>? {
         val result = service
             .getProjects()
             .map { ProjectLocal(it.id, it.name ?: context.getString(R.string.unknown), it.numberOfHouseholds ?: -1) }
 
-        db.projectsDao().replaceProjects(result)
+        dbProvider.get().projectsDao().replaceProjects(result)
 
         return result
 
     }
 
     fun getProjectsOffline(): Flow<List<ProjectLocal>> {
-        return db.projectsDao().getAll()
+        return dbProvider.get().projectsDao().getAll()
     }
 
     suspend fun getProjectsOfflineSuspend(): List<ProjectLocal> {
-        return db.projectsDao().getAllSuspend()
+        return dbProvider.get().projectsDao().getAllSuspend()
     }
 
     suspend fun getNameByDistributionId(distributionId: Int): String {
-        return db.projectsDao().getNameByDistributionId(distributionId)
+        return dbProvider.get().projectsDao().getNameByDistributionId(distributionId)
     }
 
     suspend fun deleteAll() {
-        db.projectsDao().deleteAll()
+        dbProvider.get().projectsDao().deleteAll()
     }
 }

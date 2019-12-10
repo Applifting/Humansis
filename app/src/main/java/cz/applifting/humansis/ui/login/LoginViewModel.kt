@@ -30,6 +30,7 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewStateLD.value = LoginViewState()
+        loginManager.encryptDefault()
     }
 
     fun login(username: String, password: String) {

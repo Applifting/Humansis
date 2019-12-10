@@ -3,7 +3,6 @@ package cz.applifting.humansis.repositories
 import android.content.Context
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -17,8 +16,6 @@ import javax.inject.Singleton
  */
 @Singleton
 class BeneficieriesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
-
-    val db: HumansisDB by lazy { dbProvider.get() }
 
     suspend fun getBeneficieriesOnline(distributionId: Int): List<BeneficiaryLocal>? {
 
@@ -43,38 +40,38 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                 )
             }
 
-        db.beneficiariesDao().deleteByDistribution(distributionId)
-        db.beneficiariesDao().insertAll(result)
+        dbProvider.get().beneficiariesDao().deleteByDistribution(distributionId)
+        dbProvider.get().beneficiariesDao().insertAll(result)
 
         return result
     }
 
     fun getAllBeneficieriesOffline(): Flow<List<BeneficiaryLocal>> {
-        return db.beneficiariesDao().getAllBeneficieries()
+        return dbProvider.get().beneficiariesDao().getAllBeneficieries()
     }
 
     fun getBeneficieriesOffline(distributionId: Int): Flow<List<BeneficiaryLocal>> {
-        return db.beneficiariesDao().getByDistribution(distributionId)
+        return dbProvider.get().beneficiariesDao().getByDistribution(distributionId)
     }
 
     suspend fun getBeneficieriesOfflineSuspend(distributionId: Int): List<BeneficiaryLocal> {
-        return db.beneficiariesDao().getByDistributionSuspend(distributionId)
+        return dbProvider.get().beneficiariesDao().getByDistributionSuspend(distributionId)
     }
 
     suspend fun getBeneficiaryOffline(beneficiaryId: Int): BeneficiaryLocal {
-        return db.beneficiariesDao().findById(beneficiaryId)
+        return dbProvider.get().beneficiariesDao().findById(beneficiaryId)
     }
 
     suspend fun updateBeneficiaryOffline(beneficiary: BeneficiaryLocal) {
-        return db.beneficiariesDao().update(beneficiary)
+        return dbProvider.get().beneficiariesDao().update(beneficiary)
     }
 
     suspend fun countReachedBeneficiariesOffline(distributionId: Int): Int {
-        return db.beneficiariesDao().countReachedBeneficiaries(distributionId)
+        return dbProvider.get().beneficiariesDao().countReachedBeneficiaries(distributionId)
     }
 
     suspend fun distribute(beneficiaryId: Int) {
-        val beneficiaryLocal = db.beneficiariesDao().findById(beneficiaryId)
+        val beneficiaryLocal = dbProvider.get().beneficiariesDao().findById(beneficiaryId)
 
         if (beneficiaryLocal.reliefIDs.isNotEmpty()) {
             setDistributedRelief(beneficiaryLocal.reliefIDs)
@@ -86,7 +83,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     }
 
     suspend fun checkBoookletAssignedLocally(bookletId: String): Boolean {
-        val booklets = db.beneficiariesDao().getAllBooklets()
+        val booklets = dbProvider.get().beneficiariesDao().getAllBooklets()
 
         booklets?.forEach {
             if (it.contains(bookletId)) {

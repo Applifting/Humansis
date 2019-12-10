@@ -3,8 +3,6 @@ package cz.applifting.humansis.db
 import android.content.Context
 import androidx.room.Room
 import com.commonsware.cwac.saferoom.SafeHelperFactory
-import cz.applifting.humansis.R
-import cz.applifting.humansis.misc.HumansisError
 
 
 /**
@@ -14,7 +12,7 @@ const val DB_NAME = "humansis-db"
 
 class DbProvider(val context: Context) {
 
-    private var db: HumansisDB? = null
+    var db: HumansisDB? = null
 
     fun init(password: ByteArray, oldPass: ByteArray? = null) {
         val factory = SafeHelperFactory(if (oldPass != null) {String(oldPass).toCharArray()} else {String(password).toCharArray()})
@@ -33,7 +31,15 @@ class DbProvider(val context: Context) {
     }
 
     fun get(): HumansisDB {
-        return db ?: throw HumansisError(context.getString(R.string.error_db_not_initialized))
+        return db ?: throw IllegalStateException("Db not initialized")
+    }
+
+    fun reset() {
+        db = null
+    }
+
+    fun encryptDefault() {
+        SafeHelperFactory.rekey(db?.openHelper?.readableDatabase, "default".toCharArray())
     }
 
     fun isInitialized(): Boolean = db != null

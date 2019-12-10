@@ -3,7 +3,6 @@ package cz.applifting.humansis.managers
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import com.commonsware.cwac.saferoom.SafeHelperFactory
 import cz.applifting.humansis.R
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
@@ -68,16 +67,21 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
             clearAllTables()
         }
 
-        SafeHelperFactory.rekey(db.openHelper.readableDatabase, "default".toCharArray())
-
         //deleteDatabaseFile(context, DB_NAME)
         sp.edit().putString(LAST_DOWNLOAD_KEY, null).suspendCommit()
         sp.edit().putString(SP_DB_PASS_KEY, null).suspendCommit()
     }
 
+    fun encryptDefault() {
+        if (dbProvider.isInitialized()) {
+            dbProvider.encryptDefault()
+        }
+    }
+
+
     // Initializes DB if the key is available. Otherwise returns false.
     fun tryInitDB(): Boolean {
-        if (dbProvider.isInitialized()) return true
+        if (dbProvider.isInitialized()) { return true }
         val encryptedPassword = sp.getString(SP_DB_PASS_KEY, null) ?: return false
         val decryptedPassword = decryptUsingKeyStoreKey(base64decode(encryptedPassword), KEYSTORE_KEY_ALIAS, context) ?: return false
 

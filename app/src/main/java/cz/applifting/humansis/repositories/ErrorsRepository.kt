@@ -10,19 +10,17 @@ import javax.inject.Singleton
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 27, November, 2019
  */
 @Singleton
-class ErrorsRepository @Inject constructor(dbProvider: DbProvider) {
-
-    private val db by lazy { dbProvider.get() }
+class ErrorsRepository @Inject constructor(val dbProvider: DbProvider) {
 
     fun getAll(): Flow<List<SyncError>> {
-        return db.errorsDao().getAll()
+        return dbProvider.get().errorsDao().getAll()
     }
 
     suspend fun insert(syncError: SyncError) {
-        db.errorsDao().insert(syncError)
+        dbProvider.get().errorsDao().insert(syncError)
     }
 
     suspend fun clearAll() {
-        db.errorsDao().deleteAll()
+        dbProvider.get().errorsDao().deleteAll()
     }
 }

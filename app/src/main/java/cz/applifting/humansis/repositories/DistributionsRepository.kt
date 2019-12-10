@@ -4,7 +4,6 @@ import android.content.Context
 import cz.applifting.humansis.R
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
-import cz.applifting.humansis.db.HumansisDB
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.Commodity
 import cz.applifting.humansis.model.db.CommodityLocal
@@ -18,8 +17,6 @@ import javax.inject.Singleton
  */
 @Singleton
 class DistributionsRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
-
-    private val db: HumansisDB by lazy { dbProvider.get() }
 
     suspend fun getDistributionsOnline(projectId: Int): List<DistributionLocal>? {
         val result = service
@@ -43,29 +40,29 @@ class DistributionsRepository @Inject constructor(val service: HumansisService, 
                 )
             }
 
-        db.distributionsDao().replaceByProject(projectId, result)
+        dbProvider.get().distributionsDao().replaceByProject(projectId, result)
 
         return result
     }
 
     fun getDistributionsOffline(projectId: Int): Flow<List<DistributionLocal>> {
-        return db.distributionsDao().getByProject(projectId)
+        return dbProvider.get().distributionsDao().getByProject(projectId)
     }
 
     suspend fun getDistributionsOfflineSuspend(projectId: Int): List<DistributionLocal> {
-        return db.distributionsDao().getByProjectSuspend(projectId)
+        return dbProvider.get().distributionsDao().getByProjectSuspend(projectId)
     }
 
     fun getAllDistributions(): Flow<List<DistributionLocal>> {
-        return db.distributionsDao().getAll()
+        return dbProvider.get().distributionsDao().getAll()
     }
 
     suspend fun getUncompletedDistributionsSuspend(projectId: Int): List<DistributionLocal> {
-        return db.distributionsDao().findUncompletedDistributionsSuspend(projectId)
+        return dbProvider.get().distributionsDao().findUncompletedDistributionsSuspend(projectId)
     }
 
     suspend fun getNameById(distributionId: Int): String? {
-        return db.distributionsDao().getById(distributionId)?.name
+        return dbProvider.get().distributionsDao().getById(distributionId)?.name
     }
 
     private fun parseCommodities(commodities: List<Commodity>): List<CommodityLocal> {
