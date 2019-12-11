@@ -4,4 +4,8 @@
         <item>@string/KHM</item>
         <item>@string/SYR</item>
     </string-array>
+    <string-array name="country_codes">
+        <item>KHM</item>
+        <item>SYR</item>
+    </string-array>
 </resources>

@@ -54,6 +54,7 @@ class SettingsFragment : BaseFragment() {
         val navController = findNavController()
 
         val countries = resources.getStringArray(R.array.countries)
+        val countryCodes = resources.getStringArray(R.array.country_codes)
 
         val adapter = ArrayAdapter.createFromResource(context!!, R.array.countries, R.layout.item_country)
         adapter.setDropDownViewResource(R.layout.item_country_dropdown)
@@ -67,7 +68,7 @@ class SettingsFragment : BaseFragment() {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val country = parent?.getItemAtPosition(position) as String
                 if ((activity as HumansisActivity).isNetworkConnected()) {
-                    viewModel.updateCountrySettings(country)
+                    viewModel.updateCountrySettings(countryCodes[countries.indexOf(country)])
                 }
             }
         }
@@ -94,7 +95,7 @@ class SettingsFragment : BaseFragment() {
         }
 
         viewModel.countryLD.observe(viewLifecycleOwner, Observer<String> {
-            spinner_country.setSelection(countries.indexOf(it))
+            spinner_country.setSelection(countryCodes.indexOf(it))
         })
 
         viewModel.savedLD.observe(viewLifecycleOwner, Observer<Boolean> {
