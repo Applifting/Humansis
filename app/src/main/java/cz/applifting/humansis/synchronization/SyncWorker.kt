@@ -20,7 +20,6 @@ import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
-import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
 import retrofit2.HttpException
 import java.util.*
@@ -29,9 +28,7 @@ import javax.inject.Inject
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 05, October, 2019
  */
-const val MANUAL_SYNC_WORKER = "manual-sync-worker"
-const val ON_START_SYNC_WORKER = "periodic-sync-worker"
-const val WHEN_ON_WIFI_SYNC_WORKER = "when-on-wifi-sync-worker"
+const val SYNC_WORKER = "sync-worker"
 
 const val ERROR_MESSAGE_KEY = "error-message-key"
 
@@ -114,34 +111,31 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     emptyList<ProjectLocal>()
                 }
 
-                projects.orEmpty()
-                    .map {
-                        async { distributionsRepository.getDistributionsOnline(it.id) }
+                val distributions = try {
+                    projects.orEmpty().map {
+                        distributionsRepository.getDistributionsOnline(it.id)
+                    }.flatMap {
+                        it.orEmpty().toList()
                     }
-                    .flatMap {
-                        try {
-                            it.await() ?: listOf()
-                        } catch (e: HttpException) {
-                            errors.add(getUserFriendlyErrorMessage(e.code()))
-                            logger.logToFile(applicationContext, "Failed downloading distribution ${e.code()} ${e.message()} ${e.response().toString()}")
-                            listOf<DistributionLocal>()
-                        }
+                } catch (e: HttpException) {
+                    errors.add(getUserFriendlyErrorMessage(e.code()))
+                    logger.logToFile(applicationContext, "Failed downloading distribution ${e.code()} ${e.message()} ${e.response().toString()}")
+                    listOf<DistributionLocal>()
+                }
+
+                try {
+                    distributions.map {
+                        beneficieriesRepository.getBeneficieriesOnline(it.id)
                     }
-                    .map { async { beneficieriesRepository.getBeneficieriesOnline(it.id) } }
-                    .map {
-                        try {
-                            it.await()
-                        } catch (e: HttpException) {
-                            errors.add(getUserFriendlyErrorMessage(e.code()))
-                            logger.logToFile(applicationContext, "Failed downloading beneficiaries  ${e.code()} ${e.message()} ${e.response().toString()}")
-                        }
-                    }
+                } catch (e: HttpException) {
+                    errors.add(getUserFriendlyErrorMessage(e.code()))
+                    logger.logToFile(applicationContext, "Failed downloading beneficiaries  ${e.code()} ${e.message()} ${e.response().toString()}")
+                }
 
                 val lastDownloadAt = Date()
                 sp.setDate(LAST_DOWNLOAD_KEY, lastDownloadAt)
                 sp.setDate(LAST_SYNC_FAILED_KEY, null)
             }
-
 
             if (errors.isEmpty()) {
                 logger.logToFile(applicationContext, "Sync finished successfully")

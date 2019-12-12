@@ -11,8 +11,8 @@ import androidx.work.*
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.extensions.isWifiConnected
+import cz.applifting.humansis.synchronization.SYNC_WORKER
 import cz.applifting.humansis.synchronization.SyncWorker
-import cz.applifting.humansis.synchronization.WHEN_ON_WIFI_SYNC_WORKER
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import java.util.*
 import javax.inject.Inject
@@ -35,7 +35,7 @@ class HumansisActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             window.statusBarColor = Color.BLACK
         }
-        
+
         (application as App).appComponent.inject(this)
     }
 
@@ -71,7 +71,7 @@ class HumansisActivity : AppCompatActivity() {
                 .setConstraints(whenOnWifiConstraints)
                 .build()
 
-            workManager.enqueueUniqueWork(WHEN_ON_WIFI_SYNC_WORKER, ExistingWorkPolicy.KEEP, syncWhenWifiRequest)
+            workManager.enqueueUniqueWork(SYNC_WORKER, ExistingWorkPolicy.KEEP, syncWhenWifiRequest)
         }
     }
 
@@ -86,7 +86,7 @@ class HumansisActivity : AppCompatActivity() {
         return (lastDownloadDate != null && lastDownloadDate.before(dateHourAgo))
     }
 
-    private inner class NetworkChangeReceiver: BroadcastReceiver() {
+    private inner class NetworkChangeReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (isWifiConnected()) {
                 enqueSynchronization()

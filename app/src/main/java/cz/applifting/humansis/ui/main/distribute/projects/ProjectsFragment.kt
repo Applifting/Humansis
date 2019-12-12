@@ -44,6 +44,9 @@ class ProjectsFragment : BaseFragment() {
 
         sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
             viewModel.showRefreshing(it)
+            if (!it) {
+                viewModel.loadProjects()
+            }
         })
     }
 }

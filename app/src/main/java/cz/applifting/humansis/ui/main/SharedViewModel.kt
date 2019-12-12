@@ -44,9 +44,7 @@ class SharedViewModel @Inject constructor(
     val networkStatus = MutableLiveData<Boolean>()
 
     val syncWorkerIsLoadingLD: MediatorLiveData<Boolean> = MediatorLiveData()
-    private val workInfos1LD: LiveData<List<WorkInfo>>
-    private val workInfos2LD: LiveData<List<WorkInfo>>
-    private val workInfos3LD: LiveData<List<WorkInfo>>
+    private val workInfos: LiveData<List<WorkInfo>>
 
     private val workManager = WorkManager.getInstance(context)
 
@@ -56,25 +54,14 @@ class SharedViewModel @Inject constructor(
         lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
         lastSyncFailedLD.value = sp.getDate(LAST_SYNC_FAILED_KEY)
 
-        workInfos1LD = workManager.getWorkInfosForUniqueWorkLiveData(MANUAL_SYNC_WORKER)
-        workInfos2LD = workManager.getWorkInfosForUniqueWorkLiveData(WHEN_ON_WIFI_SYNC_WORKER)
-        workInfos3LD = workManager.getWorkInfosForUniqueWorkLiveData(ON_START_SYNC_WORKER)
+        workInfos = workManager.getWorkInfosForUniqueWorkLiveData(SYNC_WORKER)
 
-        syncWorkerIsLoadingLD.addSource(workInfos1LD) {
+        syncWorkerIsLoadingLD.addSource(workInfos) {
             syncWorkerIsLoadingLD.value = isLoading(it)
         }
-
-        syncWorkerIsLoadingLD.addSource(workInfos2LD) {
-            syncWorkerIsLoadingLD.value = isLoading(it)
-        }
-
-        syncWorkerIsLoadingLD.addSource(workInfos3LD) {
-            syncWorkerIsLoadingLD.value = isLoading(it)
-        }
-
 
         // TODO toast is shown every time sync fails and user opens the app. I can not think of a simpler solution than saving the toast to persistent memory
-        toastLD.addSource(workInfos1LD) {
+        toastLD.addSource(workInfos) {
             lastDownloadLD.value = sp.getDate(LAST_DOWNLOAD_KEY)
             lastSyncFailedLD.value = sp.getDate(LAST_SYNC_FAILED_KEY)
 
@@ -97,7 +84,7 @@ class SharedViewModel @Inject constructor(
             beneficieriesRepository
                 .getAllBeneficieriesOffline()
                 .collect {
-                    val edited = it.find { it.edited }
+                    val edited = it.find { beneficiaryLocal ->  beneficiaryLocal.edited }
                     pendingChangesLD.value = edited != null
                 }
         }
@@ -105,7 +92,7 @@ class SharedViewModel @Inject constructor(
 
     fun synchronize() {
         launch {
-            workManager.beginUniqueWork(MANUAL_SYNC_WORKER, ExistingWorkPolicy.KEEP, OneTimeWorkRequest.from(SyncWorker::class.java)).enqueue()
+            workManager.enqueueUniqueWork(SYNC_WORKER, ExistingWorkPolicy.KEEP, OneTimeWorkRequest.from(SyncWorker::class.java))
             forceOfflineReloadLD.value = true
         }
     }
