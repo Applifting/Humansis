@@ -99,5 +99,6 @@
 
     <string name="KHM">KHM</string>
     <string name="SYR">SYR</string>
+    <string name="warning_country_change">Warning: Changing country will erase your current data!</string>
 
 </resources>
