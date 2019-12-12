@@ -140,6 +140,7 @@ class MainFragment : BaseFragment() {
         val pbSyncProgress = item.actionView.findViewById<ProgressBar>(R.id.pb_sync_progress)
         val ivStatus = item.actionView.findViewById<ImageView>(R.id.iv_status)
         ivStatus.simpleDrawable(if (context?.isNetworkConnected() == true) R.drawable.ic_online else R.drawable.ic_offline)
+        val ivSyncProblem = item.actionView.findViewById<ImageView>(R.id.iv_sync_problem)
 
         sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
@@ -150,6 +151,9 @@ class MainFragment : BaseFragment() {
             pbSyncProgress.visible(it && mainNavController.currentDestination?.id == R.id.settingsFragment)
         })
 
+        sharedViewModel.lastSyncFailedLD.observe(viewLifecycleOwner, Observer {
+            ivSyncProblem.visible(it != null)
+        })
         super.onCreateOptionsMenu(menu, inflater)
     }
 
