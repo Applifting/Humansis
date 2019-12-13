@@ -93,6 +93,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                                 it.id,
                                 "$projectName → $distributionName → $beneficiaryName",
                                 "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
+                                e.code(),
                                 "${e.code()}: $errBody"
                             )
 
@@ -146,7 +147,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 errorsRepository.insertAll(syncErorrs)
 
                 // Erase password to trigger re-authentication
-                if (syncErorrs.find { it.errorMessage.contains("malformed JSON")} != null) {
+                if (syncErorrs.find { it.code == 403 } != null) {
                     loginManager.markInvalidPassword()
                 }
 
@@ -193,7 +194,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 SyncError(
                     location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
                     params = applicationContext.getString(R.string.error_server),
-                    errorMessage = getErrorMessageByCode(e.code())
+                    errorMessage = getErrorMessageByCode(e.code()),
+                    code = e.code()
                 )
             }
 
@@ -201,7 +203,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 SyncError(
                     location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
                     params = applicationContext.getString(R.string.unknwon_error),
-                    errorMessage = e.message ?: ""
+                    errorMessage = e.message ?: "",
+                    code = 0
                 )
             }
         }

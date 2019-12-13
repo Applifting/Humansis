@@ -11,5 +11,6 @@ data class SyncError(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val location: String,
     val params: String,
+    val code: Int,
     val errorMessage: String
 )

@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.isNetworkConnected
 import cz.applifting.humansis.misc.Logger
@@ -94,8 +95,12 @@ class SettingsFragment : BaseFragment() {
             }
         }
 
-        btn_test.setOnClickListener {
-            viewModel.test()
+        if (BuildConfig.FLAVOR.equals("demo")) {
+            btn_test.setOnClickListener {
+                viewModel.test()
+            }
+        } else {
+            btn_test.visibility = View.GONE
         }
 
         viewModel.countryLD.observe(viewLifecycleOwner, Observer<String> {
