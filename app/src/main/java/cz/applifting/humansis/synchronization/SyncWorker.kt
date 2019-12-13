@@ -20,6 +20,7 @@ import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
+import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
 import retrofit2.HttpException
 import java.util.*
@@ -113,9 +114,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
                 val distributions = try {
                     projects.orEmpty().map {
-                        distributionsRepository.getDistributionsOnline(it.id)
+                        async { distributionsRepository.getDistributionsOnline(it.id) }
                     }.flatMap {
-                        it.orEmpty().toList()
+                        it.await().orEmpty().toList()
                     }
                 } catch (e: HttpException) {
                     errors.add(getUserFriendlyErrorMessage(e.code()))
@@ -125,7 +126,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
                 try {
                     distributions.map {
-                        beneficieriesRepository.getBeneficieriesOnline(it.id)
+                        async { beneficieriesRepository.getBeneficieriesOnline(it.id) }
+                    }.map {
+                        it.await()
                     }
                 } catch (e: HttpException) {
                     errors.add(getUserFriendlyErrorMessage(e.code()))
