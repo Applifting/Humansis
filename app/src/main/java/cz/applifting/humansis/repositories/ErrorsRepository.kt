@@ -16,8 +16,8 @@ class ErrorsRepository @Inject constructor(val dbProvider: DbProvider) {
         return dbProvider.get().errorsDao().getAll()
     }
 
-    suspend fun insert(syncError: SyncError) {
-        dbProvider.get().errorsDao().insert(syncError)
+    suspend fun insertAll(syncErrors: List<SyncError>) {
+        dbProvider.get().errorsDao().insertAll(syncErrors)
     }
 
     suspend fun clearAll() {

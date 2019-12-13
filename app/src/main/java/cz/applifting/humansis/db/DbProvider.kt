@@ -3,6 +3,7 @@ package cz.applifting.humansis.db
 import android.content.Context
 import androidx.room.Room
 import com.commonsware.cwac.saferoom.SafeHelperFactory
+import javax.inject.Singleton
 
 
 /**
@@ -10,37 +11,33 @@ import com.commonsware.cwac.saferoom.SafeHelperFactory
  */
 const val DB_NAME = "humansis-db"
 
+@Singleton
 class DbProvider(val context: Context) {
 
-    var db: HumansisDB? = null
+    lateinit var db: HumansisDB
 
     fun init(password: ByteArray, oldPass: ByteArray? = null) {
         val factory = SafeHelperFactory(if (oldPass != null) {String(oldPass).toCharArray()} else {String(password).toCharArray()})
 
-        db = Room.databaseBuilder(
-            context,
-            HumansisDB::class.java, DB_NAME
-        )
-            .openHelperFactory(factory)
-            .fallbackToDestructiveMigration()
-            .build()
+        if (!::db.isInitialized) {
+            db = Room.databaseBuilder(
+                context,
+                HumansisDB::class.java, DB_NAME
+            )
+                .openHelperFactory(factory)
+                .fallbackToDestructiveMigration()
+                .build()
+        }
+
 
         if (oldPass != null) {
-            SafeHelperFactory.rekey(db?.openHelper?.readableDatabase, String(password).toCharArray())
+            SafeHelperFactory.rekey(db.openHelper.readableDatabase, String(password).toCharArray())
         }
     }
 
     fun get(): HumansisDB {
-        return db ?: throw IllegalStateException("Db not initialized")
+        return db
     }
 
-    fun reset() {
-        db = null
-    }
-
-    fun encryptDefault() {
-        SafeHelperFactory.rekey(db?.openHelper?.readableDatabase, "default".toCharArray())
-    }
-
-    fun isInitialized(): Boolean = db != null
+    fun isInitialized(): Boolean = ::db.isInitialized
 }

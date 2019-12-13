@@ -32,6 +32,10 @@ class SettingsViewModel @Inject constructor(
         countryLD.value = sp.getString(SP_COUNTRY, null)
     }
 
+    fun test() {
+        sp.edit().putBoolean("test", !sp.getBoolean("test", false)).commit()
+    }
+
     fun updateCountrySettings(country: String) {
         val oldCountry = sp.getString(SP_COUNTRY, null)
         if (oldCountry == country) {

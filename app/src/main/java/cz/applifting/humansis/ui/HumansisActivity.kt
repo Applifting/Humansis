@@ -75,7 +75,6 @@ class HumansisActivity : AppCompatActivity() {
         }
     }
 
-
     private fun lastUploadWasLongTimeAgo(): Boolean {
         val lastDownloadDate = sp.getDate(LAST_DOWNLOAD_KEY)
         val calendar = Calendar.getInstance()

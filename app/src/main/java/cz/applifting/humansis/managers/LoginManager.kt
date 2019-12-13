@@ -3,6 +3,8 @@ package cz.applifting.humansis.managers
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
+import com.commonsware.cwac.saferoom.SafeHelperFactory
 import cz.applifting.humansis.R
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
@@ -11,9 +13,8 @@ import cz.applifting.humansis.misc.*
 import cz.applifting.humansis.model.api.LoginReqRes
 import cz.applifting.humansis.model.db.User
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.supervisorScope
-import kotlinx.coroutines.withContext
+import net.sqlcipher.database.SQLiteException
 import javax.inject.Inject
 
 
@@ -36,23 +37,29 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
         // Initialize db and save the DB password in shared prefs
         // The hashing of pass might be unnecessary, but why not. I am passing it to 3-rd part lib.
         val dbPass = hashSHA512(originalPass.plus(retrieveOrInitDbSalt().toByteArray()), 1000)
-        val encodedPass = base64encode(encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context))
-
         val defaultCountry = userResponse.projects?.firstOrNull()?.iso3 ?: "SYR"
 
+        if (retrieveUser()?.invalidPassword == true) {
+            // This case handles token expiration on backend. DB is decrypted with the old pass, but is rekyed using the new one.
+            val oldEncryptedPassword = sp.getString(SP_DB_PASS_KEY, null) ?: throw IllegalStateException("DB password lost")
+            val oldDecryptedPassword = decryptUsingKeyStoreKey(base64decode(oldEncryptedPassword), KEYSTORE_KEY_ALIAS, context)
+                ?: throw IllegalStateException("DB password couldn't be decrypted")
+
+            dbProvider.init(dbPass, oldDecryptedPassword)
+        } else {
+            dbProvider.init(dbPass, "default".toByteArray())
+        }
+
         with(sp.edit()) {
-            putString(SP_DB_PASS_KEY, encodedPass)
+            // Note that encryptUsingKeyStoreKey generates and stores IV to shared prefs
+            val encryptedDbPass = base64encode(encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context))
+            putString(SP_DB_PASS_KEY, encryptedDbPass)
             putString(SP_COUNTRY, defaultCountry)
             suspendCommit()
         }
 
-        dbProvider.init(dbPass, "default".toByteArray())
 
         val db = dbProvider.get()
-
-        withContext(Dispatchers.IO) {
-            db.clearAllTables()
-        }
 
         val id = userResponse.id?.toInt() ?: throw HumansisError(context.getString(R.string.error_missing_user_id))
         val user = User(id, userResponse.username, userResponse.email, userResponse.password)
@@ -67,17 +74,18 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
             clearAllTables()
         }
 
-        //deleteDatabaseFile(context, DB_NAME)
         sp.edit().putString(LAST_DOWNLOAD_KEY, null).suspendCommit()
         sp.edit().putString(SP_DB_PASS_KEY, null).suspendCommit()
+
+        encryptDefault()
     }
 
-    fun encryptDefault() {
-        if (dbProvider.isInitialized()) {
-            dbProvider.encryptDefault()
+    suspend fun markInvalidPassword() {
+        val user = db.userDao().getUser()
+        if (user != null) {
+            db.userDao().update(user.copy(invalidPassword = true))
         }
     }
-
 
     // Initializes DB if the key is available. Otherwise returns false.
     fun tryInitDB(): Boolean {
@@ -91,9 +99,9 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
     }
 
     suspend fun retrieveUser(): User? {
-        val db = dbProvider.get()
         return supervisorScope {
             try {
+                val db = dbProvider.get()
                 db.userDao().getUser()
             } catch (e: Exception) {
                 null
@@ -106,7 +114,17 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
 
         val user = retrieveUser()
         return user?.let {
-            generateXWSSEHeader(user.username, user.saltedPassword)
+            generateXWSSEHeader(user.username, user.saltedPassword ?: "", sp.getBoolean("test", false))
+        }
+    }
+
+    private fun encryptDefault() {
+        if (dbProvider.isInitialized()) {
+            try {
+                SafeHelperFactory.rekey(db.openHelper.readableDatabase, "default".toCharArray())
+            } catch (e: SQLiteException) {
+                Log.d("humansis", e.toString())
+            }
         }
     }
 

@@ -94,6 +94,10 @@ class SettingsFragment : BaseFragment() {
             }
         }
 
+        btn_test.setOnClickListener {
+            viewModel.test()
+        }
+
         viewModel.countryLD.observe(viewLifecycleOwner, Observer<String> {
             spinner_country.setSelection(countryCodes.indexOf(it))
         })

@@ -39,6 +39,7 @@ import kotlinx.android.synthetic.main.menu_status_button.view.*
 class MainFragment : BaseFragment() {
 
     private val viewModel: MainViewModel by viewModels { viewModelFactory }
+    private lateinit var baseNavController: NavController
     private lateinit var mainNavController: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -54,6 +55,8 @@ class MainFragment : BaseFragment() {
         )
 
         val fragmentContainer = view?.findViewById<View>(R.id.nav_host_fragment) ?: throw HumansisError("Cannot find nav host in main")
+
+        baseNavController = findNavController()
         mainNavController = Navigation.findNavController(fragmentContainer)
 
         (activity as HumansisActivity).setSupportActionBar(tb_toolbar)
@@ -79,8 +82,11 @@ class MainFragment : BaseFragment() {
             }
         })
 
-        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
-
+        sharedViewModel.shouldReauthenticateLD.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                sharedViewModel.resetShouldReauthenticate()
+                baseNavController.navigate(R.id.loginFragment)
+            }
         })
 
         val tvAppVersion = nav_view.getHeaderView(0).findViewById<TextView>(R.id.tv_app_version)

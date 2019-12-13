@@ -47,7 +47,7 @@ suspend fun hashAndSaltPassword(salt: String, password: String): String {
 }
 
 @SuppressLint("SimpleDateFormat")
-fun generateXWSSEHeader(username: String, saltedPassword: String): String {
+fun generateXWSSEHeader(username: String, saltedPassword: String, test: Boolean): String {
     val nonce = generateNonce()
 
     val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
@@ -56,6 +56,10 @@ fun generateXWSSEHeader(username: String, saltedPassword: String): String {
 
     val digest = generateDigest(saltedPassword, nonce, createdAt)
     val nonce64 = Base64.encodeToString(nonce.toByteArray(), Base64.NO_WRAP)
+
+    if (test) {
+        return "UsernameToken Username=\"$username\", PasswordDigest=\"$digest\", Nonce=\"badNone\", Created=\"$createdAt\""
+    }
 
     return "UsernameToken Username=\"$username\", PasswordDigest=\"$digest\", Nonce=\"$nonce64\", Created=\"$createdAt\""
 }

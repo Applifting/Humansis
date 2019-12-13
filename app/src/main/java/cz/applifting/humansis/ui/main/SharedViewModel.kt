@@ -10,6 +10,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import cz.applifting.humansis.extensions.getDate
+import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
@@ -33,6 +34,7 @@ class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val distributionsRepository: DistributionsRepository,
     private val beneficieriesRepository: BeneficieriesRepository,
+    private val loginManager: LoginManager,
     private val logger: Logger,
     private val sp: SharedPreferences,
     private val context: Context
@@ -44,6 +46,7 @@ class SharedViewModel @Inject constructor(
     val lastSyncFailedLD = MutableLiveData<Date>()
     val pendingChangesLD = MediatorLiveData<Boolean>()
     val networkStatus = MutableLiveData<Boolean>()
+    val shouldReauthenticateLD = MediatorLiveData<Boolean>()
 
     val syncWorkerIsLoadingLD: MediatorLiveData<Boolean> = MediatorLiveData()
     private val workInfos: LiveData<List<WorkInfo>>
@@ -60,6 +63,16 @@ class SharedViewModel @Inject constructor(
 
         syncWorkerIsLoadingLD.addSource(workInfos) {
             syncWorkerIsLoadingLD.value = isLoading(it)
+        }
+
+        shouldReauthenticateLD.addSource(workInfos) {
+            launch {
+                shouldReauthenticateLD.value = loginManager.retrieveUser()?.invalidPassword == true
+
+                if (loginManager.retrieveUser()?.invalidPassword == true) {
+                    sp.edit().putBoolean("test", false).commit()
+                }
+            }
         }
 
         // TODO toast is shown every time sync fails and user opens the app. I can not think of a simpler solution than saving the toast to persistent memory
@@ -108,6 +121,10 @@ class SharedViewModel @Inject constructor(
 
     fun showToast(text: String?) {
         toastLD.value = text
+    }
+
+    fun resetShouldReauthenticate() {
+        shouldReauthenticateLD.value = false
     }
 
     private fun isLoading(workInfos: List<WorkInfo>): Boolean {

@@ -29,8 +29,11 @@ class LoginViewModel @Inject constructor(
     val loginLD = MutableLiveData<User>()
 
     init {
+        loginLD.value = null
         viewStateLD.value = LoginViewState()
-        loginManager.encryptDefault()
+        launch {
+            loginLD.value = loginManager.retrieveUser()
+        }
     }
 
     fun login(username: String, password: String) {

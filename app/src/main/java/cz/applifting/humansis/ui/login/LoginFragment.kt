@@ -62,9 +62,16 @@ class LoginFragment : Fragment(), CoroutineScope {
         })
 
         viewModel.loginLD.observe(viewLifecycleOwner, Observer {
-            if (it != null) {
+            if (it != null && !it.invalidPassword) {
                 val action = LoginFragmentDirections.actionLoginFragmentToMainFragment(it.email, it.username)
                 navController.navigate(action)
+            } else if (it == null) {
+                et_username.isEnabled = true
+            } else {
+                tv_error.text = getString(R.string.auth_expiration_explanation)
+                tv_error.visibility = View.VISIBLE
+                et_username.isEnabled = false
+                et_username.setText(it.email)
             }
         })
 

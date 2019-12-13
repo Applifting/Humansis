@@ -57,7 +57,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     override suspend fun doWork(): Result {
         return supervisorScope {
-            val errors = mutableListOf<String?>()
             val reason = Data.Builder()
 
             logger.logToFile(applicationContext, "Started Sync")
@@ -73,6 +72,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             errorsRepository.clearAll()
 
+            val syncErorrs = arrayListOf<SyncError>()
+
             // Upload all changes
             getAllBeneficiaries()
                 .forEach {
@@ -81,7 +82,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                             beneficieriesRepository.distribute(it.id)
                         } catch (e: HttpException) {
                             val errBody = "${e.response()?.errorBody()?.string()}"
-                            errors.add(getUserFriendlyErrorMessage(e.code()))
                             logger.logToFile(applicationContext, "Failed uploading: ${it.id}: $errBody")
 
                             // Mark conflicts in DB
@@ -96,19 +96,18 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                                 "${e.code()}: $errBody"
                             )
 
-                            errorsRepository.insert(syncError)
+                            syncErorrs.add(syncError)
                         }
                     }
                 }
 
             // Download updated data
-            if (errors.isEmpty()) {
+            if (syncErorrs.isEmpty()) {
 
                 val projects = try {
                     projectsRepository.getProjectsOnline()
-                } catch (e: HttpException) {
-                    errors.add(getUserFriendlyErrorMessage(e.code()))
-                    logger.logToFile(applicationContext, "Failed downloading projects: ${e.message}}")
+                } catch (e: Exception) {
+                    syncErorrs.add(getDownloadError(e, applicationContext.getString(R.string.projects)))
                     emptyList<ProjectLocal>()
                 }
 
@@ -118,9 +117,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     }.flatMap {
                         it.await().orEmpty().toList()
                     }
-                } catch (e: HttpException) {
-                    errors.add(getUserFriendlyErrorMessage(e.code()))
-                    logger.logToFile(applicationContext, "Failed downloading distribution ${e.code()} ${e.message()} ${e.response().toString()}")
+                } catch (e: Exception) {
+                    syncErorrs.add(getDownloadError(e, applicationContext.getString(R.string.distribution)))
+                    emptyList<ProjectLocal>()
                     listOf<DistributionLocal>()
                 }
 
@@ -130,9 +129,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     }.map {
                         it.await()
                     }
-                } catch (e: HttpException) {
-                    errors.add(getUserFriendlyErrorMessage(e.code()))
-                    logger.logToFile(applicationContext, "Failed downloading beneficiaries  ${e.code()} ${e.message()} ${e.response().toString()}")
+                } catch (e: Exception) {
+                    syncErorrs.add(getDownloadError(e, applicationContext.getString(R.string.beneficiary)))
+                    emptyList<ProjectLocal>()
                 }
 
                 val lastDownloadAt = Date()
@@ -140,15 +139,28 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 sp.setDate(LAST_SYNC_FAILED_KEY, null)
             }
 
-            if (errors.isEmpty()) {
+            if (syncErorrs.isEmpty()) {
                 logger.logToFile(applicationContext, "Sync finished successfully")
                 Result.success()
             } else {
+                errorsRepository.insertAll(syncErorrs)
+
+                // Erase password to trigger re-authentication
+                if (syncErorrs.find { it.errorMessage.contains("malformed JSON")} != null) {
+                    loginManager.markInvalidPassword()
+                }
+
                 logger.logToFile(applicationContext, "Sync finished with failure")
                 sp.setDate(LAST_SYNC_FAILED_KEY, Date())
-                Result.failure(reason.putStringArray(ERROR_MESSAGE_KEY, errors.toTypedArray()).build())
+                Result.failure(reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErorrs)).build())
             }
         }
+    }
+
+    private fun convertErrors(errors: List<SyncError>): Array<String> {
+        return errors.map {
+            it.errorMessage
+        }.toTypedArray()
     }
 
     private suspend fun getAllBeneficiaries(): List<BeneficiaryLocal> {
@@ -173,7 +185,25 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         )
     }
 
-    private fun getUserFriendlyErrorMessage(code: Int): String {
-        return "${applicationContext.getString(R.string.error_server)}\n${getErrorMessageByCode(code)}"
+    private suspend fun getDownloadError(e: Exception, resourceName: String): SyncError {
+        logger.logToFile(applicationContext, "Failed downloading ${resourceName}: ${e.message}}")
+
+        return when {
+            e is HttpException -> {
+                SyncError(
+                    location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
+                    params = applicationContext.getString(R.string.error_server),
+                    errorMessage = getErrorMessageByCode(e.code())
+                )
+            }
+
+            else -> {
+                SyncError(
+                    location = applicationContext.getString(R.string.download_error).format(resourceName.toLowerCase(Locale.ROOT)),
+                    params = applicationContext.getString(R.string.unknwon_error),
+                    errorMessage = e.message ?: ""
+                )
+            }
+        }
     }
 }

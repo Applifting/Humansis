@@ -1,6 +1,7 @@
 package cz.applifting.humansis.repositories
 
 import android.content.Context
+import android.util.Log
 import cz.applifting.humansis.R
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
@@ -21,6 +22,7 @@ class ProjectsRepository @Inject constructor(val service: HumansisService, val d
             .getProjects()
             .map { ProjectLocal(it.id, it.name ?: context.getString(R.string.unknown), it.numberOfHouseholds ?: -1) }
 
+        Log.d("asdf", "here1")
         dbProvider.get().projectsDao().replaceProjects(result)
 
         return result

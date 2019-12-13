@@ -16,7 +16,7 @@ interface ErrorDao {
     fun getAll(): Flow<List<SyncError>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(syncError: SyncError)
+    suspend fun insertAll(syncErrors: List<SyncError>)
 
     @Query("DELETE FROM errors")
     suspend fun deleteAll()

@@ -12,5 +12,6 @@ data class User(
     @PrimaryKey val id: Int,
     val username: String,
     val email: String,
-    @ColumnInfo(name = "salted_password") val saltedPassword: String
+    @ColumnInfo(name = "salted_password") val saltedPassword: String,
+    val invalidPassword: Boolean = false
 )
