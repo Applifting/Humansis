@@ -46,6 +46,10 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return result
     }
 
+    fun arePendingChanges(): Flow<List<BeneficiaryLocal>> {
+        return dbProvider.get().beneficiariesDao().arePendingChanges()
+    }
+
     fun getAllBeneficieriesOffline(): Flow<List<BeneficiaryLocal>> {
         return dbProvider.get().beneficiariesDao().getAllBeneficieries()
     }

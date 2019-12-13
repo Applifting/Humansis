@@ -14,7 +14,9 @@ import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
-import cz.applifting.humansis.synchronization.*
+import cz.applifting.humansis.synchronization.ERROR_MESSAGE_KEY
+import cz.applifting.humansis.synchronization.SYNC_WORKER
+import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -82,10 +84,9 @@ class SharedViewModel @Inject constructor(
 
         launch {
             beneficieriesRepository
-                .getAllBeneficieriesOffline()
+                .arePendingChanges()
                 .collect {
-                    val edited = it.find { beneficiaryLocal ->  beneficiaryLocal.edited }
-                    pendingChangesLD.value = edited != null
+                    pendingChangesLD.value = it.isNotEmpty()
                 }
         }
     }

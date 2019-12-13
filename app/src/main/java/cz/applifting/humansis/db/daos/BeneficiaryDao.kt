@@ -6,6 +6,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BeneficiaryDao {
+
+    // Note: Room does not seem to support SQL queries for just checking if something exists
+    @Query("SELECT * FROM beneficiaries WHERE edited = 1 LIMIT 1")
+    fun arePendingChanges(): Flow<List<BeneficiaryLocal>>
+
     @Query("SELECT * FROM beneficiaries")
     fun getAllBeneficieries(): Flow<List<BeneficiaryLocal>>
 
