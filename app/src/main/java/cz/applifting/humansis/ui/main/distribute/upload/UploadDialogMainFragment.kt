@@ -48,24 +48,20 @@ class UploadDialogMainFragment : BaseFragment() {
             tv_changes.setTextColor(ContextCompat.getColor(context!!, if (it) R.color.red else R.color.green))
         })
 
-        sharedViewModel.lastDownloadLD.observe(viewLifecycleOwner, Observer {
-            tv_current_data_date.text = it?.format()
-        })
-
-        sharedViewModel.lastSyncFailedLD.observe(viewLifecycleOwner, Observer {
-            tv_sync_failed.visible(it != null)
-            tv_sync_failed_date.visible(it != null)
-            tv_sync_failed_date.text = it?.format()
-            btn_show_error_info.visible(it != null)
-        })
-
-        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
-            btn_sync.visibility = if (it) {
+        sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
+            btn_sync.visibility = if (it.isLoading) {
                 View.INVISIBLE
             } else {
                 View.VISIBLE
             }
-            pb_upload.visible(it)
+            pb_upload.visible(it.isLoading)
+
+            tv_sync_failed.visible(it.lastSyncFail != null)
+            tv_sync_failed_date.visible(it.lastSyncFail != null)
+            tv_sync_failed_date.text = it.lastSyncFail?.format()
+            btn_show_error_info.visible(it.lastSyncFail != null)
+
+            tv_current_data_date.text = it.lastDownload?.format()
         })
 
         btn_sync.setOnClickListener {

@@ -5,6 +5,7 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat.getColor
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,7 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
     }
 
     fun setState(state: ListComponentState) {
+        rv_list.visible(true)
         pb_loading.visible(state.isRetrieving)
         swrl_swipe_to_refresh.isRefreshing = state.isRefreshing
 
@@ -46,8 +48,19 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
         if (state.text != null && !state.isRetrieving && !state.isRetrieving) {
             tv_info.text = state.text
             tv_info.visible(true)
+            rv_list.visible(false)
         } else {
             tv_info.visible(false)
+            rv_list.visible(true)
+        }
+
+        if (state.isError) {
+            rv_list.visible(false)
+            tv_info.setTextColor(getColor(context, R.color.red))
+            iv_error.visible(true)
+        } else {
+            iv_error.visible(false)
+            tv_info.setTextColor(getColor(context, R.color.black))
         }
 
         adapter.clickable = !state.isRefreshing

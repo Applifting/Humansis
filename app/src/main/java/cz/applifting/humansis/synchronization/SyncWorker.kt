@@ -7,7 +7,9 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.setDate
+import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
+import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
@@ -137,10 +139,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
                 val lastDownloadAt = Date()
                 sp.setDate(LAST_DOWNLOAD_KEY, lastDownloadAt)
-                sp.setDate(LAST_SYNC_FAILED_KEY, null)
             }
 
             if (syncErorrs.isEmpty()) {
+                sp.setDate(LAST_SYNC_FAILED_KEY, null)
+                sp.edit().putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false).suspendCommit()
                 logger.logToFile(applicationContext, "Sync finished successfully")
                 Result.success()
             } else {

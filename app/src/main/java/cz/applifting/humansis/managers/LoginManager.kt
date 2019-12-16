@@ -27,6 +27,7 @@ const val SP_DB_PASS_KEY = "humansis-db"
 const val SP_SALT_KEY = "humansis-db-pass-salt"
 const val KEYSTORE_KEY_ALIAS = "HumansisDBKey"
 const val SP_COUNTRY = "country"
+const val SP_FIRST_COUNTRY_DOWNLOAD = "first_country_download"
 
 class LoginManager @Inject constructor(private val dbProvider: DbProvider, private val sp: SharedPreferences, private val context: Context) {
 
@@ -47,6 +48,7 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
 
             dbProvider.init(dbPass, oldDecryptedPassword)
         } else {
+            sp.edit().putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, true).suspendCommit()
             dbProvider.init(dbPass, "default".toByteArray())
         }
 

@@ -103,5 +103,6 @@
     <string name="unknwon_error">Unknown error has occurred.</string>
     <string name="download_error">Couldn\'t download %s.</string>
     <string name="auth_expiration_explanation">You were logged out because your session has expired. Your data is still saved on the device. Log in to sync.</string>
+    <string name="sync_error">There was an error during synchronization.</string>
 
 </resources>

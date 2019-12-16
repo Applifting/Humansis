@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.SP_COUNTRY
+import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
@@ -45,6 +46,7 @@ class SettingsViewModel @Inject constructor(
         launch {
             with(sp.edit()) {
                 putString(SP_COUNTRY, country.toUpperCase(Locale.getDefault()))
+                putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, true)
                 suspendCommit()
             }
 

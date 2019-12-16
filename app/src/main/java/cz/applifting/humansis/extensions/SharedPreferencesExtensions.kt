@@ -15,8 +15,8 @@ suspend fun SharedPreferences.Editor.suspendCommit(): Boolean {
     }
 }
 
-fun SharedPreferences.setDate(key: String, value: Date?) {
-    this.edit().putLong(key, value?.time ?: 0).apply()
+suspend fun SharedPreferences.setDate(key: String, value: Date?) {
+    this.edit().putLong(key, value?.time ?: 0).suspendCommit()
 }
 
 fun SharedPreferences.getDate(key: String): Date? {

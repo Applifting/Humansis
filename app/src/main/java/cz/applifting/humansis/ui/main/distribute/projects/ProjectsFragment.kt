@@ -1,7 +1,6 @@
 package cz.applifting.humansis.ui.main.distribute.projects
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,14 +37,16 @@ class ProjectsFragment : BaseFragment() {
         lc_projects.init(adapter)
 
         viewModel.projectsLD.observe(viewLifecycleOwner, Observer {
-            Log.d("asdf", "updating projects, ${it.size}")
             adapter.updateProjects(it)
         })
 
-        viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_projects::setState))
+        viewModel.listStateLD.observe(viewLifecycleOwner, Observer(
+            lc_projects::setState
+        ))
 
-        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
-            viewModel.showRefreshing(it)
+        sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
+            viewModel.showRefreshing(it.isLoading, isFirstdownload = it.isFirstCountryDownload)
+            viewModel.showError(it.lastSyncFail != null && it.isFirstCountryDownload)
         })
     }
 }

@@ -78,8 +78,8 @@ class BeneficiariesFragment : BaseFragment() {
 
         viewModel.init(args.distributionId)
 
-        sharedViewModel.syncWorkerIsLoadingLD.observe(viewLifecycleOwner, Observer {
-            viewModel.showRefreshing(it)
+        sharedViewModel.syncState.observe(viewLifecycleOwner, Observer {
+            viewModel.showRefreshing(it.isLoading)
         })
 
         findNavController().addOnDestinationChangedListener { _, _, _ -> et_search?.hideSoftKeyboard() }
