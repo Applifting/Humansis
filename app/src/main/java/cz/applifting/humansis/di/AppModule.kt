@@ -3,6 +3,7 @@ package cz.applifting.humansis.di
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.GsonBuilder
+import cz.applifting.humansis.BuildConfig
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.extensions.isNetworkConnected
@@ -34,7 +35,12 @@ class AppModule {
     @Reusable
     fun retrofitProvider(@Named(BASE_URL) baseUrl: String, loginManager: LoginManager, context: Context, sp: SharedPreferences): HumansisService {
         val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            @Suppress("ConstantConditionIf")
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.BASIC
+            }
         }
 
         val client: OkHttpClient = OkHttpClient.Builder()
