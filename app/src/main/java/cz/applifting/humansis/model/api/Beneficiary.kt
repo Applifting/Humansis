@@ -14,5 +14,6 @@ data class Beneficiary(
     @SerializedName("local_family_name") val familyName: String?,
     @SerializedName("status") val distributed: Boolean,
     @SerializedName("vulnerability_criteria") val vulnerabilities: List<Vulnerability>,
-    @SerializedName("national_ids") val nationalIds: List<IdNumber>?
+    @SerializedName("national_ids") val nationalIds: List<IdNumber>?,
+    @SerializedName("referral") val referral: Referral?
 )

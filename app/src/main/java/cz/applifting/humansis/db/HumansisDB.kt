@@ -12,10 +12,10 @@ import cz.applifting.humansis.model.db.*
  */
 @Database(
     entities = [User::class, BeneficiaryLocal::class, ProjectLocal::class, DistributionLocal::class, PendingChangeLocal::class, SyncError::class],
-    version = 13,
+    version = 14,
     exportSchema = false
 )
-@TypeConverters(StringListConverter::class, TargetConverter::class, DateConverter::class, IntListConverter::class, CommodityConverter::class)
+@TypeConverters(StringListConverter::class, TargetConverter::class, DateConverter::class, IntListConverter::class, CommodityConverter::class, ReferralTypeConverter::class)
 abstract class HumansisDB : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun beneficiariesDao(): BeneficiaryDao

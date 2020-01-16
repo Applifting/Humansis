@@ -3,6 +3,7 @@ package cz.applifting.humansis.model.db
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import cz.applifting.humansis.model.ReferralType
 
 /**
  * Created by Vaclav Legat <vaclav.legat@applifting.cz>
@@ -22,7 +23,9 @@ data class BeneficiaryLocal(
     val qrBooklets: List<String>?,
     val edited: Boolean,
     val commodities: List<CommodityLocal>?,
-    val nationalId: String?
+    val nationalId: String?,
+    val referralType: ReferralType?,
+    val referralNote: String?
 ) {
     // Used in UI only
     @Ignore
