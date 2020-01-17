@@ -1,7 +1,6 @@
 package cz.applifting.humansis.model.db
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import cz.applifting.humansis.model.ReferralType
 
@@ -25,9 +24,6 @@ data class BeneficiaryLocal(
     val commodities: List<CommodityLocal>?,
     val nationalId: String?,
     val referralType: ReferralType?,
-    val referralNote: String?
-) {
-    // Used in UI only
-    @Ignore
-    var currentViewing: Boolean = false
-}
+    val referralNote: String?,
+    val isReferralChanged: Boolean = false // special API call needed just for referral
+)

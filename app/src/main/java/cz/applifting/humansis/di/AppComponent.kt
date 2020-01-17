@@ -7,6 +7,7 @@ import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.login.LoginFragment
 import cz.applifting.humansis.ui.main.MainFragment
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog
+import cz.applifting.humansis.ui.main.distribute.beneficiary.confirm.ConfirmBeneficiaryDialog
 import cz.applifting.humansis.ui.main.distribute.upload.UploadDialog
 import cz.applifting.humansis.ui.main.settings.SettingsFragment
 import cz.applifting.humansis.ui.splash.SplashFragment
@@ -37,6 +38,8 @@ interface AppComponent {
     fun inject(splashActivity: SplashFragment)
 
     fun inject(beneficiaryDialog: BeneficiaryDialog)
+
+    fun inject(confirmBeneficiaryDialog: ConfirmBeneficiaryDialog)
 
     fun inject(uploadDialog: UploadDialog)
 
