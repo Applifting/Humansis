@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/nav_graph"
-        app:startDestination="@id/projectsFragment">
+        app:startDestination="@+id/projectsFragment">
 
     <fragment
             android:id="@+id/projectsFragment"
@@ -74,9 +74,21 @@
         <argument
                 android:name="isQRVoucher"
                 app:argType="boolean" />
+        <action
+                android:id="@+id/action_beneficiaryDialog_to_confirmBeneficiaryDialog"
+                app:destination="@+id/confirmBeneficiaryDialog" />
 
     </dialog>
 
+    <dialog
+            android:id="@+id/confirmBeneficiaryDialog"
+            android:name="cz.applifting.humansis.ui.main.distribute.beneficiary.confirm.ConfirmBeneficiaryDialog"
+            android:label="{beneficiaryName}">
+        <argument
+                android:name="beneficiaryId"
+                app:argType="integer" />
+
+    </dialog>
     <dialog
             android:id="@+id/uploadDialog"
             android:name="cz.applifting.humansis.ui.main.distribute.upload.UploadDialog"
@@ -88,7 +100,7 @@
     <dialog
             android:id="@+id/logsDialog"
             android:name="cz.applifting.humansis.ui.main.settings.LogsDialog"
-            android:label="LogsDialog" >
+            android:label="LogsDialog">
         <argument
                 android:name="logs"
                 app:argType="string" />
@@ -97,7 +109,7 @@
     <fragment
             android:id="@+id/settingsFragment"
             android:name="cz.applifting.humansis.ui.main.settings.SettingsFragment"
-            android:label="Settings" >
+            android:label="Settings">
         <action
                 android:id="@+id/action_settingsFragment_to_logsDialog"
                 app:destination="@id/logsDialog" />

@@ -6,6 +6,7 @@ import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.ALREADY_ASSIGNED
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.INVALID_CODE
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,14 +21,16 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
     val scannedIdLD = MutableLiveData<String>()
 
+    var previousEditState: Boolean? = null
+
     private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex()
 
-    fun loadBeneficiary(id: Int) {
+    fun initBeneficiary(id: Int) {
         launch {
-            val beneficiary = beneficieriesRepository.getBeneficiaryOffline(id)
-            beneficiary.currentViewing = true
-
-            beneficiaryLD.value = beneficiary
+            beneficieriesRepository.getBeneficiaryOfflineFlow(id)
+                .collect {
+                    beneficiaryLD.value = it
+                }
         }
     }
 
@@ -35,12 +38,11 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
         val beneficiary = beneficiaryLD.value?.copy(
             qrBooklets = if (code != null) listOf(code) else listOfNotNull()
         ) ?: throw IllegalStateException()
-        beneficiary.currentViewing = true
 
         beneficiaryLD.value = beneficiary
     }
 
-    internal fun editBeneficiary() {
+    internal fun revertBeneficiary() {
         launch {
             val beneficiary = beneficiaryLD.value ?: throw IllegalStateException("Beneficiary was not loaded")
 
@@ -50,10 +52,9 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
                 qrBooklets = if (beneficiary.distributed) mutableListOf() else beneficiary.qrBooklets
             )
 
-            updatedBeneficiary.currentViewing = false
+            // TODO revert also referral?
 
             beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
-            beneficiaryLD.value = updatedBeneficiary
         }
     }
 

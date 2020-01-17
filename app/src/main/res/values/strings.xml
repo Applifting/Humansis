@@ -105,4 +105,16 @@
     <string name="auth_expiration_explanation">You were logged out because your session has expired. Your data is still saved on the device. Log in to sync.</string>
     <string name="sync_error">There was an error during synchronization.</string>
 
+    <string name="referral_type_none">None</string>
+    <string name="referral_type_health">Health</string>
+    <string name="referral_type_protection">Protection</string>
+    <string name="referral_type_shelter">Shelter</string>
+    <string name="referral_type_nutrition">Nutrition</string>
+    <string name="referral_type_other">Other</string>
+    <string name="referral_validation_error_xor">Fill in both type and note or none of them.</string>
+    <string name="referral_validation_error_unset">Can\'t remove type.</string>
+    <string name="cancel">Cancel</string>
+    <string name="referral_type_label">Referral type</string>
+    <string name="referral_note_label">Referral note</string>
+
 </resources>

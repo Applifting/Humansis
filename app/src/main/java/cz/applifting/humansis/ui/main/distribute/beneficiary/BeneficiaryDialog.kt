@@ -20,6 +20,7 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.visible
+import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
 import cz.applifting.humansis.ui.main.SharedViewModel
@@ -81,7 +82,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             tv_booklet.visible(args.isQRVoucher)
         }
 
-        viewModel.loadBeneficiary(args.beneficiaryId)
+        viewModel.initBeneficiary(args.beneficiaryId)
 
         viewModel.beneficiaryLD.observe(viewLifecycleOwner, Observer {
             // Views
@@ -138,20 +139,29 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                     }
                 }
 
-                btn_action.setOnClickListener {
-                    viewModel.editBeneficiary()
-                    btn_action.isEnabled = false
+                btn_action.setOnClickListener { _ ->
+                    if (it.edited) {
+                        viewModel.revertBeneficiary()
+                        btn_action.isEnabled = false
+                    } else {
+                        showConfirmBeneficiaryDialog(it)
+                    }
                 }
 
-                // Close dialog and notify shareViewModel after beneficiary is saved to db
-                if (!it.currentViewing) {
-                    val text = if (it.distributed) {
-                        "Item was successfully distributed."
-                    } else {
-                        "Distribution was successfully reverted."
+                when (viewModel.previousEditState) {
+                    null -> viewModel.previousEditState = it.edited
+                    it.edited -> {}
+                    else -> {
+                        // edit state changed
+                        // Close dialog and notify shareViewModel after beneficiary is saved to db
+                        val text = if (it.distributed) {
+                            "Item was successfully distributed."
+                        } else {
+                            "Distribution was successfully reverted."
+                        }
+                        sharedViewModel.showToast(text)
+                        dismiss()
                     }
-                    sharedViewModel.showToast(text)
-                    dismiss()
                 }
             }
         })
@@ -186,7 +196,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (CAMERA_REQUEST_CODE == requestCode) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                viewModel.loadBeneficiary(args.beneficiaryId)
+                viewModel.beneficiaryLD.postValue(viewModel.beneficiaryLD.value)
             } else {
                 // permission not granted, go to previous screen
                 findNavController().navigateUp()
@@ -230,5 +240,16 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         builder.setNegativeButton(getString(cz.applifting.humansis.R.string.camera_permission_dialog_negative_btn_label)) { _, _ -> findNavController().navigateUp() }
         val dialog = builder.create()
         dialog.show()
+    }
+
+    private fun showConfirmBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
+        (findNavController().currentDestination?.id == R.id.beneficiaryDialog).let { safeToNavigate ->
+            if (safeToNavigate) {
+                val action = BeneficiaryDialogDirections.actionBeneficiaryDialogToConfirmBeneficiaryDialog(
+                    beneficiaryLocal.id
+                )
+                findNavController().navigate(action)
+            }
+        }
     }
 }

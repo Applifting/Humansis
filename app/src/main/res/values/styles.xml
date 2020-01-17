@@ -35,6 +35,10 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="FieldLabel" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
 
 
     <style name="MyAnimation.Window" parent="@android:style/Animation.Activity">
