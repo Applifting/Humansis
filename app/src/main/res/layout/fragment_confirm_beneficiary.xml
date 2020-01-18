@@ -7,30 +7,28 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-    <TextView
-            android:id="@+id/tv_referral_type_title"
-            style="@style/FieldLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/referral_type_label"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    <Spinner
+    <fr.ganfra.materialspinner.MaterialSpinner
             android:id="@+id/spinner_referral_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:ms_multiline="false"
+            app:ms_enableFloatingLabel="true"
+            app:ms_alwaysShowFloatingLabel="true"
+            app:ms_floatingLabelText="@string/referral_type_label"
+            app:ms_alignLabels="true"
+            app:ms_thickness="0.5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_referral_type_title" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
     <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayout"
+            android:id="@+id/layout_referral_note"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:hintTextAppearance="@style/FieldLabel"
+            android:layout_marginTop="8dp"
+            android:paddingStart="-4dp"
+            android:paddingEnd="-4dp"
+            android:textColorHint="?android:attr/textColorTertiary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/spinner_referral_type">
@@ -38,6 +36,8 @@
         <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tv_referral_note"
                 android:layout_width="match_parent"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
                 android:layout_height="wrap_content"
                 android:hint="@string/referral_note_label" />
 
@@ -54,6 +54,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_referral_note" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
