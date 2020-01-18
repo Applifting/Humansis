@@ -104,9 +104,10 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    viewModel.referralTypeLD.postValue(spinner_referral_type.selectedItemPosition.toReferralType())
+                    viewModel.referralTypeLD.value = position.toReferralType()
                 }
             }
+            spinner_referral_type.showFloatingLabel() // needed when nothing is initially selected
 
             tv_referral_note.addTextChangedListener {
                 viewModel.referralNoteLD.postValue(tv_referral_note.text?.toString())
