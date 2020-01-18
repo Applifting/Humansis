@@ -62,36 +62,28 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
 
         setupViews()
 
-        viewModel.loadBeneficiary(args.beneficiaryId)
+        viewModel.initBeneficiary(args.beneficiaryId)
 
-        viewModel.beneficiaryLD.observe(viewLifecycleOwner, Observer {
-            // initialize fields
-            if (viewModel.referralType.value == null) {
-                viewModel.referralType.value = it.referralType
-            }
-            if (viewModel.referralNote.value == null) {
-                viewModel.referralNote.value = it.referralNote
-            }
-        })
-
-        viewModel.referralType.observe(viewLifecycleOwner, Observer {
+        viewModel.referralTypeLD.observe(viewLifecycleOwner, Observer {
             spinner_referral_type.apply {
                 val spinnerPos = it.toSpinnerPos()
                 if (selectedItemPosition != spinnerPos) {
                     setSelection(spinnerPos)
                 }
+                viewModel.errorLD.value = null
             }
         })
 
-        viewModel.referralNote.observe(viewLifecycleOwner, Observer {
+        viewModel.referralNoteLD.observe(viewLifecycleOwner, Observer {
             tv_referral_note.apply {
                 if (text.toString() != it) {
                     setText(it)
                 }
+                viewModel.errorLD.value = null
             }
         })
 
-        viewModel.error.observe(viewLifecycleOwner, Observer {
+        viewModel.errorLD.observe(viewLifecycleOwner, Observer {
             tv_error.visibility = if (it == null) View.GONE else View.VISIBLE
             tv_error.text = it?.let { getString(it) }
         })
@@ -112,14 +104,12 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    viewModel.referralType.postValue(spinner_referral_type.selectedItemPosition.toReferralType())
-                    viewModel.error.postValue(null)
+                    viewModel.referralTypeLD.postValue(spinner_referral_type.selectedItemPosition.toReferralType())
                 }
             }
 
             tv_referral_note.addTextChangedListener {
-                viewModel.referralNote.postValue(tv_referral_note.text?.toString())
-                viewModel.error.postValue(null)
+                viewModel.referralNoteLD.postValue(tv_referral_note.text?.toString())
             }
         }
     }

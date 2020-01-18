@@ -9,21 +9,29 @@ import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficieriesRepository: BeneficieriesRepository) :
+class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesRepository: BeneficieriesRepository) :
     BaseViewModel() {
 
-    val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
-    val referralType = MutableLiveData<ReferralType>()
-    val referralNote = MutableLiveData<String>()
-    val error = MutableLiveData<Int>()
+    private val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
+    val referralTypeLD = MutableLiveData<ReferralType>()
+    val referralNoteLD = MutableLiveData<String>()
+    val errorLD = MutableLiveData<Int>()
 
     val referralTypes
         get() = listOf(R.string.referral_type_none)
             .plus(ReferralType.values().map { it.textId })
 
-    fun loadBeneficiary(id: Int) {
-        launch {
-            beneficiaryLD.value = beneficieriesRepository.getBeneficiaryOffline(id)
+    fun initBeneficiary(id: Int) {
+        beneficiaryLD.value ?: launch {
+            beneficiaryLD.value = beneficiariesRepository.getBeneficiaryOffline(id).also {
+                // initialize fields
+                if (referralTypeLD.value == null) {
+                    referralTypeLD.value = it.referralType
+                }
+                if (referralNoteLD.value == null) {
+                    referralNoteLD.value = it.referralNote
+                }
+            }
         }
     }
 
@@ -36,17 +44,17 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficieriesR
     }
 
     private fun validateFields(): Boolean {
-        val referralType = referralType.value
-        val referralNote = referralNote.value
+        val referralType = referralTypeLD.value
+        val referralNote = referralNoteLD.value
         if ((referralType == null) xor referralNote.isNullOrEmpty()) {
-            error.postValue(R.string.referral_validation_error_xor)
+            // BE limitation
+            errorLD.postValue(R.string.referral_validation_error_xor)
             return false
         }
-        beneficiaryLD.value?.let {
-            if (referralType == null) {
-                error.postValue(R.string.referral_validation_error_unset)
-                return false
-            }
+        if (beneficiaryLD.value?.referralType != null && referralType == null) {
+            // BE limitation
+            errorLD.postValue(R.string.referral_validation_error_unset)
+            return false
         }
         return true
     }
@@ -59,12 +67,12 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficieriesR
                 distributed = !beneficiary.distributed,
                 edited = !beneficiary.distributed,
                 qrBooklets = if (beneficiary.distributed) mutableListOf() else beneficiary.qrBooklets,
-                referralType = referralType.value,
-                referralNote = referralNote.value,
-                isReferralChanged = beneficiary.referralType != referralType.value || beneficiary.referralNote != referralNote.value
+                referralType = referralTypeLD.value,
+                referralNote = referralNoteLD.value,
+                isReferralChanged = beneficiary.referralType != referralTypeLD.value || beneficiary.referralNote != referralNoteLD.value
             )
 
-            beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+            beneficiariesRepository.updateBeneficiaryOffline(updatedBeneficiary)
             beneficiaryLD.value = updatedBeneficiary
         }
     }
