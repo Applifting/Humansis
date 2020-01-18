@@ -15,7 +15,7 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficieriesR
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
     val referralType = MutableLiveData<ReferralType>()
     val referralNote = MutableLiveData<String>()
-    val error = MutableLiveData<String>()
+    val error = MutableLiveData<Int>()
 
     val referralTypes
         get() = listOf(R.string.referral_type_none)
@@ -27,7 +27,31 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficieriesR
         }
     }
 
-    internal fun editBeneficiary() {
+    fun tryEditBeneficiary(): Boolean {
+        if (validateFields()) {
+            editBeneficiary()
+            return true
+        }
+        return false
+    }
+
+    private fun validateFields(): Boolean {
+        val referralType = referralType.value
+        val referralNote = referralNote.value
+        if ((referralType == null) xor referralNote.isNullOrEmpty()) {
+            error.postValue(R.string.referral_validation_error_xor)
+            return false
+        }
+        beneficiaryLD.value?.let {
+            if (referralType == null) {
+                error.postValue(R.string.referral_validation_error_unset)
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun editBeneficiary() {
         launch {
             val beneficiary = beneficiaryLD.value ?: throw IllegalStateException("Beneficiary was not loaded")
 

@@ -48,29 +48,12 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
         // set listener this way so we can avoid dismiss on click
         alertDialog.setOnShowListener {
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                if (validateFields()) {
-                    viewModel.editBeneficiary()
+                if (viewModel.tryEditBeneficiary()) {
                     dismiss()
                 }
             }
         }
         return alertDialog
-    }
-
-    private fun validateFields(): Boolean {
-        val referralType = spinner_referral_type.selectedItemPosition.toReferralType()
-        val referralNote = tv_referral_note.text?.toString()
-        if ((referralType == null) xor referralNote.isNullOrEmpty()) {
-            viewModel.error.postValue(getString(R.string.referral_validation_error_xor))
-            return false
-        }
-        viewModel.beneficiaryLD.value?.let {
-            if (referralType == null) {
-                viewModel.error.postValue(getString(R.string.referral_validation_error_unset))
-                return false
-            }
-        }
-        return true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -109,8 +92,8 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
         })
 
         viewModel.error.observe(viewLifecycleOwner, Observer {
-            tv_error.visibility = if (it.isNullOrEmpty()) View.GONE else View.VISIBLE
-            tv_error.text = it
+            tv_error.visibility = if (it == null) View.GONE else View.VISIBLE
+            tv_error.text = it?.let { getString(it) }
         })
 
         return dialogView
