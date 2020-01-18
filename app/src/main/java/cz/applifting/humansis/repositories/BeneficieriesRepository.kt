@@ -48,6 +48,14 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return result
     }
 
+    suspend fun updateBeneficiaryReferralOnline(beneficiary: BeneficiaryLocal) {
+        return service.updateBeneficiaryReferral(beneficiary.beneficiaryId, BeneficiaryForReferralUpdate(
+            id = beneficiary.beneficiaryId,
+            referralType = beneficiary.referralType,
+            referralNote = beneficiary.referralNote
+        ))
+    }
+
     fun arePendingChanges(): Flow<List<BeneficiaryLocal>> {
         return dbProvider.get().beneficiariesDao().arePendingChanges()
     }

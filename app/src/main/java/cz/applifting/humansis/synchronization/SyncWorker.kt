@@ -57,6 +57,10 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         (appContext as App).appComponent.inject(this)
     }
 
+    enum class UploadAction {
+        DISTRIBUTION, REFERRAL_UPDATE
+    }
+
     override suspend fun doWork(): Result {
         return supervisorScope {
             val reason = Data.Builder()
@@ -76,6 +80,26 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             val syncErorrs = arrayListOf<SyncError>()
 
+            suspend fun logUploadError(e: HttpException, it: BeneficiaryLocal, action: UploadAction) {
+                val errBody = "${e.response()?.errorBody()?.string()}"
+                logger.logToFile(applicationContext, "Failed uploading [$action]: ${it.id}: $errBody")
+
+                // Mark conflicts in DB
+                val distributionName = distributionsRepository.getNameById(it.distributionId)
+                val projectName = projectsRepository.getNameByDistributionId(it.distributionId)
+                val beneficiaryName = "${it.givenName} ${it.familyName}"
+
+                val syncError = SyncError(
+                    it.id,
+                    "[$action] $projectName → $distributionName → $beneficiaryName",
+                    "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
+                    e.code(),
+                    "${e.code()}: $errBody"
+                )
+
+                syncErorrs.add(syncError)
+            }
+
             // Upload all changes
             getAllBeneficiaries()
                 .forEach {
@@ -83,23 +107,14 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                         try {
                             beneficieriesRepository.distribute(it.id)
                         } catch (e: HttpException) {
-                            val errBody = "${e.response()?.errorBody()?.string()}"
-                            logger.logToFile(applicationContext, "Failed uploading: ${it.id}: $errBody")
-
-                            // Mark conflicts in DB
-                            val distributionName = distributionsRepository.getNameById(it.distributionId)
-                            val projectName = projectsRepository.getNameByDistributionId(it.distributionId)
-                            val beneficiaryName = "${it.givenName} ${it.familyName}"
-
-                            val syncError = SyncError(
-                                it.id,
-                                "$projectName → $distributionName → $beneficiaryName",
-                                "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
-                                e.code(),
-                                "${e.code()}: $errBody"
-                            )
-
-                            syncErorrs.add(syncError)
+                            logUploadError(e, it, UploadAction.DISTRIBUTION)
+                        }
+                    }
+                    if (it.isReferralChanged) {
+                        try {
+                            beneficieriesRepository.updateBeneficiaryReferralOnline(it)
+                        } catch (e: HttpException) {
+                            logUploadError(e, it, UploadAction.REFERRAL_UPDATE)
                         }
                     }
                 }
