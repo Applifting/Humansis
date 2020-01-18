@@ -31,4 +31,7 @@ interface HumansisService {
 
     @POST("booklets/assign/{beneficiaryId}/{distributionId}")
     suspend fun assignBooklet(@Path("beneficiaryId") beneficiaryId: Int, @Path("distributionId") distributionId: Int, @Body assingBookletRequest: AssingBookletRequest)
+
+    @POST("beneficiaries/{beneficiaryId}")
+    suspend fun updateBeneficiaryReferral(@Path("beneficiaryId") beneficiaryId: Int, @Body beneficiary: BeneficiaryForReferralUpdate)
 }
