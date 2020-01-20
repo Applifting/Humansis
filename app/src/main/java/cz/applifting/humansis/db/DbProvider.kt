@@ -2,6 +2,8 @@ package cz.applifting.humansis.db
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.commonsware.cwac.saferoom.SafeHelperFactory
 import javax.inject.Singleton
 
@@ -25,6 +27,7 @@ class DbProvider(val context: Context) {
                 HumansisDB::class.java, DB_NAME
             )
                 .openHelperFactory(factory)
+                .addMigrations(MIGRATION_13_14)
                 .fallbackToDestructiveMigration()
                 .build()
         }
@@ -40,4 +43,12 @@ class DbProvider(val context: Context) {
     }
 
     fun isInitialized(): Boolean = ::db.isInitialized
+}
+
+private val MIGRATION_13_14 = object : Migration(13, 14) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE 'beneficiaries' ADD COLUMN 'referralType' TEXT")
+        database.execSQL("ALTER TABLE 'beneficiaries' ADD COLUMN 'referralNote' TEXT")
+        database.execSQL("ALTER TABLE 'beneficiaries' ADD COLUMN 'isReferralChanged' INT NOT NULL DEFAULT 0")
+    }
 }
