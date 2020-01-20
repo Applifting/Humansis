@@ -109,7 +109,7 @@ class SettingsFragment : BaseFragment() {
 
         viewModel.savedLD.observe(viewLifecycleOwner, Observer<Boolean> {
             val message = if (it) {
-                sharedViewModel.synchronize()
+                sharedViewModel.forceSynchronize()
                 getString(R.string.settings_country_update_success)
             } else {
                 getString(R.string.settings_country_update_error)
