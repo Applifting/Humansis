@@ -36,6 +36,8 @@ const val SYNC_WORKER = "sync-worker"
 
 const val ERROR_MESSAGE_KEY = "error-message-key"
 
+const val SP_SYNC_UPLOAD_INCOMPLETE = "sync-upload-incomplete"
+
 class SyncWorker(appContext: Context, workerParams: WorkerParameters) : CoroutineWorker(appContext, workerParams) {
 
     @Inject
@@ -108,6 +110,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             getAllBeneficiaries()
                 .forEach {
                     if (it.edited && it.distributed) {
+                        sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, true).suspendCommit()
                         try {
                             beneficieriesRepository.distribute(it.id)
                         } catch (e: HttpException) {
@@ -185,6 +188,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         return if (syncErrors.isEmpty()) {
             sp.setDate(LAST_SYNC_FAILED_KEY, null)
             sp.edit().putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false).suspendCommit()
+            sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, false).suspendCommit()
             logger.logToFile(applicationContext, "Sync finished successfully")
             Result.success()
         } else {

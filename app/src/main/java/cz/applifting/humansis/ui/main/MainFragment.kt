@@ -94,7 +94,7 @@ class MainFragment : BaseFragment() {
 
         btn_logout.setOnClickListener {
 
-            val pendingChanges = sharedViewModel.pendingChangesLD.value ?: false
+            val pendingChanges = sharedViewModel.syncNeededLD.value ?: false
 
             if (!pendingChanges) {
                 AlertDialog.Builder(context!!)
@@ -147,7 +147,7 @@ class MainFragment : BaseFragment() {
         val ivStatus = item.actionView.findViewById<ImageView>(R.id.iv_status)
         ivStatus.simpleDrawable(if (context?.isNetworkConnected() == true) R.drawable.ic_online else R.drawable.ic_offline)
 
-        sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, Observer {
             item.actionView.iv_pending_changes.visibility = if (it) View.VISIBLE else View.INVISIBLE
         })
 

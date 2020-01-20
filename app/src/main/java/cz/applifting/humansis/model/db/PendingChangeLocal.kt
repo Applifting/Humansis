@@ -4,6 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
 
+// TODO remove
+@Deprecated("not used")
 @Entity(tableName = "pending_changes")
 data class PendingChangeLocal(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,

@@ -6,6 +6,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import cz.applifting.humansis.model.db.PendingChangeLocal
 
+// TODO remove
+@Deprecated("not used")
 @Dao
 interface PendingChangesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)

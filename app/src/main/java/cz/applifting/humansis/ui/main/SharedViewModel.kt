@@ -13,13 +13,11 @@ import cz.applifting.humansis.extensions.getDate
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.Logger
+import cz.applifting.humansis.misc.booleanLiveData
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
-import cz.applifting.humansis.synchronization.ERROR_MESSAGE_KEY
-import cz.applifting.humansis.synchronization.SYNC_WORKER
-import cz.applifting.humansis.synchronization.SyncWorkerState
-import cz.applifting.humansis.synchronization.enqueueSyncWorker
+import cz.applifting.humansis.synchronization.*
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -42,7 +40,9 @@ class SharedViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val toastLD = MediatorLiveData<String>()
-    val pendingChangesLD = MediatorLiveData<Boolean>()
+    private val pendingChangesLD = MutableLiveData<Boolean>()
+    private val uploadIncompleteLD = sp.booleanLiveData(SP_SYNC_UPLOAD_INCOMPLETE, false)
+    val syncNeededLD = MediatorLiveData<Boolean>()
     val networkStatus = MutableLiveData<Boolean>()
     val shouldReauthenticateLD = MediatorLiveData<Boolean>()
 
@@ -97,6 +97,14 @@ class SharedViewModel @Inject constructor(
                 .collect {
                     pendingChangesLD.value = it.isNotEmpty()
                 }
+        }
+        syncNeededLD.apply {
+            addSource(uploadIncompleteLD) {
+                syncNeededLD.value = it || pendingChangesLD.value ?: false
+            }
+            addSource(pendingChangesLD) {
+                syncNeededLD.value = it || uploadIncompleteLD.value ?: false
+            }
         }
     }
 

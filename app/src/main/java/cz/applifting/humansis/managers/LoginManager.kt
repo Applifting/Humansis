@@ -12,6 +12,7 @@ import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.misc.*
 import cz.applifting.humansis.model.api.LoginReqRes
 import cz.applifting.humansis.model.db.User
+import cz.applifting.humansis.synchronization.SP_SYNC_UPLOAD_INCOMPLETE
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import kotlinx.coroutines.supervisorScope
 import net.sqlcipher.database.SQLiteException
@@ -78,6 +79,7 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
 
         sp.edit().putString(LAST_DOWNLOAD_KEY, null).suspendCommit()
         sp.edit().putString(SP_DB_PASS_KEY, null).suspendCommit()
+        sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, false).suspendCommit()
 
         encryptDefault()
     }
