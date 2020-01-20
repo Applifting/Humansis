@@ -18,8 +18,8 @@ import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.ERROR_MESSAGE_KEY
 import cz.applifting.humansis.synchronization.SYNC_WORKER
-import cz.applifting.humansis.synchronization.SyncWorker
 import cz.applifting.humansis.synchronization.SyncWorkerState
+import cz.applifting.humansis.synchronization.enqueueSyncWorker
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -100,8 +100,12 @@ class SharedViewModel @Inject constructor(
         }
     }
 
-    fun synchronize() {
+    fun forceSynchronize() {
         launch {
+            if (workInfos.value?.first()?.state == WorkInfo.State.ENQUEUED) {
+                // cancel previous work which may be stuck in the queue
+                workManager.cancelUniqueWork(SYNC_WORKER)
+            }
             workManager.enqueueUniqueWork(SYNC_WORKER, ExistingWorkPolicy.KEEP, OneTimeWorkRequest.from(SyncWorker::class.java))
         }
     }
@@ -109,7 +113,7 @@ class SharedViewModel @Inject constructor(
     fun tryFirstDownload() {
         launch {
             if (sp.getDate(LAST_DOWNLOAD_KEY) == null || projectsRepository.getProjectsOfflineSuspend().isEmpty()) {
-                synchronize()
+                forceSynchronize()
             }
         }
     }

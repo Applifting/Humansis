@@ -65,7 +65,8 @@ class UploadDialogMainFragment : BaseFragment() {
         })
 
         btn_sync.setOnClickListener {
-            sharedViewModel.synchronize()
+            sharedViewModel.forceSynchronize()
+            // TODO disable button unless the work was stuck for long time
         }
 
         btn_show_error_info.setOnClickListener {

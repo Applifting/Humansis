@@ -41,7 +41,7 @@ class HumansisActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        enqueSynchronization()
+        enqueueSynchronization()
 
         val filter = IntentFilter()
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
@@ -59,7 +59,7 @@ class HumansisActivity : AppCompatActivity() {
         return false
     }
 
-    private fun enqueSynchronization() {
+    private fun enqueueSynchronization() {
         val workManager = WorkManager.getInstance(this)
 
         // Try to upload changes as soon as user is online
@@ -88,7 +88,7 @@ class HumansisActivity : AppCompatActivity() {
     private inner class NetworkChangeReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (isWifiConnected()) {
-                enqueSynchronization()
+                enqueueSynchronization()
             }
         }
     }

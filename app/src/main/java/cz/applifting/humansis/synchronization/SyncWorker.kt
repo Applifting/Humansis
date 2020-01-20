@@ -1,5 +1,6 @@
 package cz.applifting.humansis.synchronization
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.work.CoroutineWorker
@@ -52,6 +53,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     @Inject
     lateinit var errorsRepository: ErrorsRepository
 
+    private val reason = Data.Builder()
+    private val syncErrors = arrayListOf<SyncError>()
 
     init {
         (appContext as App).appComponent.inject(this)
@@ -63,7 +66,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     override suspend fun doWork(): Result {
         return supervisorScope {
-            val reason = Data.Builder()
+
+            if (isStopped) return@supervisorScope stopWork("Before initialization")
 
             logger.logToFile(applicationContext, "Started Sync")
 
@@ -78,7 +82,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             errorsRepository.clearAll()
 
-            val syncErorrs = arrayListOf<SyncError>()
+            if (isStopped) return@supervisorScope stopWork("After initialization")
 
             suspend fun logUploadError(e: HttpException, it: BeneficiaryLocal, action: UploadAction) {
                 val errBody = "${e.response()?.errorBody()?.string()}"
@@ -97,7 +101,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     "${e.code()}: $errBody"
                 )
 
-                syncErorrs.add(syncError)
+                syncErrors.add(syncError)
             }
 
             // Upload all changes
@@ -117,17 +121,20 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                             logUploadError(e, it, UploadAction.REFERRAL_UPDATE)
                         }
                     }
+                    if (isStopped) return@supervisorScope stopWork("Uploading ${it.beneficiaryId}")
                 }
 
             // Download updated data
-            if (syncErorrs.isEmpty()) {
+            if (syncErrors.isEmpty()) {
 
                 val projects = try {
                     projectsRepository.getProjectsOnline()
                 } catch (e: Exception) {
-                    syncErorrs.add(getDownloadError(e, applicationContext.getString(R.string.projects)))
+                    syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.projects)))
                     emptyList<ProjectLocal>()
                 }
+
+                if (isStopped) return@supervisorScope stopWork("Downloading projects")
 
                 val distributions = try {
                     projects.orEmpty().map {
@@ -136,10 +143,11 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                         it.await().orEmpty().toList()
                     }
                 } catch (e: Exception) {
-                    syncErorrs.add(getDownloadError(e, applicationContext.getString(R.string.distribution)))
-                    emptyList<ProjectLocal>()
-                    listOf<DistributionLocal>()
+                    syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.distribution)))
+                    emptyList<DistributionLocal>()
                 }
+
+                if (isStopped) return@supervisorScope stopWork("Downloading distributions")
 
                 try {
                     distributions.map {
@@ -148,7 +156,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                         it.await()
                     }
                 } catch (e: Exception) {
-                    syncErorrs.add(getDownloadError(e, applicationContext.getString(R.string.beneficiary)))
+                    syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.beneficiary)))
                     emptyList<ProjectLocal>()
                 }
 
@@ -156,23 +164,40 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 sp.setDate(LAST_DOWNLOAD_KEY, lastDownloadAt)
             }
 
-            if (syncErorrs.isEmpty()) {
-                sp.setDate(LAST_SYNC_FAILED_KEY, null)
-                sp.edit().putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false).suspendCommit()
-                logger.logToFile(applicationContext, "Sync finished successfully")
-                Result.success()
-            } else {
-                errorsRepository.insertAll(syncErorrs)
+            finishWork()
+        }
+    }
 
-                // Erase password to trigger re-authentication
-                if (syncErorrs.find { it.code == 403 } != null) {
-                    loginManager.markInvalidPassword()
-                }
+    private suspend fun stopWork(location: String): Result {
+        syncErrors.add(
+            SyncError(
+                location = location,
+                params = "",
+                code = 0,
+                errorMessage = "Sync was stopped by work manager"
+            )
+        )
+        return finishWork()
+    }
 
-                logger.logToFile(applicationContext, "Sync finished with failure")
-                sp.setDate(LAST_SYNC_FAILED_KEY, Date())
-                Result.failure(reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErorrs)).build())
+    @SuppressLint("CommitPrefEdits")
+    private suspend fun finishWork(): Result {
+        return if (syncErrors.isEmpty()) {
+            sp.setDate(LAST_SYNC_FAILED_KEY, null)
+            sp.edit().putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false).suspendCommit()
+            logger.logToFile(applicationContext, "Sync finished successfully")
+            Result.success()
+        } else {
+            errorsRepository.insertAll(syncErrors)
+
+            // Erase password to trigger re-authentication
+            if (syncErrors.find { it.code == 403 } != null) {
+                loginManager.markInvalidPassword()
             }
+
+            logger.logToFile(applicationContext, "Sync finished with failure")
+            sp.setDate(LAST_SYNC_FAILED_KEY, Date())
+            Result.failure(reason.putStringArray(ERROR_MESSAGE_KEY, convertErrors(syncErrors)).build())
         }
     }
 
