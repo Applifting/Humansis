@@ -104,6 +104,9 @@
     <string name="download_error">Couldn\'t download %s.</string>
     <string name="auth_expiration_explanation">You were logged out because your session has expired. Your data is still saved on the device. Log in to sync.</string>
     <string name="sync_error">There was an error during synchronization.</string>
+    <string name="dont_save">Don\'t save</string>
+    <string name="confirm_scan_question">Do you want to confirm the scanned code?</string>
+    <string name="confirm_scan_title">Confirm booklet</string>
 
     <string name="referral_type_none">None</string>
     <string name="referral_type_health">Health</string>

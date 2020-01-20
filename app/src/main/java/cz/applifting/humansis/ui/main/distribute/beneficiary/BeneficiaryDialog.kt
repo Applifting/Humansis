@@ -125,7 +125,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                             else -> booklet
                         }
                     )
-                    view.btn_action.isEnabled = (booklet != null && booklet != INVALID_CODE && booklet != ALREADY_ASSIGNED)
+                    view.btn_action.isEnabled = booklet.isValidBooklet
 
                     if (booklet == null) {
                         qr_scanner_holder.visibility = View.VISIBLE
@@ -173,6 +173,9 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         return view
     }
 
+    private val String?.isValidBooklet
+        get() = (this != null && this != INVALID_CODE && this != ALREADY_ASSIGNED)
+
     override fun onResume() {
         super.onResume()
         if (qr_scanner_holder.visibility == View.VISIBLE) {
@@ -216,8 +219,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
+    private val BeneficiaryLocal.hasUnsavedQr
+        get() = args.isQRVoucher && qrBooklets?.firstOrNull().isValidBooklet && !distributed
+
     private fun handleBackPressed() {
-        dismiss()
+        if (viewModel.beneficiaryLD.value?.hasUnsavedQr == true) {
+            showDismissConfirmDialog()
+        } else {
+            dismiss()
+        }
     }
 
     private fun requestCameraPermission() {
@@ -251,5 +261,15 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 findNavController().navigate(action)
             }
         }
+    }
+
+    private fun showDismissConfirmDialog() {
+        AlertDialog.Builder(context!!)
+            .setTitle(R.string.confirm_scan_title)
+            .setMessage(R.string.confirm_scan_question)
+            .setPositiveButton(R.string.confirm_distribution) { _, _ -> showConfirmBeneficiaryDialog(viewModel.beneficiaryLD.value!!) }
+            .setNegativeButton(R.string.dont_save) { _, _ -> dismiss() }
+            .create()
+            .show()
     }
 }
