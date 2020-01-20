@@ -43,7 +43,7 @@ class UploadDialogMainFragment : BaseFragment() {
             tv_connectoin_status.text = getString(if (it) R.string.online else R.string.offline)
         })
 
-        sharedViewModel.pendingChangesLD.observe(viewLifecycleOwner, Observer {
+        sharedViewModel.syncNeededLD.observe(viewLifecycleOwner, Observer {
             tv_changes.text = getString(if (it) R.string.pending_local_changes else R.string.no_pending_changes)
             tv_changes.setTextColor(ContextCompat.getColor(context!!, if (it) R.color.red else R.color.green))
         })
