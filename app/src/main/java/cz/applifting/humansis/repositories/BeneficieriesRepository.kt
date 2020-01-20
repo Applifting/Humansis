@@ -98,6 +98,8 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         if (beneficiaryLocal.qrBooklets?.isNotEmpty() == true) {
             assignBooklet(beneficiaryLocal.qrBooklets.first(), beneficiaryLocal.beneficiaryId, beneficiaryLocal.distributionId)
         }
+
+        updateBeneficiaryOffline(beneficiaryLocal.copy(edited = false))
     }
 
     suspend fun checkBoookletAssignedLocally(bookletId: String): Boolean {
