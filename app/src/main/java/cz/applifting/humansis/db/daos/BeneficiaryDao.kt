@@ -1,6 +1,7 @@
 package cz.applifting.humansis.db.daos
 
 import androidx.room.*
+import cz.applifting.humansis.model.ReferralType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import kotlinx.coroutines.flow.Flow
 
@@ -43,4 +44,7 @@ interface BeneficiaryDao {
 
     @Query("SELECT qrBooklets FROM beneficiaries")
     suspend fun getAllBooklets(): List<String>?
+
+    @Query("UPDATE beneficiaries SET referralType = :referralType, referralNote = :referralNote where beneficiaryId = :beneficiaryId")
+    suspend fun updateReferralOfMultiple(beneficiaryId: Int, referralType: ReferralType?, referralNote: String?)
 }

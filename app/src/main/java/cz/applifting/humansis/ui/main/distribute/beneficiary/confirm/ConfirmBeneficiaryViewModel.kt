@@ -72,6 +72,7 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
             )
 
             beneficiariesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+            beneficiariesRepository.updateReferralOfMultiple(updatedBeneficiary)
             beneficiaryLD.value = updatedBeneficiary
         }
     }

@@ -84,6 +84,11 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return dbProvider.get().beneficiariesDao().update(beneficiary)
     }
 
+    suspend fun updateReferralOfMultiple(beneficiary: BeneficiaryLocal) {
+        // update of referral will be send to BE only from the original beneficiary
+        dbProvider.get().beneficiariesDao().updateReferralOfMultiple(beneficiary.beneficiaryId, beneficiary.referralType, beneficiary.referralNote)
+    }
+
     suspend fun countReachedBeneficiariesOffline(distributionId: Int): Int {
         return dbProvider.get().beneficiariesDao().countReachedBeneficiaries(distributionId)
     }
