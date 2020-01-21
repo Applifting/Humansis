@@ -2,6 +2,8 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary.confirm
 
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.equalsIgnoreEmpty
+import cz.applifting.humansis.extensions.orNullIfEmpty
 import cz.applifting.humansis.model.ReferralType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.repositories.BeneficieriesRepository
@@ -63,12 +65,14 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
         launch {
             val beneficiary = beneficiaryLD.value!!
 
+            val isReferralTypeChanged = beneficiary.referralType != referralTypeLD.value
+            val isReferralNoteChanged = !beneficiary.referralNote.equalsIgnoreEmpty(referralNoteLD.value)
             val updatedBeneficiary = beneficiary.copy(
                 distributed = true,
                 edited = true,
                 referralType = referralTypeLD.value,
-                referralNote = referralNoteLD.value,
-                isReferralChanged = beneficiary.referralType != referralTypeLD.value || beneficiary.referralNote != referralNoteLD.value
+                referralNote = referralNoteLD.value.orNullIfEmpty(),
+                isReferralChanged = isReferralTypeChanged || isReferralNoteChanged
             )
 
             beneficiariesRepository.updateBeneficiaryOffline(updatedBeneficiary)
