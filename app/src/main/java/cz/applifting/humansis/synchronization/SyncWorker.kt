@@ -37,6 +37,7 @@ const val SYNC_WORKER = "sync-worker"
 const val ERROR_MESSAGE_KEY = "error-message-key"
 
 const val SP_SYNC_UPLOAD_INCOMPLETE = "sync-upload-incomplete"
+const val SP_SYNC_SUMMARY = "sync-summary"
 
 class SyncWorker(appContext: Context, workerParams: WorkerParameters) : CoroutineWorker(appContext, workerParams) {
 
@@ -57,14 +58,14 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     private val reason = Data.Builder()
     private val syncErrors = arrayListOf<SyncError>()
+    private val syncStats = SyncStats()
 
     init {
         (appContext as App).appComponent.inject(this)
     }
 
-    enum class UploadAction {
-        DISTRIBUTION, REFERRAL_UPDATE
-    }
+    private val BeneficiaryLocal.wasDistributed: Boolean
+    get() = edited && distributed
 
     override suspend fun doWork(): Result {
         return supervisorScope {
@@ -72,6 +73,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             if (isStopped) return@supervisorScope stopWork("Before initialization")
 
             logger.logToFile(applicationContext, "Started Sync")
+            sp.edit().putString(SP_SYNC_SUMMARY, "").suspendCommit()
 
             if (!loginManager.tryInitDB()) {
                 reason.putStringArray(
@@ -83,8 +85,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             }
 
             errorsRepository.clearAll()
-
-            if (isStopped) return@supervisorScope stopWork("After initialization")
 
             suspend fun logUploadError(e: HttpException, it: BeneficiaryLocal, action: UploadAction) {
                 val errBody = "${e.response()?.errorBody()?.string()}"
@@ -106,13 +106,19 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 syncErrors.add(syncError)
             }
 
+            val allBeneficiaries = getAllBeneficiaries()
+            syncStats.uploadCandidatesCount = allBeneficiaries.count { it.wasDistributed }
+
+            if (isStopped) return@supervisorScope stopWork("After initialization")
+
             // Upload all changes
-            getAllBeneficiaries()
+            allBeneficiaries
                 .forEach {
-                    if (it.edited && it.distributed) {
+                    if (it.wasDistributed) {
                         sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, true).suspendCommit()
                         try {
                             beneficieriesRepository.distribute(it.id)
+                            syncStats.countUploadSuccess()
                         } catch (e: HttpException) {
                             logUploadError(e, it, UploadAction.DISTRIBUTION)
                         }
@@ -162,9 +168,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.beneficiary)))
                     emptyList<ProjectLocal>()
                 }
-
-                val lastDownloadAt = Date()
-                sp.setDate(LAST_DOWNLOAD_KEY, lastDownloadAt)
             }
 
             finishWork()
@@ -185,7 +188,9 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
     @SuppressLint("CommitPrefEdits")
     private suspend fun finishWork(): Result {
+        sp.edit().putString(SP_SYNC_SUMMARY, syncStats.toString()).suspendCommit()
         return if (syncErrors.isEmpty()) {
+            sp.setDate(LAST_DOWNLOAD_KEY, Date())
             sp.setDate(LAST_SYNC_FAILED_KEY, null)
             sp.edit().putBoolean(SP_FIRST_COUNTRY_DOWNLOAD, false).suspendCommit()
             sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, false).suspendCommit()
@@ -253,6 +258,27 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     errorMessage = e.message ?: "",
                     code = 0
                 )
+            }
+        }
+    }
+
+    private enum class UploadAction {
+        DISTRIBUTION, REFERRAL_UPDATE
+    }
+
+    private inner class SyncStats(
+        var uploadCandidatesCount: Int? = null,
+        private var uploadedSuccessfullyCount: Int = 0
+    ) {
+        fun countUploadSuccess() {
+            uploadedSuccessfullyCount++
+        }
+
+        override fun toString(): String {
+            return if (uploadCandidatesCount == null || uploadCandidatesCount == 0) {
+                applicationContext.getString(R.string.sync_summary_nothing)
+            } else {
+                applicationContext.getString(R.string.sync_summary, uploadedSuccessfullyCount, uploadCandidatesCount)
             }
         }
     }

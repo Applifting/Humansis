@@ -119,5 +119,7 @@
     <string name="cancel">Cancel</string>
     <string name="referral_type_label">Referral type</string>
     <string name="referral_note_label">Referral note</string>
+    <string name="sync_summary">Uploaded %1$d of %2$d changes.</string>
+    <string name="sync_summary_nothing">No local changes were uploaded.</string>
 
 </resources>

@@ -64,6 +64,11 @@ class UploadDialogMainFragment : BaseFragment() {
             tv_current_data_date.text = it.lastDownload?.format()
         })
 
+        uploadDialogViewModel.syncSummary.observe(viewLifecycleOwner, Observer {
+            tv_sync_summary.visible(!it.isNullOrBlank())
+            tv_sync_summary.text = it
+        })
+
         btn_sync.setOnClickListener {
             sharedViewModel.forceSynchronize()
             // TODO disable button unless the work was stuck for long time
