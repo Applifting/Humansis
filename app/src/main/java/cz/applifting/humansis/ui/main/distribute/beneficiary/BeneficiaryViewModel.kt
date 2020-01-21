@@ -35,31 +35,33 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
     }
 
     fun scanQRBooklet(code: String?) {
-        val beneficiary = beneficiaryLD.value?.copy(
-            qrBooklets = if (code != null) listOf(code) else listOfNotNull()
-        ) ?: throw IllegalStateException()
+        launch {
+            val beneficiary = beneficiaryLD.value!!.copy(
+                qrBooklets = listOfNotNull(code)
+            )
 
-        beneficiaryLD.value = beneficiary
+            beneficieriesRepository.updateBeneficiaryOffline(beneficiary)
+            beneficiaryLD.value = beneficiary
+        }
     }
 
     internal fun revertBeneficiary() {
         launch {
-            val beneficiary = beneficiaryLD.value ?: throw IllegalStateException("Beneficiary was not loaded")
-
+            val beneficiary = beneficiaryLD.value!!
             val updatedBeneficiary = beneficiary.copy(
-                distributed = !beneficiary.distributed,
-                edited = !beneficiary.distributed,
-                qrBooklets = if (beneficiary.distributed) mutableListOf() else beneficiary.qrBooklets
+                distributed = false,
+                edited = false,
+                qrBooklets = emptyList()
             )
-
             // TODO revert also referral?
+            // would need to remember original referral
 
             beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+            beneficiaryLD.value = updatedBeneficiary
         }
     }
 
     internal fun checkScannedId(scannedId: String) {
-
         launch {
             val assigned = beneficieriesRepository.checkBoookletAssignedLocally(scannedId)
 

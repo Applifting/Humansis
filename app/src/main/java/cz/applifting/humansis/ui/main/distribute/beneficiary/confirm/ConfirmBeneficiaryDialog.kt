@@ -48,7 +48,7 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
         // set listener this way so we can avoid dismiss on click
         alertDialog.setOnShowListener {
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                if (viewModel.tryEditBeneficiary()) {
+                if (viewModel.tryConfirmDistribution()) {
                     dismiss()
                 }
             }

@@ -25,20 +25,20 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
             .getDistributionBeneficiaries(distributionId)
             .map {
                 BeneficiaryLocal(
-                    it.id,
-                    it.beneficiary.id,
-                    it.beneficiary.givenName,
-                    it.beneficiary.familyName,
-                    distributionId,
-                    isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets),
-                    parseVulnerabilities(it.beneficiary.vulnerabilities),
-                    parseReliefs(it.reliefs),
-                    parseQRBooklets(it.booklets),
-                    false,
-                    parseCommodities(it.booklets, distribution?.commodities),
-                    it.beneficiary.nationalIds?.getOrNull(0)?.idNumber,
-                    it.beneficiary.referral?.type,
-                    it.beneficiary.referral?.note
+                    id = it.id,
+                    beneficiaryId = it.beneficiary.id,
+                    givenName = it.beneficiary.givenName,
+                    familyName = it.beneficiary.familyName,
+                    distributionId = distributionId,
+                    distributed = isReliefDistributed(it.reliefs) || isBookletDistributed(it.booklets),
+                    vulnerabilities = parseVulnerabilities(it.beneficiary.vulnerabilities),
+                    reliefIDs = parseReliefs(it.reliefs),
+                    qrBooklets = parseQRBooklets(it.booklets),
+                    edited = false,
+                    commodities = parseCommodities(it.booklets, distribution?.commodities),
+                    nationalId = it.beneficiary.nationalIds?.getOrNull(0)?.idNumber,
+                    referralType = it.beneficiary.referral?.type,
+                    referralNote = it.beneficiary.referral?.note
                 )
             }
 

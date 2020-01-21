@@ -35,9 +35,9 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
         }
     }
 
-    fun tryEditBeneficiary(): Boolean {
+    fun tryConfirmDistribution(): Boolean {
         if (validateFields()) {
-            editBeneficiary()
+            confirmDistribution()
             return true
         }
         return false
@@ -59,14 +59,13 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
         return true
     }
 
-    private fun editBeneficiary() {
+    private fun confirmDistribution() {
         launch {
-            val beneficiary = beneficiaryLD.value ?: throw IllegalStateException("Beneficiary was not loaded")
+            val beneficiary = beneficiaryLD.value!!
 
             val updatedBeneficiary = beneficiary.copy(
-                distributed = !beneficiary.distributed,
-                edited = !beneficiary.distributed,
-                qrBooklets = if (beneficiary.distributed) mutableListOf() else beneficiary.qrBooklets,
+                distributed = true,
+                edited = true,
                 referralType = referralTypeLD.value,
                 referralNote = referralNoteLD.value,
                 isReferralChanged = beneficiary.referralType != referralTypeLD.value || beneficiary.referralNote != referralNoteLD.value
