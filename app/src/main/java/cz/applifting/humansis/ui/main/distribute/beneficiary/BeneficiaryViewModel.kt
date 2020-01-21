@@ -51,10 +51,9 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
             val updatedBeneficiary = beneficiary.copy(
                 distributed = false,
                 edited = false,
-                qrBooklets = emptyList()
+                qrBooklets = emptyList(),
+                isReferralChanged = false // referral will remain changed locally but won't be uploaded
             )
-            // TODO revert also referral?
-            // would need to remember original referral
 
             beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
             beneficiaryLD.value = updatedBeneficiary
