@@ -3,7 +3,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
 
     <TextView
             android:id="@+id/tv_location"
@@ -36,7 +39,6 @@
             app:layout_constraintStart_toStartOf="@+id/tv_info"
             app:layout_constraintTop_toBottomOf="@+id/tv_info"
             tools:text="@string/error_bad_request" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -96,11 +96,12 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 val beneficiaryName = "${it.givenName} ${it.familyName}"
 
                 val syncError = SyncError(
-                    it.id,
-                    "[$action] $projectName → $distributionName → $beneficiaryName",
-                    "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
-                    e.code(),
-                    "${e.code()}: $errBody"
+                    id = it.id,
+                    location = "[$action] $projectName → $distributionName → $beneficiaryName",
+                    params = "Humansis ID: ${it.beneficiaryId} \nNational ID: ${it.nationalId}",
+                    code = e.code(),
+                    errorMessage = "${e.code()}: $errBody",
+                    beneficiaryId = it.id
                 )
 
                 syncErrors.add(syncError)
@@ -117,7 +118,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                     if (it.wasDistributed) {
                         sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, true).suspendCommit()
                         try {
-                            beneficieriesRepository.distribute(it.id)
+                            beneficieriesRepository.distribute(it)
                             syncStats.countUploadSuccess()
                         } catch (e: HttpException) {
                             logUploadError(e, it, UploadAction.DISTRIBUTION)

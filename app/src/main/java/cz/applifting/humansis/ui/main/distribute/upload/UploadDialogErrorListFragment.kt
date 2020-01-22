@@ -6,11 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
+import cz.applifting.humansis.model.ui.isQRVoucherDistribution
 import cz.applifting.humansis.ui.BaseFragment
 import kotlinx.android.synthetic.main.fragment_dialog_upload_status_error_info.*
+import kotlinx.coroutines.launch
 
 
 /**
@@ -29,7 +32,11 @@ class UploadDialogErrorListFragment : BaseFragment() {
         super.onActivityCreated(savedInstanceState)
         uploadDialogViewModel = ViewModelProviders.of(parentFragment!!, viewModelFactory)[UploadDialogViewModel::class.java]
 
-        val adapter = ErrorListAdapter()
+        val adapter = ErrorListAdapter {
+            it.beneficiaryId?.let {
+                openBeneficiaryDialog(it)
+            }
+        }
         rl_erros.adapter = adapter
         rl_erros.layoutManager = LinearLayoutManager(context)
 
@@ -45,6 +52,28 @@ class UploadDialogErrorListFragment : BaseFragment() {
 
         btn_back.setOnClickListener {
             uploadDialogViewModel.changeScreen(Screen.MAIN)
+        }
+    }
+
+    private fun openBeneficiaryDialog(beneficiaryId: Int) {
+        // TODO disable clicking while this is running
+        launch {
+            val (projectName, distribution, beneficiary) = uploadDialogViewModel.getRelatedEntities(beneficiaryId)
+            if (projectName == null || distribution == null || beneficiary == null) {
+                return@launch
+            }
+            findNavController().apply {
+                if (currentDestination?.id == R.id.uploadDialog) {
+                    navigate(
+                        UploadDialogDirections.actionUploadDialogToBeneficiaryDialog(
+                            beneficiaryId = beneficiary.id,
+                            distributionName = distribution.name,
+                            projectName = projectName,
+                            isQRVoucher = distribution.isQRVoucherDistribution
+                        )
+                    )
+                }
+            }
         }
     }
 }

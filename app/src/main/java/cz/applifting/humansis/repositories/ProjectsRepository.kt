@@ -37,7 +37,7 @@ class ProjectsRepository @Inject constructor(val service: HumansisService, val d
         return dbProvider.get().projectsDao().getAllSuspend()
     }
 
-    suspend fun getNameByDistributionId(distributionId: Int): String {
+    suspend fun getNameByDistributionId(distributionId: Int): String? {
         return dbProvider.get().projectsDao().getNameByDistributionId(distributionId)
     }
 
