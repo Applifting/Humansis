@@ -11,7 +11,7 @@ import cz.applifting.humansis.extensions.simpleDrawable
 import cz.applifting.humansis.extensions.tintedDrawable
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.Target
-import cz.applifting.humansis.model.ui.DistributionModel
+import cz.applifting.humansis.model.ui.DistributionItemWrapper
 import cz.applifting.humansis.ui.components.listComponent.ListComponentAdapter
 import kotlinx.android.synthetic.main.item_distribution.view.*
 import kotlinx.android.synthetic.main.item_project.view.tv_location
@@ -20,10 +20,10 @@ import kotlinx.android.synthetic.main.item_project.view.tv_location
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 21, August, 2019
  */
 class DistributionsAdapter(
-    private val onItemClick: (distribution: DistributionModel) -> Unit
+    private val onItemClick: (distribution: DistributionItemWrapper) -> Unit
 ) : ListComponentAdapter<DistributionsAdapter.DistributionViewHolder>() {
 
-    private val distributions: MutableList<DistributionModel> = mutableListOf()
+    private val distributions: MutableList<DistributionItemWrapper> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DistributionViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
@@ -41,10 +41,10 @@ class DistributionsAdapter(
         holder.bind(distribution)
     }
 
-    fun updateDistributions(newDistributions: List<DistributionModel>) {
+    fun updateDistributions(newDistributions: List<DistributionItemWrapper>) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-                newDistributions[newItemPosition].id == distributions[oldItemPosition].id
+                newDistributions[newItemPosition].distribution.id == distributions[oldItemPosition].distribution.id
 
             override fun getOldListSize(): Int = distributions.size
             override fun getNewListSize(): Int = newDistributions.size
@@ -67,7 +67,7 @@ class DistributionsAdapter(
         val pbDistributionProgress = layout.pb_distribution_progress
         val context = layout.context
 
-        fun bind(distribution: DistributionModel) = with(distribution) {
+        fun bind(distributionItemWrapper: DistributionItemWrapper) = with(distributionItemWrapper.distribution) {
 
             // Set text fields
             tvName.text = name
@@ -75,7 +75,7 @@ class DistributionsAdapter(
             tvBeneficieriesCnt.text = context.getString(R.string.beneficiaries, numberOfBeneficiaries)
             llComoditiesHolder.removeAllViews()
 
-            distribution.commodities.forEach {
+            commodities.forEach {
                 try {
                     val commodityImage = ImageView(context)
                     commodityImage.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -111,7 +111,7 @@ class DistributionsAdapter(
             pbDistributionProgress.visible(!completed)
 
             if (numberOfBeneficiaries > 0) {
-                pbDistributionProgress.progress = numberOfReachedBeneficiaries * 100 / numberOfBeneficiaries
+                pbDistributionProgress.progress = distributionItemWrapper.numberOfReachedBeneficiaries * 100 / numberOfBeneficiaries
             }
         }
     }

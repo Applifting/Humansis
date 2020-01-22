@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
-import cz.applifting.humansis.model.ui.isQRVoucherDistribution
 import cz.applifting.humansis.ui.BaseFragment
 import cz.applifting.humansis.ui.HumansisActivity
 import kotlinx.android.synthetic.main.fragment_distributions.*
@@ -35,12 +34,15 @@ class DistributionsFragment : BaseFragment() {
         (activity as HumansisActivity).supportActionBar?.subtitle = getString(R.string.distributions)
 
         val viewAdapter = DistributionsAdapter {
-            val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(
-                it.id,
-                it.name,
-                args.projectName,
-                it.isQRVoucherDistribution)
-            this.findNavController().navigate(action)
+            it.distribution.also {
+                val action = DistributionsFragmentDirections.actionDistributionsFragmentToBeneficiariesFragment(
+                    it.id,
+                    it.name,
+                    args.projectName,
+                    it.isQRVoucherDistribution
+                )
+                this.findNavController().navigate(action)
+            }
         }
 
         lc_distributions.init(viewAdapter)

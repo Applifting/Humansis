@@ -10,7 +10,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
-import cz.applifting.humansis.model.ui.isQRVoucherDistribution
 import cz.applifting.humansis.ui.BaseFragment
 import kotlinx.android.synthetic.main.fragment_dialog_upload_status_error_info.*
 import kotlinx.coroutines.launch

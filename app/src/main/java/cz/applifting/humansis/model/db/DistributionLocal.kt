@@ -3,8 +3,8 @@ package cz.applifting.humansis.model.db
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.Target
 
 /**
@@ -28,4 +28,7 @@ data class DistributionLocal(
     val projectId: Int,
     val target: Target,
     val completed: Boolean
-)
+) {
+    val isQRVoucherDistribution: Boolean
+        get() = commodities.any { commodity -> commodity.type == CommodityType.QR_VOUCHER }
+}

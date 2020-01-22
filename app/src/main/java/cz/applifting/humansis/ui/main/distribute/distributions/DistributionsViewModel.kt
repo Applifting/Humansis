@@ -2,7 +2,7 @@ package cz.applifting.humansis.ui.main.distribute.distributions
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
-import cz.applifting.humansis.model.ui.DistributionModel
+import cz.applifting.humansis.model.ui.DistributionItemWrapper
 import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.ui.main.BaseListViewModel
@@ -20,7 +20,7 @@ class DistributionsViewModel @Inject constructor(
     context: Context
 ) : BaseListViewModel(context) {
 
-    val distributionsLD: MutableLiveData<List<DistributionModel>> = MutableLiveData()
+    val distributionsLD: MutableLiveData<List<DistributionItemWrapper>> = MutableLiveData()
 
     private var projectId: Int? = null
 
@@ -37,22 +37,8 @@ class DistributionsViewModel @Inject constructor(
                 .getDistributionsOffline(projectId)
                 .map { newDistributions ->
                     newDistributions.map {
-
-                        // todo maybe count on db layer
                         val reachedBeneficiaries = beneficiariesRepository.countReachedBeneficiariesOffline(it.id)
-                        val distributionModel = DistributionModel(
-                            it.id,
-                            it.name,
-                            it.numberOfBeneficiaries,
-                            it.commodities,
-                            it.dateOfDistribution,
-                            it.projectId,
-                            it.target,
-                            it.completed,
-                            reachedBeneficiaries
-                        )
-
-                        distributionModel
+                        DistributionItemWrapper(it, reachedBeneficiaries)
                     }
 
                 }
