@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.hideSoftKeyboard
+import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.BaseFragment
@@ -91,16 +92,14 @@ class BeneficiariesFragment : BaseFragment() {
     }
 
     private fun showBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
-        (findNavController().currentDestination?.id == R.id.beneficiariesFragment).let { safeToNavigate ->
-            if (safeToNavigate) {
-                val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragmentDialog(
-                    beneficiaryId = beneficiaryLocal.id,
-                    distributionName = args.distributionName,
-                    projectName = args.projectName,
-                    isQRVoucher = args.isQRVoucherDistribution
-                )
-                findNavController().navigate(action)
-            }
-        }
+        tryNavigate(
+            R.id.beneficiariesFragment,
+            BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragmentDialog(
+                beneficiaryId = beneficiaryLocal.id,
+                distributionName = args.distributionName,
+                projectName = args.projectName,
+                isQRVoucher = args.isQRVoucherDistribution
+            )
+        )
     }
 }

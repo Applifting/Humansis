@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.ui.BaseFragment
 import kotlinx.android.synthetic.main.fragment_dialog_upload_status_error_info.*
 import kotlinx.coroutines.launch
@@ -22,6 +22,7 @@ class UploadDialogErrorListFragment : BaseFragment() {
 
     private lateinit var uploadDialogViewModel: UploadDialogViewModel
 
+    private var isOpeningBeneficiary = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_dialog_upload_status_error_info, container, false)
@@ -33,7 +34,9 @@ class UploadDialogErrorListFragment : BaseFragment() {
 
         val adapter = ErrorListAdapter {
             it.beneficiaryId?.let {
-                openBeneficiaryDialog(it)
+                if (!isOpeningBeneficiary) {
+                    openBeneficiaryDialog(it)
+                }
             }
         }
         rl_erros.adapter = adapter
@@ -55,24 +58,23 @@ class UploadDialogErrorListFragment : BaseFragment() {
     }
 
     private fun openBeneficiaryDialog(beneficiaryId: Int) {
-        // TODO disable clicking while this is running
+        isOpeningBeneficiary = true
         launch {
             val (projectName, distribution, beneficiary) = uploadDialogViewModel.getRelatedEntities(beneficiaryId)
             if (projectName == null || distribution == null || beneficiary == null) {
                 return@launch
             }
-            findNavController().apply {
-                if (currentDestination?.id == R.id.uploadDialog) {
-                    navigate(
-                        UploadDialogDirections.actionUploadDialogToBeneficiaryDialog(
-                            beneficiaryId = beneficiary.id,
-                            distributionName = distribution.name,
-                            projectName = projectName,
-                            isQRVoucher = distribution.isQRVoucherDistribution
-                        )
-                    )
-                }
-            }
+            tryNavigate(
+                R.id.uploadDialog,
+                UploadDialogDirections.actionUploadDialogToBeneficiaryDialog(
+                    beneficiaryId = beneficiary.id,
+                    distributionName = distribution.name,
+                    projectName = projectName,
+                    isQRVoucher = distribution.isQRVoucherDistribution
+                )
+            )
+        }.invokeOnCompletion {
+            isOpeningBeneficiary = false
         }
     }
 }

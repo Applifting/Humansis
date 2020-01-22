@@ -19,6 +19,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.Result
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.tryNavigate
 import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.App
@@ -254,14 +255,12 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
     }
 
     private fun showConfirmBeneficiaryDialog(beneficiaryLocal: BeneficiaryLocal) {
-        (findNavController().currentDestination?.id == R.id.beneficiaryDialog).let { safeToNavigate ->
-            if (safeToNavigate) {
-                val action = BeneficiaryDialogDirections.actionBeneficiaryDialogToConfirmBeneficiaryDialog(
-                    beneficiaryLocal.id
-                )
-                findNavController().navigate(action)
-            }
-        }
+        tryNavigate(
+            R.id.beneficiaryDialog,
+            BeneficiaryDialogDirections.actionBeneficiaryDialogToConfirmBeneficiaryDialog(
+                beneficiaryLocal.id
+            )
+        )
     }
 
     private fun showDismissConfirmDialog() {
