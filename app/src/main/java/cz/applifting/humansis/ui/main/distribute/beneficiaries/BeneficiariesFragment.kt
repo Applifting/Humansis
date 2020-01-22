@@ -94,10 +94,10 @@ class BeneficiariesFragment : BaseFragment() {
         (findNavController().currentDestination?.id == R.id.beneficiariesFragment).let { safeToNavigate ->
             if (safeToNavigate) {
                 val action = BeneficiariesFragmentDirections.actionBeneficiariesFragmentToBeneficiaryFragmentDialog(
-                    beneficiaryLocal.id,
-                    args.distributionName,
-                    args.projectName,
-                    args.isQRVoucherDistribution
+                    beneficiaryId = beneficiaryLocal.id,
+                    distributionName = args.distributionName,
+                    projectName = args.projectName,
+                    isQRVoucher = args.isQRVoucherDistribution
                 )
                 findNavController().navigate(action)
             }
