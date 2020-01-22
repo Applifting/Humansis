@@ -76,6 +76,7 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
 
         view.apply {
+            btn_close.setImageResource(if (args.isFromList) R.drawable.ic_arrow_back else R.drawable.ic_close_black_24dp)
             btn_close.setOnClickListener {
                 handleBackPressed()
             }
