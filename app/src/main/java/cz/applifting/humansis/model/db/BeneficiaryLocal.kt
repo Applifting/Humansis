@@ -19,11 +19,11 @@ import cz.applifting.humansis.model.ReferralType
         onDelete = ForeignKey.CASCADE
     )]
 )
-// each beneficiary (beneficiaryId, ...) can be in multiple distributions
-// TODO rename ids (also all "beneficiaryId" variables)
+// this is flattened object from API, original: {id, distributionId, {beneficiaryId, givenName, ...}}
+// each "beneficiary" (beneficiaryId, givenName, ...) can be in multiple distributions
 data class BeneficiaryLocal(
-    @PrimaryKey val id: Int, // unique id
-    val beneficiaryId: Int, // global beneficiary id
+    @PrimaryKey val id: Int, // unique combination of beneficiaryId and distributionId
+    val beneficiaryId: Int, // id of actual beneficiary (can be non-unique)
     val givenName: String?,
     val familyName: String?,
     val distributionId: Int,
