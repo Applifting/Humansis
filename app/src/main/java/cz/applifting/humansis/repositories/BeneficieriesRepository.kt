@@ -72,7 +72,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return dbProvider.get().beneficiariesDao().getByDistributionSuspend(distributionId)
     }
 
-    suspend fun getBeneficiaryOffline(beneficiaryId: Int): BeneficiaryLocal {
+    suspend fun getBeneficiaryOffline(beneficiaryId: Int): BeneficiaryLocal? {
         return dbProvider.get().beneficiariesDao().findById(beneficiaryId)
     }
 
@@ -93,9 +93,7 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return dbProvider.get().beneficiariesDao().countReachedBeneficiaries(distributionId)
     }
 
-    suspend fun distribute(beneficiaryId: Int) {
-        val beneficiaryLocal = dbProvider.get().beneficiariesDao().findById(beneficiaryId)
-
+    suspend fun distribute(beneficiaryLocal: BeneficiaryLocal) {
         if (beneficiaryLocal.reliefIDs.isNotEmpty()) {
             setDistributedRelief(beneficiaryLocal.reliefIDs)
         }

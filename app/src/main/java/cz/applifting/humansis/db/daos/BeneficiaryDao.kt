@@ -22,7 +22,7 @@ interface BeneficiaryDao {
     suspend fun getByDistributionSuspend(distributionId: Int): List<BeneficiaryLocal>
 
     @Query("SELECT * FROM beneficiaries where id = :beneficiaryId")
-    suspend fun findById(beneficiaryId: Int): BeneficiaryLocal
+    suspend fun findById(beneficiaryId: Int): BeneficiaryLocal?
 
     @Query("SELECT * FROM beneficiaries where id = :beneficiaryId")
     fun findByIdFlow(beneficiaryId: Int): Flow<BeneficiaryLocal>

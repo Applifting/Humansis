@@ -92,7 +92,12 @@
     <dialog
             android:id="@+id/uploadDialog"
             android:name="cz.applifting.humansis.ui.main.distribute.upload.UploadDialog"
-            android:label="UploadDialog" />
+            android:label="UploadDialog" >
+        <action
+                android:id="@+id/action_uploadDialog_to_beneficiaryDialog"
+                app:destination="@id/beneficiaryDialog"
+                app:enterAnim="@anim/fragment_fade_enter" />
+    </dialog>
     <action
             android:id="@+id/action_global_uploadDialogFragment"
             app:destination="@id/uploadDialog" />

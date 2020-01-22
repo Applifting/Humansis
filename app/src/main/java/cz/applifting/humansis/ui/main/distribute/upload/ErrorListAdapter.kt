@@ -11,7 +11,9 @@ import kotlinx.android.synthetic.main.item_error.view.*
 /**
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 27, November, 2019
  */
-class ErrorListAdapter: RecyclerView.Adapter<ErrorListAdapter.ViewHolder>() {
+class ErrorListAdapter(
+    val onItemClick: (SyncError) -> Unit
+): RecyclerView.Adapter<ErrorListAdapter.ViewHolder>() {
 
     private val syncErrors: MutableList<SyncError> = mutableListOf()
 
@@ -43,6 +45,9 @@ class ErrorListAdapter: RecyclerView.Adapter<ErrorListAdapter.ViewHolder>() {
             tvLocation.text = syncError.location
             tvInfo.text = syncError.params
             tvError.text = syncError.errorMessage
+            view.setOnClickListener {
+                onItemClick(syncError)
+            }
         }
     }
 

@@ -25,7 +25,7 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
 
     fun initBeneficiary(id: Int) {
         beneficiaryLD.value ?: launch {
-            beneficiaryLD.value = beneficiariesRepository.getBeneficiaryOffline(id).also {
+            beneficiaryLD.value = beneficiariesRepository.getBeneficiaryOffline(id)?.also {
                 // initialize fields
                 if (referralTypeLD.value == null) {
                     referralTypeLD.value = it.referralType
