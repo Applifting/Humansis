@@ -65,11 +65,17 @@ class LoginViewModel @Inject constructor(
                 val user = loginManager.login(userResponse, password.toByteArray())
                 loginLD.value = user
             } catch (e: HumansisError) {
-                viewStateLD.value = LoginViewState(errorMessage = e.message)
+                viewStateLD.value = createViewStateErrorOnLogin(e.message)
             } catch (e: HttpException) {
                 val message = parseError(e, context)
-                viewStateLD.value = LoginViewState(errorMessage = message)
+                viewStateLD.value = createViewStateErrorOnLogin(message)
             }
         }
     }
+
+    private fun createViewStateErrorOnLogin(errorMessage: String?) =
+        // keep username disabled when login screen was reached after receiving 403 on sync
+        LoginViewState(errorMessage = errorMessage).let { state ->
+            loginLD.value?.let { state.copy(etUsernameIsEnabled = !it.invalidPassword) } ?: state
+        }
 }
