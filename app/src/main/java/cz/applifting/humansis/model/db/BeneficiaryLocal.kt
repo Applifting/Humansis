@@ -3,6 +3,7 @@ package cz.applifting.humansis.model.db
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import cz.applifting.humansis.extensions.equalsIgnoreEmpty
 import cz.applifting.humansis.model.ReferralType
 
 /**
@@ -34,7 +35,17 @@ data class BeneficiaryLocal(
     val edited: Boolean,
     val commodities: List<CommodityLocal>?,
     val nationalId: String?,
-    val referralType: ReferralType?,
-    val referralNote: String?,
-    val isReferralChanged: Boolean = false // special API call needed just for referral
-)
+    val originalReferralType: ReferralType?,
+    val originalReferralNote: String?,
+    val referralType: ReferralType? = null,
+    val referralNote: String? = null
+) {
+    val isReferralTypeChanged
+        get() = originalReferralType != referralType
+
+    val isReferralNoteChanged
+        get() = originalReferralNote.equalsIgnoreEmpty(originalReferralNote)
+
+    val isReferralChanged
+        get() = isReferralTypeChanged || isReferralNoteChanged
+}

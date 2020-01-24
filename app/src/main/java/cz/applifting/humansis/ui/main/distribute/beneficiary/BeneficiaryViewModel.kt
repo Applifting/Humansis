@@ -52,7 +52,8 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
                 distributed = false,
                 edited = false,
                 qrBooklets = emptyList(),
-                isReferralChanged = false // referral will remain changed locally but won't be uploaded
+                referralType = null,
+                referralNote = null
             )
 
             beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
