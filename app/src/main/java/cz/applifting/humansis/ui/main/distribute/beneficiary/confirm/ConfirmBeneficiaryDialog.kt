@@ -1,5 +1,6 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiary.confirm
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -36,6 +37,7 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
 
     private var dialogView: View? = null
 
+    @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialogView = activity!!.layoutInflater.inflate(R.layout.fragment_confirm_beneficiary, null)
         val alertDialog = AlertDialog.Builder(activity!!, theme)

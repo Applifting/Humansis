@@ -37,8 +37,8 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                     edited = false,
                     commodities = parseCommodities(it.booklets, distribution?.commodities),
                     nationalId = it.beneficiary.nationalIds?.getOrNull(0)?.idNumber,
-                    referralType = it.beneficiary.referral?.type,
-                    referralNote = it.beneficiary.referral?.note
+                    originalReferralType = it.beneficiary.referral?.type,
+                    originalReferralNote = it.beneficiary.referral?.note
                 )
             }
 
