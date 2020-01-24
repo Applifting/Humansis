@@ -113,7 +113,8 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.13'
 
     // Worker
-    implementation "androidx.work:work-runtime-ktx:2.2.0"
+    def work_version = "2.2.0"
+    implementation "androidx.work:work-runtime-ktx:$work_version"
 
     // Spinner (actually usable one)
     implementation ('com.github.ganfra:material-spinner:2.0.0') {
@@ -121,9 +122,13 @@ dependencies {
     }
 
 
+    def test_version = "1.2.0"
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation "androidx.test:runner:$test_version"
+    androidTestImplementation "androidx.test:core-ktx:$test_version"
+    androidTestImplementation "androidx.work:work-testing:$work_version"
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.1'
+    androidTestImplementation "io.mockk:mockk-android:1.9.3"
 }
 
 def readVersionName() {
