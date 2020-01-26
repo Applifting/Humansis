@@ -112,7 +112,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             if (isStopped) return@supervisorScope stopWork("After initialization")
 
-            // Upload all changes
+            // Upload distributions of beneficiaries
             allBeneficiaries
                 .forEach {
                     if (it.wasDistributed) {
@@ -124,12 +124,15 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                             logUploadError(e, it, UploadAction.DISTRIBUTION)
                         }
                     }
-                    if (it.isReferralChanged) {
-                        try {
-                            beneficieriesRepository.updateBeneficiaryReferralOnline(it)
-                        } catch (e: HttpException) {
-                            logUploadError(e, it, UploadAction.REFERRAL_UPDATE)
-                        }
+                    if (isStopped) return@supervisorScope stopWork("Uploading ${it.beneficiaryId}")
+                }
+            // Upload changes of referral
+            beneficieriesRepository.getAllReferralChangesOffline()
+                .forEach {
+                    try {
+                        beneficieriesRepository.updateBeneficiaryReferralOnline(it)
+                    } catch (e: HttpException) {
+                        logUploadError(e, it, UploadAction.REFERRAL_UPDATE)
                     }
                     if (isStopped) return@supervisorScope stopWork("Uploading ${it.beneficiaryId}")
                 }
@@ -217,6 +220,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         }.toTypedArray()
     }
 
+    // TODO optimize
     private suspend fun getAllBeneficiaries(): List<BeneficiaryLocal> {
         return projectsRepository
             .getProjectsOfflineSuspend()

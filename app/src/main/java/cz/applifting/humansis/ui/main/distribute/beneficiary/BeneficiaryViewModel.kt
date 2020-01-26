@@ -22,6 +22,8 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
     val scannedIdLD = MutableLiveData<String>()
 
     var previousEditState: Boolean? = null
+    var isAssignedInOtherDistribution: Boolean = false
+    private set
 
     private val BOOKLET_REGEX = "^\\d{1,6}-\\d{1,6}-\\d{1,6}$".toRegex()
 
@@ -29,6 +31,7 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
         launch {
             beneficieriesRepository.getBeneficiaryOfflineFlow(id)
                 .collect {
+                    isAssignedInOtherDistribution = beneficieriesRepository.isAssignedInOtherDistribution(it)
                     beneficiaryLD.value = it
                 }
         }
@@ -52,8 +55,8 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
                 distributed = false,
                 edited = false,
                 qrBooklets = emptyList(),
-                referralType = null,
-                referralNote = null
+                referralType = beneficiary.originalReferralType,
+                referralNote = beneficiary.originalReferralNote
             )
 
             beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
