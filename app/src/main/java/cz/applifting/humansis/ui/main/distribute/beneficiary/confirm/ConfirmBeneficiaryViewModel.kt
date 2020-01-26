@@ -26,19 +26,15 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
         beneficiaryLD.value ?: launch {
             beneficiaryLD.value = beneficiariesRepository.getBeneficiaryOffline(id)?.also {
                 // initialize fields
-                if (referralTypeLD.value == null) {
-                    referralTypeLD.value = if (it.isReferralTypeChanged) it.referralType else it.originalReferralType
-                }
-                if (referralNoteLD.value == null) {
-                    referralNoteLD.value = if (it.isReferralNoteChanged) it.referralNote else it.originalReferralNote
-                }
+                referralTypeLD.value = it.referralType
+                referralNoteLD.value = it.referralNote
             }
         }
     }
 
-    fun tryConfirmDistribution(): Boolean {
+    fun tryConfirm(): Boolean {
         if (validateFields()) {
-            confirmDistribution()
+            confirm()
             return true
         }
         return false
@@ -52,7 +48,7 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
             errorLD.postValue(R.string.referral_validation_error_xor)
             return false
         }
-        if (beneficiaryLD.value?.referralType != null && referralType == null) {
+        if (beneficiaryLD.value?.originalReferralType != null && referralType == null) {
             // BE limitation
             errorLD.postValue(R.string.referral_validation_error_unset)
             return false
@@ -60,13 +56,20 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
         return true
     }
 
-    private fun confirmDistribution() {
+    /**
+     * True if this dialog is about confirming assignment of distribution.
+     * Else false - the assignment is being reverted.
+     */
+    private val BeneficiaryLocal.isAssigning: Boolean
+    get() = !distributed
+
+    private fun confirm() {
         launch {
             val beneficiary = beneficiaryLD.value!!
 
             val updatedBeneficiary = beneficiary.copy(
-                distributed = true,
-                edited = true,
+                distributed = beneficiary.isAssigning,
+                edited = beneficiary.isAssigning,
                 referralType = referralTypeLD.value,
                 referralNote = referralNoteLD.value.orNullIfEmpty()
             )

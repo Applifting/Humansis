@@ -47,4 +47,10 @@ interface BeneficiaryDao {
 
     @Query("UPDATE beneficiaries SET referralType = :referralType, referralNote = :referralNote where beneficiaryId = :beneficiaryId")
     suspend fun updateReferralOfMultiple(beneficiaryId: Int, referralType: ReferralType?, referralNote: String?)
+
+    @Query("SELECT COUNT(id) from beneficiaries WHERE beneficiaryId = :beneficiaryId AND edited = 1")
+    suspend fun countDuplicateAssignedBeneficiaries(beneficiaryId: Int): Int
+
+    @Query("SELECT * from beneficiaries WHERE (referralType IS NOT originalReferralType OR referralNote IS NOT originalReferralNote) GROUP BY beneficiaryId")
+    suspend fun getAllReferralChanges(): List<BeneficiaryLocal>
 }

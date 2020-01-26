@@ -3,6 +3,7 @@ package cz.applifting.humansis.repositories
 import android.content.Context
 import cz.applifting.humansis.api.HumansisService
 import cz.applifting.humansis.db.DbProvider
+import cz.applifting.humansis.extensions.orNullIfEmpty
 import cz.applifting.humansis.model.CommodityType
 import cz.applifting.humansis.model.api.*
 import cz.applifting.humansis.model.db.BeneficiaryLocal
@@ -15,6 +16,7 @@ import javax.inject.Singleton
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
 @Singleton
+// TODO FIX THE TYPO!!!
 class BeneficieriesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
     suspend fun getBeneficieriesOnline(distributionId: Int): List<BeneficiaryLocal>? {
@@ -37,8 +39,10 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
                     edited = false,
                     commodities = parseCommodities(it.booklets, distribution?.commodities),
                     nationalId = it.beneficiary.nationalIds?.getOrNull(0)?.idNumber,
-                    originalReferralType = it.beneficiary.referral?.type,
-                    originalReferralNote = it.beneficiary.referral?.note
+                    originalReferralType = it.beneficiary.referral?.type, // TODO don't crash on unknown
+                    originalReferralNote = it.beneficiary.referral?.note.orNullIfEmpty(),
+                    referralType = it.beneficiary.referral?.type,
+                    referralNote = it.beneficiary.referral?.note.orNullIfEmpty()
                 )
             }
 
@@ -49,11 +53,13 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     }
 
     suspend fun updateBeneficiaryReferralOnline(beneficiary: BeneficiaryLocal) {
-        return service.updateBeneficiaryReferral(beneficiary.beneficiaryId, BeneficiaryForReferralUpdate(
+        service.updateBeneficiaryReferral(beneficiary.beneficiaryId, BeneficiaryForReferralUpdate(
             id = beneficiary.beneficiaryId,
             referralType = beneficiary.referralType,
             referralNote = beneficiary.referralNote
         ))
+        // prevent upload again if the sync fails
+        dbProvider.get().beneficiariesDao().updateReferralOfMultiple(beneficiary.beneficiaryId, null, null)
     }
 
     fun arePendingChanges(): Flow<List<BeneficiaryLocal>> {
@@ -85,8 +91,15 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
     }
 
     suspend fun updateReferralOfMultiple(beneficiary: BeneficiaryLocal) {
-        // update of referral will be send to BE only from the original beneficiary
         dbProvider.get().beneficiariesDao().updateReferralOfMultiple(beneficiary.beneficiaryId, beneficiary.referralType, beneficiary.referralNote)
+    }
+
+    suspend fun isAssignedInOtherDistribution(beneficiary: BeneficiaryLocal): Boolean {
+        return dbProvider.get().beneficiariesDao().countDuplicateAssignedBeneficiaries(beneficiary.beneficiaryId) > 1
+    }
+
+    suspend fun getAllReferralChangesOffline(): List<BeneficiaryLocal> {
+        return dbProvider.get().beneficiariesDao().getAllReferralChanges()
     }
 
     suspend fun countReachedBeneficiariesOffline(distributionId: Int): Int {
