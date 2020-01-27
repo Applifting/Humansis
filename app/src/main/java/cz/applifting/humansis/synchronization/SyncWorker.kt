@@ -64,9 +64,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         (appContext as App).appComponent.inject(this)
     }
 
-    private val BeneficiaryLocal.wasDistributed: Boolean
-    get() = edited && distributed
-
     override suspend fun doWork(): Result {
         return supervisorScope {
 
@@ -107,27 +104,28 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 syncErrors.add(syncError)
             }
 
-            val allBeneficiaries = getAllBeneficiaries()
-            syncStats.uploadCandidatesCount = allBeneficiaries.count { it.wasDistributed }
+            val assignedBeneficiaries = beneficieriesRepository.getAssignedBeneficieriesOfflineSuspend()
+            val referralChangedBeneficiaries = beneficieriesRepository.getAllReferralChangesOffline()
+            syncStats.uploadCandidatesCount = assignedBeneficiaries.count()
+            if (assignedBeneficiaries.isNotEmpty()) {
+                sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, true).suspendCommit()
+            }
 
             if (isStopped) return@supervisorScope stopWork("After initialization")
 
             // Upload distributions of beneficiaries
-            allBeneficiaries
+            assignedBeneficiaries
                 .forEach {
-                    if (it.wasDistributed) {
-                        sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, true).suspendCommit()
-                        try {
-                            beneficieriesRepository.distribute(it)
-                            syncStats.countUploadSuccess()
-                        } catch (e: HttpException) {
-                            logUploadError(e, it, UploadAction.DISTRIBUTION)
-                        }
+                    try {
+                        beneficieriesRepository.distribute(it)
+                        syncStats.countUploadSuccess()
+                    } catch (e: HttpException) {
+                        logUploadError(e, it, UploadAction.DISTRIBUTION)
                     }
                     if (isStopped) return@supervisorScope stopWork("Uploading ${it.beneficiaryId}")
                 }
             // Upload changes of referral
-            beneficieriesRepository.getAllReferralChangesOffline()
+            referralChangedBeneficiaries
                 .forEach {
                     try {
                         beneficieriesRepository.updateBeneficiaryReferralOnline(it)
@@ -218,14 +216,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         return errors.map {
             it.errorMessage
         }.toTypedArray()
-    }
-
-    // TODO optimize
-    private suspend fun getAllBeneficiaries(): List<BeneficiaryLocal> {
-        return projectsRepository
-            .getProjectsOfflineSuspend()
-            .flatMap { distributionsRepository.getDistributionsOfflineSuspend(it.id) }
-            .flatMap { beneficieriesRepository.getBeneficieriesOfflineSuspend(it.id) }
     }
 
     private fun getErrorMessageByCode(code: Int): String {
