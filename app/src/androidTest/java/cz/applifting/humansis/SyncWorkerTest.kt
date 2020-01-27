@@ -16,6 +16,7 @@ import cz.applifting.humansis.repositories.BeneficieriesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
+import cz.applifting.humansis.synchronization.SP_SYNC_UPLOAD_INCOMPLETE
 import cz.applifting.humansis.synchronization.SyncWorker
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
@@ -48,8 +49,9 @@ class SyncWorkerTest {
     @MockK
     private lateinit var errorsRepository: ErrorsRepository
     private val errors: MutableList<SyncError> = mutableListOf()
-    @RelaxedMockK // TODO test setting values
+    @RelaxedMockK
     private lateinit var sharedPreferences: SharedPreferences
+    private var uploadIncomplete: Boolean = false
     @MockK
     private lateinit var loginManager: LoginManager
 
@@ -69,7 +71,12 @@ class SyncWorkerTest {
                 coEvery { clearAll() } answers { errors.clear() }
                 coEvery { insertAll(any()) } answers { errors.addAll(firstArg()) }
             }
-            it.sp = sharedPreferences
+            it.sp = sharedPreferences.apply {
+                coEvery { edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, any()) } answers {
+                    uploadIncomplete = secondArg()
+                    self as SharedPreferences.Editor
+                }
+            }
             it.loginManager = loginManager.apply {
                 coEvery { tryInitDB() } returns true
             }
@@ -89,6 +96,9 @@ class SyncWorkerTest {
         val result = runBlocking { worker.doWork() }
 
         assertSuccess(result)
+        projectsRepository.apply {
+            coVerify(exactly = 1) { getProjectsOnline() }
+        }
     }
 
     @Test
@@ -142,6 +152,8 @@ class SyncWorkerTest {
             coVerify(exactly = 1) { getProjectsOnline() }
         }
         beneficiariesRepository.apply {
+            coVerify(exactly = 1) { getAssignedBeneficieriesOfflineSuspend() }
+            coVerify(exactly = 1) { getAllReferralChangesOffline() }
             coVerify(exactly = assignedBeneficiaryCount) { distribute(any()) }
             coVerify(exactly = changedReferralCount) { updateBeneficiaryReferralOnline(any()) }
         }
@@ -164,17 +176,16 @@ class SyncWorkerTest {
         projectsRepository.apply {
             coVerify(exactly = 0) { getProjectsOnline() }
         }
+        Assert.assertTrue(uploadIncomplete)
     }
 
-    @Test
-    fun reuploadAfterFail() {
-
-    }
+    // TODO check handle errors (5x)
 
     private fun assertSuccess(result: ListenableWorker.Result) {
         println(errors)
         Assert.assertThat(result, instanceOf(ListenableWorker.Result.Success::class.java))
         coVerify(exactly = 0) { errorsRepository.insertAll(any()) }
+        Assert.assertFalse(uploadIncomplete)
     }
 
     private fun assertFailure(result: ListenableWorker.Result) {
