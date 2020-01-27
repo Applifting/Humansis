@@ -23,11 +23,15 @@ import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.runBlocking
+import okhttp3.ResponseBody
 import org.hamcrest.CoreMatchers.instanceOf
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import retrofit2.HttpException
+import retrofit2.Response
+import java.net.HttpURLConnection
 
 
 @RunWith(AndroidJUnit4::class)
@@ -54,8 +58,12 @@ class SyncWorkerTest {
         MockKAnnotations.init(this)
         context = ApplicationProvider.getApplicationContext()
         worker = TestWorkerBuilder.from(context, SyncWorker::class.java).build().also {
-            it.projectsRepository = projectsRepository
-            it.distributionsRepository = distributionsRepository
+            it.projectsRepository = projectsRepository.apply {
+                coEvery { getNameByDistributionId(any()) } returns ""
+            }
+            it.distributionsRepository = distributionsRepository.apply {
+                coEvery { getNameById(any()) } returns ""
+            }
             it.beneficieriesRepository = beneficiariesRepository
             it.errorsRepository = errorsRepository.apply {
                 coEvery { clearAll() } answers { errors.clear() }
@@ -77,7 +85,9 @@ class SyncWorkerTest {
             coEvery { getAssignedBeneficieriesOfflineSuspend() } returns emptyList()
             coEvery { getAllReferralChangesOffline() } returns emptyList()
         }
+
         val result = runBlocking { worker.doWork() }
+
         assertSuccess(result)
     }
 
@@ -96,7 +106,9 @@ class SyncWorkerTest {
             coEvery { getAllReferralChangesOffline() } returns emptyList()
             coEvery { getBeneficieriesOnline(any()) } returns List(5) { anyBeneficiary() }
         }
+
         val result = runBlocking { worker.doWork() }
+
         assertSuccess(result)
         projectsRepository.apply {
             coVerify(exactly = 1) { getProjectsOnline() }
@@ -109,10 +121,66 @@ class SyncWorkerTest {
         }
     }
 
+    @Test
+    fun upload() {
+        projectsRepository.apply {
+            coEvery { getProjectsOnline() } returns emptyList()
+        }
+        val assignedBeneficiaryCount = 2
+        val changedReferralCount = 3
+        beneficiariesRepository.apply {
+            coEvery { getAssignedBeneficieriesOfflineSuspend() } returns List(assignedBeneficiaryCount) { anyBeneficiary() }
+            coEvery { getAllReferralChangesOffline() } returns List(changedReferralCount) { anyBeneficiary() }
+            coEvery { distribute(any()) } returns Unit
+            coEvery { updateBeneficiaryReferralOnline(any()) } returns Unit
+        }
+
+        val result = runBlocking { worker.doWork() }
+
+        assertSuccess(result)
+        projectsRepository.apply {
+            coVerify(exactly = 1) { getProjectsOnline() }
+        }
+        beneficiariesRepository.apply {
+            coVerify(exactly = assignedBeneficiaryCount) { distribute(any()) }
+            coVerify(exactly = changedReferralCount) { updateBeneficiaryReferralOnline(any()) }
+        }
+    }
+
+    @Test
+    fun noDownloadAfterFailedUpload() {
+        projectsRepository.apply {
+            coEvery { getProjectsOnline() } returns emptyList()
+        }
+        beneficiariesRepository.apply {
+            coEvery { getAssignedBeneficieriesOfflineSuspend() } returns listOf(anyBeneficiary())
+            coEvery { getAllReferralChangesOffline() } returns emptyList()
+            coEvery { distribute(any()) } throws anyHttpException()
+        }
+
+        val result = runBlocking { worker.doWork() }
+
+        assertFailure(result)
+        projectsRepository.apply {
+            coVerify(exactly = 0) { getProjectsOnline() }
+        }
+    }
+
+    @Test
+    fun reuploadAfterFail() {
+
+    }
+
     private fun assertSuccess(result: ListenableWorker.Result) {
         println(errors)
         Assert.assertThat(result, instanceOf(ListenableWorker.Result.Success::class.java))
         coVerify(exactly = 0) { errorsRepository.insertAll(any()) }
+    }
+
+    private fun assertFailure(result: ListenableWorker.Result) {
+        Assert.assertThat(result, instanceOf(ListenableWorker.Result.Failure::class.java))
+        coVerify(atLeast = 1) { errorsRepository.insertAll(any()) }
+        Assert.assertTrue(errors.isNotEmpty())
     }
 
     private fun anyProject() = ProjectLocal(
@@ -150,4 +218,8 @@ class SyncWorkerTest {
         referralType = null,
         referralNote = null
     )
+
+    private fun anyHttpException() =
+        HttpException(Response.error<Any>(HttpURLConnection.HTTP_INTERNAL_ERROR, ResponseBody.create(null, "")))
+
 }
