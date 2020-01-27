@@ -24,6 +24,7 @@ import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
+import cz.applifting.humansis.ui.components.TitledTextView
 import cz.applifting.humansis.ui.main.SharedViewModel
 import kotlinx.android.synthetic.main.fragment_beneficiary.*
 import kotlinx.android.synthetic.main.fragment_beneficiary.view.*
@@ -67,6 +68,11 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
+    private fun TitledTextView.setOptionalValue(value: String?) {
+        visible(!value.isNullOrEmpty())
+        setValue(value)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -96,6 +102,8 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
                 tv_project.setValue(args.projectName)
                 tv_screen_title.text = getString(if (it.distributed) R.string.detail else R.string.assign)
                 tv_screen_subtitle.text = getString(R.string.beneficiary_name, it.givenName, it.familyName)
+                tv_referral_type.setOptionalValue(it.referralType?.textId?.let { getString(it) })
+                tv_referral_note.setOptionalValue(it.referralNote)
 
                 if (it.distributed) {
                     if (it.edited) {
