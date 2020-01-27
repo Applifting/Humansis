@@ -107,7 +107,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             val assignedBeneficiaries = beneficieriesRepository.getAssignedBeneficieriesOfflineSuspend()
             val referralChangedBeneficiaries = beneficieriesRepository.getAllReferralChangesOffline()
             syncStats.uploadCandidatesCount = assignedBeneficiaries.count()
-            if (assignedBeneficiaries.isNotEmpty()) {
+            if (assignedBeneficiaries.isNotEmpty() || referralChangedBeneficiaries.isNotEmpty()) {
                 sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, true).suspendCommit()
             }
 
