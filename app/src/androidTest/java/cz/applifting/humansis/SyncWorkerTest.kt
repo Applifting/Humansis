@@ -66,7 +66,11 @@ class SyncWorkerTest {
             it.distributionsRepository = distributionsRepository.apply {
                 coEvery { getNameById(any()) } returns ""
             }
-            it.beneficieriesRepository = beneficiariesRepository
+            it.beneficieriesRepository = beneficiariesRepository.apply {
+                // no upload by default
+                coEvery { getAssignedBeneficieriesOfflineSuspend() } returns emptyList()
+                coEvery { getAllReferralChangesOffline() } returns emptyList()
+            }
             it.errorsRepository = errorsRepository.apply {
                 coEvery { clearAll() } answers { errors.clear() }
                 coEvery { insertAll(any()) } answers { errors.addAll(firstArg()) }
@@ -85,57 +89,33 @@ class SyncWorkerTest {
 
     @Test
     fun allEmpty() {
-        projectsRepository.apply {
-            coEvery { getProjectsOnline() } returns emptyList()
-        }
-        beneficiariesRepository.apply {
-            coEvery { getAssignedBeneficieriesOfflineSuspend() } returns emptyList()
-            coEvery { getAllReferralChangesOffline() } returns emptyList()
-        }
+        coEvery { projectsRepository.getProjectsOnline() } returns emptyList()
 
         val result = runBlocking { worker.doWork() }
 
         assertSuccess(result)
-        projectsRepository.apply {
-            coVerify(exactly = 1) { getProjectsOnline() }
-        }
+        coVerify(exactly = 1) { projectsRepository.getProjectsOnline() }
     }
 
     @Test
     fun download() {
         val projectsCount = 2
-        projectsRepository.apply {
-            coEvery { getProjectsOnline() } returns List(projectsCount) { anyProject() }
-        }
+        coEvery { projectsRepository.getProjectsOnline() } returns List(projectsCount) { anyProject() }
         val distributionCount = 3
-        distributionsRepository.apply {
-            coEvery { getDistributionsOnline(any()) } returns List(distributionCount) { anyDistribution() }
-        }
-        beneficiariesRepository.apply {
-            coEvery { getAssignedBeneficieriesOfflineSuspend() } returns emptyList()
-            coEvery { getAllReferralChangesOffline() } returns emptyList()
-            coEvery { getBeneficieriesOnline(any()) } returns List(5) { anyBeneficiary() }
-        }
+        coEvery { distributionsRepository.getDistributionsOnline(any()) } returns List(distributionCount) { anyDistribution() }
+        coEvery { beneficiariesRepository.getBeneficieriesOnline(any()) } returns List(5) { anyBeneficiary() }
 
         val result = runBlocking { worker.doWork() }
 
         assertSuccess(result)
-        projectsRepository.apply {
-            coVerify(exactly = 1) { getProjectsOnline() }
-        }
-        distributionsRepository.apply {
-            coVerify(exactly = projectsCount) { getDistributionsOnline(any()) }
-        }
-        beneficiariesRepository.apply {
-            coVerify(exactly = projectsCount * distributionCount) { getBeneficieriesOnline(any()) }
-        }
+        coVerify(exactly = 1) { projectsRepository.getProjectsOnline() }
+        coVerify(exactly = projectsCount) { distributionsRepository.getDistributionsOnline(any()) }
+        coVerify(exactly = projectsCount * distributionCount) { beneficiariesRepository.getBeneficieriesOnline(any()) }
     }
 
     @Test
     fun upload() {
-        projectsRepository.apply {
-            coEvery { getProjectsOnline() } returns emptyList()
-        }
+        coEvery { projectsRepository.getProjectsOnline() } returns emptyList()
         val assignedBeneficiaryCount = 2
         val changedReferralCount = 3
         beneficiariesRepository.apply {
@@ -148,9 +128,7 @@ class SyncWorkerTest {
         val result = runBlocking { worker.doWork() }
 
         assertSuccess(result)
-        projectsRepository.apply {
-            coVerify(exactly = 1) { getProjectsOnline() }
-        }
+        coVerify(exactly = 1) { projectsRepository.getProjectsOnline() }
         beneficiariesRepository.apply {
             coVerify(exactly = 1) { getAssignedBeneficieriesOfflineSuspend() }
             coVerify(exactly = 1) { getAllReferralChangesOffline() }
@@ -160,26 +138,66 @@ class SyncWorkerTest {
     }
 
     @Test
-    fun noDownloadAfterFailedUpload() {
-        projectsRepository.apply {
-            coEvery { getProjectsOnline() } returns emptyList()
-        }
+    fun errorOnDistribute() {
         beneficiariesRepository.apply {
             coEvery { getAssignedBeneficieriesOfflineSuspend() } returns listOf(anyBeneficiary())
-            coEvery { getAllReferralChangesOffline() } returns emptyList()
             coEvery { distribute(any()) } throws anyHttpException()
         }
 
         val result = runBlocking { worker.doWork() }
 
         assertFailure(result)
-        projectsRepository.apply {
-            coVerify(exactly = 0) { getProjectsOnline() }
-        }
         Assert.assertTrue(uploadIncomplete)
     }
 
-    // TODO check handle errors (5x)
+    @Test
+    fun errorOnReferralUpdate() {
+        beneficiariesRepository.apply {
+            coEvery { getAllReferralChangesOffline() } returns listOf(anyBeneficiary())
+            coEvery { updateBeneficiaryReferralOnline(any()) } throws anyHttpException()
+        }
+
+        val result = runBlocking { worker.doWork() }
+
+        assertFailure(result)
+        Assert.assertTrue(uploadIncomplete)
+    }
+
+    @Test
+    fun errorOnProjects() {
+        coEvery { projectsRepository.getProjectsOnline() } throws anyHttpException()
+
+        val result = runBlocking { worker.doWork() }
+
+        assertFailure(result)
+        coVerify(exactly = 1) { projectsRepository.getProjectsOnline() }
+    }
+
+    @Test
+    fun errorOnDistributions() {
+        coEvery { projectsRepository.getProjectsOnline() } returns listOf(anyProject())
+        coEvery { distributionsRepository.getDistributionsOnline(any()) } throws anyHttpException()
+
+        val result = runBlocking { worker.doWork() }
+
+        assertFailure(result)
+        coVerify(exactly = 1) { projectsRepository.getProjectsOnline() }
+        coVerify(exactly = 1) { distributionsRepository.getDistributionsOnline(any()) }
+    }
+
+    @Test
+    fun errorOnBeneficiaries() {
+        coEvery { projectsRepository.getProjectsOnline() } returns listOf(anyProject())
+        coEvery { distributionsRepository.getDistributionsOnline(any()) } returns listOf(anyDistribution())
+        coEvery { beneficiariesRepository.getBeneficieriesOnline(any()) } throws anyHttpException()
+
+        val result = runBlocking { worker.doWork() }
+
+        assertFailure(result)
+        coVerify(exactly = 1) { projectsRepository.getProjectsOnline() }
+        coVerify(exactly = 1) { distributionsRepository.getDistributionsOnline(any()) }
+        coVerify(exactly = 1) { beneficiariesRepository.getBeneficieriesOnline(any()) }
+    }
 
     private fun assertSuccess(result: ListenableWorker.Result) {
         println(errors)
