@@ -70,6 +70,14 @@ android {
     }
 }
 
+configurations {
+    all {
+        // exclude old hamcrests (from junit4 etc.) so we can use the newer one without conflicts
+        exclude group: "org.hamcrest", module: "hamcrest-core"
+        exclude group: "org.hamcrest", module: "hamcrest-library"
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -124,6 +132,7 @@ dependencies {
 
     def test_version = "1.2.0"
     testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'org.hamcrest:hamcrest:2.2'
     androidTestImplementation "androidx.test:runner:$test_version"
     androidTestImplementation "androidx.test:core-ktx:$test_version"
     androidTestImplementation "androidx.work:work-testing:$work_version"

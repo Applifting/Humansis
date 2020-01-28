@@ -72,7 +72,7 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
     }
 
     suspend fun logout() {
-        // TODO clear all other data
+        // TODO clear all other data (both sp)
         db.apply {
             clearAllTables()
         }
