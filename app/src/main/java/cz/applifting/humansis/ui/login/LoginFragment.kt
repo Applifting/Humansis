@@ -1,5 +1,6 @@
 package cz.applifting.humansis.ui.login
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -76,9 +77,11 @@ class LoginFragment : Fragment(), CoroutineScope {
         })
 
 
-        if (BuildConfig.FLAVOR.equals("demo")) {
-            et_username.setText("demo@humansis.org")
-            et_password.setText("Tester123")
+        @Suppress("ConstantConditionIf")
+        @SuppressLint("SetTextI18n")
+        if (BuildConfig.FLAVOR == "demo") {
+            et_username.setText("TestProjectOfficer01@test.com")
+            et_password.setText("Reset123")
         }
     }
 
