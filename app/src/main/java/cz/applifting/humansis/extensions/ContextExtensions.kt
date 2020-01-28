@@ -26,7 +26,6 @@ fun Fragment.tryNavController(): NavController? =
         findNavController()
     } catch (e: IllegalStateException) {
         // when fragment got close etc.
-        // TODO maybe check isResumed is enough?
         e.printStackTrace()
         null
     }

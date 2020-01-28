@@ -2,7 +2,7 @@ package cz.applifting.humansis.ui.main.distribute.beneficiary
 
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import cz.applifting.humansis.repositories.BeneficieriesRepository
+import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.ui.BaseViewModel
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.ALREADY_ASSIGNED
 import cz.applifting.humansis.ui.main.distribute.beneficiary.BeneficiaryDialog.Companion.INVALID_CODE
@@ -15,7 +15,7 @@ import javax.inject.Inject
  * @since 9. 9. 2019
  */
 
-class BeneficiaryViewModel @Inject constructor(private val beneficieriesRepository: BeneficieriesRepository) :
+class BeneficiaryViewModel @Inject constructor(private val beneficiariesRepository: BeneficiariesRepository) :
     BaseViewModel() {
 
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
@@ -29,9 +29,9 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
 
     fun initBeneficiary(id: Int) {
         launch {
-            beneficieriesRepository.getBeneficiaryOfflineFlow(id)
+            beneficiariesRepository.getBeneficiaryOfflineFlow(id)
                 .collect {
-                    isAssignedInOtherDistribution = beneficieriesRepository.isAssignedInOtherDistribution(it)
+                    isAssignedInOtherDistribution = beneficiariesRepository.isAssignedInOtherDistribution(it)
                     beneficiaryLD.value = it
                 }
         }
@@ -43,7 +43,7 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
                 qrBooklets = listOfNotNull(code)
             )
 
-            beneficieriesRepository.updateBeneficiaryOffline(beneficiary)
+            beneficiariesRepository.updateBeneficiaryOffline(beneficiary)
             beneficiaryLD.value = beneficiary
         }
     }
@@ -59,14 +59,14 @@ class BeneficiaryViewModel @Inject constructor(private val beneficieriesReposito
                 referralNote = beneficiary.originalReferralNote
             )
 
-            beneficieriesRepository.updateBeneficiaryOffline(updatedBeneficiary)
+            beneficiariesRepository.updateBeneficiaryOffline(updatedBeneficiary)
             beneficiaryLD.value = updatedBeneficiary
         }
     }
 
     internal fun checkScannedId(scannedId: String) {
         launch {
-            val assigned = beneficieriesRepository.checkBoookletAssignedLocally(scannedId)
+            val assigned = beneficiariesRepository.checkBoookletAssignedLocally(scannedId)
 
             val bookletId = when {
                 assigned -> ALREADY_ASSIGNED

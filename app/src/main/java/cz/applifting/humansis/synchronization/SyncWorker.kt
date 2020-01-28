@@ -15,7 +15,7 @@ import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
-import cz.applifting.humansis.repositories.BeneficieriesRepository
+import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
@@ -45,7 +45,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     @Inject
     lateinit var distributionsRepository: DistributionsRepository
     @Inject
-    lateinit var beneficieriesRepository: BeneficieriesRepository
+    lateinit var beneficiariesRepository: BeneficiariesRepository
     @Inject
     lateinit var sp: SharedPreferences
     @Inject
@@ -103,8 +103,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 syncErrors.add(syncError)
             }
 
-            val assignedBeneficiaries = beneficieriesRepository.getAssignedBeneficieriesOfflineSuspend()
-            val referralChangedBeneficiaries = beneficieriesRepository.getAllReferralChangesOffline()
+            val assignedBeneficiaries = beneficiariesRepository.getAssignedBeneficiariesOfflineSuspend()
+            val referralChangedBeneficiaries = beneficiariesRepository.getAllReferralChangesOffline()
             syncStats.uploadCandidatesCount = assignedBeneficiaries.count()
             if (assignedBeneficiaries.isNotEmpty() || referralChangedBeneficiaries.isNotEmpty()) {
                 sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, true).suspendCommit()
@@ -116,7 +116,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             assignedBeneficiaries
                 .forEach {
                     try {
-                        beneficieriesRepository.distribute(it)
+                        beneficiariesRepository.distribute(it)
                         syncStats.countUploadSuccess()
                     } catch (e: HttpException) {
                         logUploadError(e, it, UploadAction.DISTRIBUTION)
@@ -127,7 +127,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
             referralChangedBeneficiaries
                 .forEach {
                     try {
-                        beneficieriesRepository.updateBeneficiaryReferralOnline(it)
+                        beneficiariesRepository.updateBeneficiaryReferralOnline(it)
                     } catch (e: HttpException) {
                         logUploadError(e, it, UploadAction.REFERRAL_UPDATE)
                     }
@@ -161,7 +161,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
                 try {
                     distributions.map {
-                        async { beneficieriesRepository.getBeneficieriesOnline(it.id) }
+                        async { beneficiariesRepository.getBeneficiariesOnline(it.id) }
                     }.map {
                         it.await()
                     }

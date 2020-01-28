@@ -60,7 +60,7 @@ class DistributionsAdapter(
     inner class DistributionViewHolder(val layout: CardView) : RecyclerView.ViewHolder(layout) {
         val tvName = layout.tv_location
         val tvDate = layout.tv_date
-        val tvBeneficieriesCnt = layout.tv_beneficieries_cnt
+        val tvBeneficiariesCnt = layout.tv_beneficiaries_cnt
         val ivTarget = layout.iv_target
         val ivStatus = layout.iv_status
         val llComoditiesHolder = layout.tl_commodities_holder
@@ -72,7 +72,7 @@ class DistributionsAdapter(
             // Set text fields
             tvName.text = name
             tvDate.text = context.getString(R.string.date_of_distribution, dateOfDistribution)
-            tvBeneficieriesCnt.text = context.getString(R.string.beneficiaries, numberOfBeneficiaries)
+            tvBeneficiariesCnt.text = context.getString(R.string.beneficiaries, numberOfBeneficiaries)
             llComoditiesHolder.removeAllViews()
 
             commodities.forEach {

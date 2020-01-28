@@ -73,7 +73,7 @@ class BeneficiariesFragment : BaseFragment() {
         viewModel.listStateLD.observe(viewLifecycleOwner, Observer(lc_beneficiaries::setState))
 
         viewModel.currentSort.observe(viewLifecycleOwner, Observer<BeneficiariesViewModel.Sort> {
-            viewModel.setSortedBeneficieries(viewModel.searchResultsLD.value)
+            viewModel.setSortedBeneficiaries(viewModel.searchResultsLD.value)
             cmp_search_beneficiary.changeSortIcon(it)
         })
 

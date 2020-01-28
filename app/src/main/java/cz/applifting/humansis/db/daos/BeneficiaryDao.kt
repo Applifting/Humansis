@@ -13,10 +13,10 @@ interface BeneficiaryDao {
     fun arePendingChanges(): Flow<List<BeneficiaryLocal>>
 
     @Query("SELECT * FROM beneficiaries")
-    fun getAllBeneficieries(): Flow<List<BeneficiaryLocal>>
+    fun getAllBeneficiaries(): Flow<List<BeneficiaryLocal>>
 
     @Query("SELECT * FROM beneficiaries WHERE distributed = 1 AND edited = 1")
-    suspend fun getAssignedBeneficieriesSuspend(): List<BeneficiaryLocal>
+    suspend fun getAssignedBeneficiariesSuspend(): List<BeneficiaryLocal>
 
     @Query("SELECT * FROM beneficiaries where distributionId = :distributionId")
     fun getByDistribution(distributionId: Int): Flow<List<BeneficiaryLocal>>

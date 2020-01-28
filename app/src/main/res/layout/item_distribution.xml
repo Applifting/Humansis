@@ -50,7 +50,7 @@
                 tools:text="Date: lsadjfadsf" />
 
         <TextView
-                android:id="@+id/tv_beneficieries_cnt"
+                android:id="@+id/tv_beneficiaries_cnt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -58,7 +58,7 @@
                 android:textSize="12sp"
                 app:layout_constraintStart_toEndOf="@id/iv_status"
                 app:layout_constraintTop_toBottomOf="@+id/tv_date"
-                tools:text="Beneficieries: 100" />
+                tools:text="Beneficiaries: 100" />
 
         <TextView
                 android:id="@+id/tv_commodities"
@@ -69,7 +69,7 @@
                 android:text="@string/commodities"
                 android:textSize="12sp"
                 app:layout_constraintStart_toEndOf="@id/iv_status"
-                app:layout_constraintTop_toBottomOf="@+id/tv_beneficieries_cnt" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_beneficiaries_cnt" />
 
             <LinearLayout
                     android:id="@+id/tl_commodities_holder"

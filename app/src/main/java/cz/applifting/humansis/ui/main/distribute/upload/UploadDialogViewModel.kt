@@ -2,11 +2,11 @@ package cz.applifting.humansis.ui.main.distribute.upload
 
 import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
+import cz.applifting.humansis.misc.stringLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.model.db.SyncError
-import cz.applifting.humansis.misc.stringLiveData
-import cz.applifting.humansis.repositories.BeneficieriesRepository
+import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ErrorsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
@@ -28,7 +28,7 @@ class UploadDialogViewModel @Inject constructor(
     private val errorsRepository: ErrorsRepository,
     private val projectsRepository: ProjectsRepository,
     private val distributionsRepository: DistributionsRepository,
-    private val beneficieriesRepository: BeneficieriesRepository,
+    private val beneficiariesRepository: BeneficiariesRepository,
     sp: SharedPreferences
 ) : BaseViewModel() {
 
@@ -51,7 +51,7 @@ class UploadDialogViewModel @Inject constructor(
     }
 
     suspend fun getRelatedEntities(id: Int): Triple<String?, DistributionLocal?, BeneficiaryLocal?> {
-        val beneficiary = beneficieriesRepository.getBeneficiaryOffline(id)
+        val beneficiary = beneficiariesRepository.getBeneficiaryOffline(id)
         return Triple(
             beneficiary?.let { projectsRepository.getNameByDistributionId(it.distributionId) },
             beneficiary?.let { distributionsRepository.getById(it.distributionId) },

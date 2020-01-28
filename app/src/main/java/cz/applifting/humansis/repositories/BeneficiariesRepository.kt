@@ -16,10 +16,9 @@ import javax.inject.Singleton
  * Created by Petr Kubes <petr.kubes@applifting.cz> on 09, September, 2019
  */
 @Singleton
-// TODO FIX THE TYPO!!!
-class BeneficieriesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
+class BeneficiariesRepository @Inject constructor(val service: HumansisService, val dbProvider: DbProvider, val context: Context) {
 
-    suspend fun getBeneficieriesOnline(distributionId: Int): List<BeneficiaryLocal>? {
+    suspend fun getBeneficiariesOnline(distributionId: Int): List<BeneficiaryLocal>? {
 
         val distribution = dbProvider.get().distributionsDao().getById(distributionId)
 
@@ -66,20 +65,20 @@ class BeneficieriesRepository @Inject constructor(val service: HumansisService, 
         return dbProvider.get().beneficiariesDao().arePendingChanges()
     }
 
-    fun getAllBeneficieriesOffline(): Flow<List<BeneficiaryLocal>> {
-        return dbProvider.get().beneficiariesDao().getAllBeneficieries()
+    fun getAllBeneficiariesOffline(): Flow<List<BeneficiaryLocal>> {
+        return dbProvider.get().beneficiariesDao().getAllBeneficiaries()
     }
 
-    fun getBeneficieriesOffline(distributionId: Int): Flow<List<BeneficiaryLocal>> {
+    fun getBeneficiariesOffline(distributionId: Int): Flow<List<BeneficiaryLocal>> {
         return dbProvider.get().beneficiariesDao().getByDistribution(distributionId)
     }
 
-    suspend fun getBeneficieriesOfflineSuspend(distributionId: Int): List<BeneficiaryLocal> {
+    suspend fun getBeneficiariesOfflineSuspend(distributionId: Int): List<BeneficiaryLocal> {
         return dbProvider.get().beneficiariesDao().getByDistributionSuspend(distributionId)
     }
 
-    suspend fun getAssignedBeneficieriesOfflineSuspend(): List<BeneficiaryLocal> {
-        return dbProvider.get().beneficiariesDao().getAssignedBeneficieriesSuspend()
+    suspend fun getAssignedBeneficiariesOfflineSuspend(): List<BeneficiaryLocal> {
+        return dbProvider.get().beneficiariesDao().getAssignedBeneficiariesSuspend()
     }
 
     suspend fun getBeneficiaryOffline(beneficiaryId: Int): BeneficiaryLocal? {

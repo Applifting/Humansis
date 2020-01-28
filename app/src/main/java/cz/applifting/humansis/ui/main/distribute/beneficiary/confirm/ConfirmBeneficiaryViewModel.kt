@@ -5,12 +5,12 @@ import cz.applifting.humansis.R
 import cz.applifting.humansis.extensions.orNullIfEmpty
 import cz.applifting.humansis.model.ReferralType
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import cz.applifting.humansis.repositories.BeneficieriesRepository
+import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.ui.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesRepository: BeneficieriesRepository) :
+class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesRepository: BeneficiariesRepository) :
     BaseViewModel() {
 
     private val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()

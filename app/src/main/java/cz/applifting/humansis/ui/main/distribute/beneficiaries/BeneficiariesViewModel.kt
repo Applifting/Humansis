@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.db.BeneficiaryLocal
-import cz.applifting.humansis.repositories.BeneficieriesRepository
+import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.ui.components.listComponent.ListComponentState
 import cz.applifting.humansis.ui.main.BaseListViewModel
 import kotlinx.coroutines.flow.collect
@@ -17,7 +17,7 @@ import javax.inject.Inject
  * @since 5. 9. 2019
  */
 class BeneficiariesViewModel @Inject constructor(
-    private val beneficieriesRepository: BeneficieriesRepository,
+    private val beneficiariesRepository: BeneficiariesRepository,
     context: Context
 ) : BaseListViewModel(context) {
 
@@ -37,7 +37,7 @@ class BeneficiariesViewModel @Inject constructor(
     init {
         currentSort.value = Sort.DEFAULT
         searchResultsLD.addSource(beneficiariesLD) { list ->
-            setSortedBeneficieries(list)
+            setSortedBeneficiaries(list)
         }
     }
 
@@ -45,8 +45,8 @@ class BeneficiariesViewModel @Inject constructor(
         launch {
             showRetrieving(true)
 
-            beneficieriesRepository
-                .getBeneficieriesOffline(distributionId)
+            beneficiariesRepository
+                .getBeneficiariesOffline(distributionId)
                 .collect { newBeneficiaries ->
                     beneficiariesLD.value = newBeneficiaries
                     statsLD.value = Pair(newBeneficiaries.count { it.distributed }, newBeneficiaries.size)
@@ -74,7 +74,7 @@ class BeneficiariesViewModel @Inject constructor(
             return@let
         }
 
-        setSortedBeneficieries(it.filter { beneficiary ->
+        setSortedBeneficiaries(it.filter { beneficiary ->
             val familyName = beneficiary.familyName?.normalize() ?: ""
             val givenName = beneficiary.givenName?.normalize() ?: ""
             val beneficiaryId = beneficiary.beneficiaryId.toString()
@@ -90,7 +90,7 @@ class BeneficiariesViewModel @Inject constructor(
         currentSort.value = nextSort()
     }
 
-    internal fun setSortedBeneficieries(list: List<BeneficiaryLocal>?) {
+    internal fun setSortedBeneficiaries(list: List<BeneficiaryLocal>?) {
         searchResultsLD.value = list?.run {
             when (currentSort.value) {
                 Sort.DEFAULT -> defaultSort()

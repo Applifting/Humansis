@@ -3,7 +3,7 @@ package cz.applifting.humansis.ui.main.distribute.distributions
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import cz.applifting.humansis.model.ui.DistributionItemWrapper
-import cz.applifting.humansis.repositories.BeneficieriesRepository
+import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.ui.main.BaseListViewModel
 import kotlinx.coroutines.flow.collect
@@ -16,7 +16,7 @@ import javax.inject.Inject
  */
 class DistributionsViewModel @Inject constructor(
     private val distributionsRepository: DistributionsRepository,
-    private val beneficiariesRepository: BeneficieriesRepository,
+    private val beneficiariesRepository: BeneficiariesRepository,
     context: Context
 ) : BaseListViewModel(context) {
 

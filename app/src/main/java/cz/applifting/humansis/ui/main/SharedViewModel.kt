@@ -14,7 +14,7 @@ import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.Logger
 import cz.applifting.humansis.misc.booleanLiveData
-import cz.applifting.humansis.repositories.BeneficieriesRepository
+import cz.applifting.humansis.repositories.BeneficiariesRepository
 import cz.applifting.humansis.repositories.DistributionsRepository
 import cz.applifting.humansis.repositories.ProjectsRepository
 import cz.applifting.humansis.synchronization.*
@@ -32,7 +32,7 @@ const val LAST_SYNC_FAILED_KEY = "lastSyncFailedKey"
 class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val distributionsRepository: DistributionsRepository,
-    private val beneficieriesRepository: BeneficieriesRepository,
+    private val beneficiariesRepository: BeneficiariesRepository,
     private val loginManager: LoginManager,
     private val logger: Logger,
     private val sp: SharedPreferences,
@@ -92,7 +92,7 @@ class SharedViewModel @Inject constructor(
 
 
         launch {
-            beneficieriesRepository
+            beneficiariesRepository
                 .arePendingChanges()
                 .collect {
                     pendingChangesLD.value = it.isNotEmpty()
