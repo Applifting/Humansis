@@ -23,7 +23,8 @@ import org.junit.runner.RunWith
 class LoginManagerTest {
 
     private lateinit var context: Context
-    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sp: SharedPreferences
+    private lateinit var spCrypto: SharedPreferences
     private lateinit var dbProvider: DbProvider
     @MockK
     private lateinit var db: HumansisDB
@@ -35,9 +36,10 @@ class LoginManagerTest {
     fun setUp() {
         MockKAnnotations.init(this)
         context = ApplicationProvider.getApplicationContext()
-        sharedPreferences = context.getSharedPreferences("HumansisTesting", Context.MODE_PRIVATE)
+        sp = context.getSharedPreferences("HumansisTesting", Context.MODE_PRIVATE)
+        spCrypto = context.getSharedPreferences("HumansisCryptoTesting", Context.MODE_PRIVATE)
         dbProvider = spyk(DbProvider(context))
-        loginManager = LoginManager(dbProvider, sharedPreferences, context)
+        loginManager = LoginManager(dbProvider, sp, spCrypto, context)
         every { dbProvider.init(capture(dbPassword), any()) } answers {
             dbProvider.db = db
         }
@@ -66,20 +68,20 @@ class LoginManagerTest {
 
         coVerify(exactly = 1) { db.userDao().insert(any()) }
         Assert.assertFalse(String(dbPassword.captured).contains("password", ignoreCase = true))
-        Assert.assertThat(sharedPreferences.getString(SP_DB_PASS_KEY, null), not(emptyOrNullString()))
+        Assert.assertThat(sp.getString(SP_DB_PASS_KEY, null), not(emptyOrNullString()))
     }
 
     @Test
     fun logout() {
         dbProvider.init(ByteArray(0), null)
         every { db.clearAllTables() } returns Unit
-        Assert.assertTrue(sharedPreferences.edit().putBoolean("nukes-ready-to-launch", true).commit())
+        Assert.assertTrue(sp.edit().putBoolean("nukes-ready-to-launch", true).commit())
 
         runBlocking { loginManager.logout() }
 
         verify(atLeast = 1) { db.clearAllTables() }
-        println(sharedPreferences.all)
-        Assert.assertTrue(sharedPreferences.all.isEmpty())
+        println(sp.all)
+        Assert.assertTrue(sp.all.isEmpty())
         verify(atLeast = 1) { SafeHelperFactory.rekey(db.openHelper.readableDatabase, any<CharArray>()) }
     }
 }

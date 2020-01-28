@@ -7,6 +7,7 @@ import com.commonsware.cwac.saferoom.SafeHelperFactory
 import cz.applifting.humansis.R
 import cz.applifting.humansis.db.DbProvider
 import cz.applifting.humansis.db.HumansisDB
+import cz.applifting.humansis.di.SPQualifier
 import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.misc.*
 import cz.applifting.humansis.model.api.LoginReqRes
@@ -27,7 +28,12 @@ const val KEYSTORE_KEY_ALIAS = "HumansisDBKey"
 const val SP_COUNTRY = "country"
 const val SP_FIRST_COUNTRY_DOWNLOAD = "first_country_download"
 
-class LoginManager @Inject constructor(private val dbProvider: DbProvider, private val sp: SharedPreferences, private val context: Context) {
+class LoginManager @Inject constructor(
+    private val dbProvider: DbProvider,
+    @param:SPQualifier(type = SPQualifier.Type.GENERIC) private val sp: SharedPreferences,
+    @param:SPQualifier(type = SPQualifier.Type.CRYPTO) private val spCrypto: SharedPreferences,
+    private val context: Context
+) {
 
     val db: HumansisDB by lazy { dbProvider.get() }
 
@@ -40,7 +46,7 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
         if (retrieveUser()?.invalidPassword == true) {
             // This case handles token expiration on backend. DB is decrypted with the old pass, but is rekyed using the new one.
             val oldEncryptedPassword = sp.getString(SP_DB_PASS_KEY, null) ?: throw IllegalStateException("DB password lost")
-            val oldDecryptedPassword = decryptUsingKeyStoreKey(base64decode(oldEncryptedPassword), KEYSTORE_KEY_ALIAS, context)
+            val oldDecryptedPassword = decryptUsingKeyStoreKey(base64decode(oldEncryptedPassword), KEYSTORE_KEY_ALIAS, spCrypto)
                 ?: throw IllegalStateException("DB password couldn't be decrypted")
 
             dbProvider.init(dbPass, oldDecryptedPassword)
@@ -51,7 +57,7 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
 
         with(sp.edit()) {
             // Note that encryptUsingKeyStoreKey generates and stores IV to shared prefs
-            val encryptedDbPass = base64encode(encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context))
+            val encryptedDbPass = base64encode(encryptUsingKeyStoreKey(dbPass, KEYSTORE_KEY_ALIAS, context, spCrypto))
             putString(SP_DB_PASS_KEY, encryptedDbPass)
             putString(SP_COUNTRY, defaultCountry)
             suspendCommit()
@@ -70,7 +76,7 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
     suspend fun logout() {
         db.clearAllTables()
         sp.edit().clear().suspendCommit()
-        getCryptoSharedPreferences(context).edit().clear().suspendCommit()
+        spCrypto.edit().clear().suspendCommit()
 
         encryptDefault()
     }
@@ -86,7 +92,7 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
     fun tryInitDB(): Boolean {
         if (dbProvider.isInitialized()) { return true }
         val encryptedPassword = sp.getString(SP_DB_PASS_KEY, null) ?: return false
-        val decryptedPassword = decryptUsingKeyStoreKey(base64decode(encryptedPassword), KEYSTORE_KEY_ALIAS, context) ?: return false
+        val decryptedPassword = decryptUsingKeyStoreKey(base64decode(encryptedPassword), KEYSTORE_KEY_ALIAS, spCrypto) ?: return false
 
         dbProvider.init(decryptedPassword)
 

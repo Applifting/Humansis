@@ -104,6 +104,20 @@ class AppModule {
     @Provides
     @Singleton
     fun spProvider(context: Context): SharedPreferences {
-        return context.getSharedPreferences("HumansisSP", Context.MODE_PRIVATE)
+        return spGenericProvider(context)
+    }
+
+    @Provides
+    @Singleton
+    @SPQualifier(type = SPQualifier.Type.GENERIC)
+    fun spGenericProvider(context: Context): SharedPreferences {
+        return context.getSharedPreferences(SPQualifier.Type.GENERIC.spName, Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    @SPQualifier(type = SPQualifier.Type.CRYPTO)
+    fun spCryptoProvider(context: Context): SharedPreferences {
+        return context.getSharedPreferences(SPQualifier.Type.CRYPTO.spName, Context.MODE_PRIVATE)
     }
 }

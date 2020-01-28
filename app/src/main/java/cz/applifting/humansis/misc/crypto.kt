@@ -2,7 +2,6 @@ package cz.applifting.humansis.misc
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Build
 import android.security.KeyPairGeneratorSpec
@@ -28,7 +27,6 @@ import kotlin.random.Random
  */
 
 const val KEY_PROVIDER = "AndroidKeyStore"
-const val CRYPTO_SP = "crypto-sp"
 const val SP_AES_IV_KEY = "db-aes"
 
 // TODO measure these functions and check which - if not all - should be done on background thread
@@ -81,18 +79,18 @@ fun hashSHA512(input: ByteArray, iterations: Int = 1): ByteArray {
 }
 
 
-fun encryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Context): ByteArray {
+fun encryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Context, sp: SharedPreferences): ByteArray {
     val keyStore = KeyStore.getInstance("AndroidKeyStore")
     keyStore.load(null)
 
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        doEncryptionUsingAES(secret, keyAlias, keyStore, context)
+        doEncryptionUsingAES(secret, keyAlias, keyStore, sp)
     } else {
         doEncryptionUsingRSA(secret, keyAlias, keyStore, context)
     }
 }
 
-fun decryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Context): ByteArray? {
+fun decryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, sp: SharedPreferences): ByteArray? {
     val keyStore = KeyStore.getInstance("AndroidKeyStore")
     keyStore.load(null)
 
@@ -101,7 +99,7 @@ fun decryptUsingKeyStoreKey(secret: ByteArray, keyAlias: String, context: Contex
     }
 
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        doDecryptionUsingAES(secret, keyAlias, keyStore, context)
+        doDecryptionUsingAES(secret, keyAlias, keyStore, sp)
     } else {
         doDecryptionUsingRSA(secret, keyAlias, keyStore)
     }
@@ -139,24 +137,19 @@ private fun doDecryptionUsingRSA(secret: ByteArray, keyAlias: String, keyStore: 
 }
 
 @RequiresApi(Build.VERSION_CODES.M)
-private fun doEncryptionUsingAES(secret: ByteArray, keyAlias: String, keyStore: KeyStore, context: Context): ByteArray {
+private fun doEncryptionUsingAES(secret: ByteArray, keyAlias: String, keyStore: KeyStore, sp: SharedPreferences): ByteArray {
     if (!keyStore.containsAlias(keyAlias)) {
-        generateAESKey(keyAlias, context)
+        generateAESKey(keyAlias)
     }
 
     val keyEntry = keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry
-    val sp = getCryptoSharedPreferences(context)
     return encryptAES(secret, keyEntry.secretKey, sp)
 }
 
-private fun doDecryptionUsingAES(secret: ByteArray, keyAlias: String, keyStore: KeyStore, context: Context): ByteArray {
-    val sp = getCryptoSharedPreferences(context)
+private fun doDecryptionUsingAES(secret: ByteArray, keyAlias: String, keyStore: KeyStore, sp: SharedPreferences): ByteArray {
     val key = keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry
     return decryptAES(secret, key.secretKey, sp)
 }
-
-fun getCryptoSharedPreferences(context: Context): SharedPreferences =
-    context.getSharedPreferences(CRYPTO_SP, MODE_PRIVATE)
 
 private fun hashSHA1(s: String): String {
     return Base64.encodeToString(MessageDigest.getInstance("SHA-1").digest(s.toByteArray()), Base64.NO_WRAP)
@@ -220,7 +213,7 @@ private fun decryptAES(secret: ByteArray, key: SecretKey, sp: SharedPreferences)
 
 
 @RequiresApi(Build.VERSION_CODES.M)
-private fun generateAESKey(keyAlias: String, context: Context) {
+private fun generateAESKey(keyAlias: String) {
     val keyGenerator = KeyGenerator.getInstance(
         KeyProperties.KEY_ALGORITHM_AES, KEY_PROVIDER
     )
