@@ -1,6 +1,5 @@
 package cz.applifting.humansis.managers
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
@@ -12,8 +11,6 @@ import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.misc.*
 import cz.applifting.humansis.model.api.LoginReqRes
 import cz.applifting.humansis.model.db.User
-import cz.applifting.humansis.synchronization.SP_SYNC_UPLOAD_INCOMPLETE
-import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import kotlinx.coroutines.supervisorScope
 import net.sqlcipher.database.SQLiteException
 import javax.inject.Inject
@@ -34,7 +31,6 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
 
     val db: HumansisDB by lazy { dbProvider.get() }
 
-    @SuppressLint("CommitPrefEdits")
     suspend fun login(userResponse: LoginReqRes, originalPass: ByteArray): User {
         // Initialize db and save the DB password in shared prefs
         // The hashing of pass might be unnecessary, but why not. I am passing it to 3-rd part lib.
@@ -72,14 +68,9 @@ class LoginManager @Inject constructor(private val dbProvider: DbProvider, priva
     }
 
     suspend fun logout() {
-        // TODO clear all other data (both sp)
-        db.apply {
-            clearAllTables()
-        }
-
-        sp.edit().putString(LAST_DOWNLOAD_KEY, null).suspendCommit()
-        sp.edit().putString(SP_DB_PASS_KEY, null).suspendCommit()
-        sp.edit().putBoolean(SP_SYNC_UPLOAD_INCOMPLETE, false).suspendCommit()
+        db.clearAllTables()
+        sp.edit().clear().suspendCommit()
+        getCryptoSharedPreferences(context).edit().clear().suspendCommit()
 
         encryptDefault()
     }

@@ -145,15 +145,18 @@ private fun doEncryptionUsingAES(secret: ByteArray, keyAlias: String, keyStore: 
     }
 
     val keyEntry = keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry
-    val sp = context.getSharedPreferences(CRYPTO_SP, MODE_PRIVATE)
+    val sp = getCryptoSharedPreferences(context)
     return encryptAES(secret, keyEntry.secretKey, sp)
 }
 
 private fun doDecryptionUsingAES(secret: ByteArray, keyAlias: String, keyStore: KeyStore, context: Context): ByteArray {
-    val sp = context.getSharedPreferences(CRYPTO_SP, MODE_PRIVATE)
+    val sp = getCryptoSharedPreferences(context)
     val key = keyStore.getEntry(keyAlias, null) as KeyStore.SecretKeyEntry
     return decryptAES(secret, key.secretKey, sp)
 }
+
+fun getCryptoSharedPreferences(context: Context): SharedPreferences =
+    context.getSharedPreferences(CRYPTO_SP, MODE_PRIVATE)
 
 private fun hashSHA1(s: String): String {
     return Base64.encodeToString(MessageDigest.getInstance("SHA-1").digest(s.toByteArray()), Base64.NO_WRAP)

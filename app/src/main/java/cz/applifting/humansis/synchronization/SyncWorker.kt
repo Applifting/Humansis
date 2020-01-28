@@ -1,6 +1,5 @@
 package cz.applifting.humansis.synchronization
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.work.CoroutineWorker
@@ -188,7 +187,6 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
         return finishWork()
     }
 
-    @SuppressLint("CommitPrefEdits")
     private suspend fun finishWork(): Result {
         sp.edit().putString(SP_SYNC_SUMMARY, syncStats.toString()).suspendCommit()
         return if (syncErrors.isEmpty()) {
