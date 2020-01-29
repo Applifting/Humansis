@@ -10,54 +10,43 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="24dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp">
-
-        <TextView
-                android:id="@+id/tv_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/confirm_distribution_question"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
 
         <TextView
                 android:id="@+id/tv_message"
+                style="@style/TextAppearance.AppCompat.Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/confirm_distribution_message"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:text="@string/confirm_distribution_message"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                style="@style/TextAppearance.AppCompat.Medium"/>
+                android:textSize="18sp" />
 
         <LinearLayout
                 android:id="@+id/header_referral"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingStart="8dp"
                 android:paddingTop="8dp"
+                android:paddingEnd="0dp"
                 android:paddingBottom="8dp">
 
             <TextView
                     android:id="@+id/tv_referral_title"
-                    style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/add_referral" />
+                    android:text="@string/add_referral"
+                    android:textSize="16sp" />
 
             <ImageView
                     android:id="@+id/referral_header_indicator"
@@ -75,9 +64,9 @@
                 android:id="@+id/layout_referral"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:orientation="vertical"
                 android:visibility="gone"
-                android:layout_marginBottom="8dp"
                 tools:visibility="visible">
 
             <fr.ganfra.materialspinner.MaterialSpinner
@@ -123,22 +112,22 @@
                 tools:text="Error" />
 
         <LinearLayout
-            android:id="@+id/layout_buttons"
+                android:id="@+id/layout_buttons"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:paddingBottom="8dp"
                 android:gravity="end">
 
             <Button
                     android:id="@+id/btn_cancel"
-                    android:text="@string/cancel"
-                    style="@style/Button.Cancel" />
+                    style="@style/Button.Cancel"
+                    android:text="@string/cancel" />
 
             <Button
                     android:id="@+id/btn_confirm"
-                    android:text="@string/confirm_distribution"
-                    style="@style/Button.Confirm" />
+                    style="@style/Button.Confirm"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/confirm_distribution" />
 
         </LinearLayout>
 

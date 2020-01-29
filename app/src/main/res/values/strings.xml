@@ -124,7 +124,6 @@
     <string name="expand_referral_information">Expand referral information</string>
     <string name="add_referral">Add referral information</string>
     <string name="edit_referral">Edit referral information</string>
-    <string name="confirm_distribution_question">Confirm?</string>
-    <string name="confirm_distribution_message">Do you want to confirm this distribution?</string>
+    <string name="confirm_distribution_message">Confirm to assign this item to the beneficiary</string>
 
 </resources>
