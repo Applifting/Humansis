@@ -34,6 +34,11 @@ class ListComponent(context: Context, attrs: AttributeSet) : ConstraintLayout(co
         }
 
         swrl_swipe_to_refresh.isEnabled = false
+        swrl_swipe_to_refresh.setColorSchemeResources(
+            R.color.colorAccent,
+            R.color.colorAccentDark,
+            R.color.darkBlue
+        )
     }
 
     fun setState(state: ListComponentState) {
