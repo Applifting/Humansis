@@ -114,7 +114,7 @@
     <string name="referral_type_shelter">Shelter</string>
     <string name="referral_type_nutrition">Nutrition</string>
     <string name="referral_type_other">Other</string>
-    <string name="referral_validation_error_xor">Fill in both type and note or none of them.</string>
+    <string name="referral_validation_error_xor">Fill in both type and comment or none of them.</string>
     <string name="referral_validation_error_unset">Can\'t remove type.</string>
     <string name="cancel">Cancel</string>
     <string name="referral_type_label">Type</string>
