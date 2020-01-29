@@ -58,15 +58,9 @@
 
             <Button
                     android:id="@+id/btn_action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/background_confirm_btn"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
+                    style="@style/Button.Confirm"
                     android:text="@string/confirm_distribution"
-                    android:textColor="@color/white"
+                    android:layout_marginEnd="16dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

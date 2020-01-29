@@ -1,14 +1,11 @@
 package cz.applifting.humansis.ui.main.distribute.beneficiary.confirm
 
-import android.annotation.SuppressLint
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -36,35 +33,13 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
 
     private val args: ConfirmBeneficiaryDialogArgs by navArgs()
 
-    private var dialogView: View? = null
-
-    @SuppressLint("InflateParams")
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        dialogView = activity!!.layoutInflater.inflate(R.layout.fragment_confirm_beneficiary, null)
-        val alertDialog = AlertDialog.Builder(activity!!, theme)
-            .setTitle(R.string.confirm_distribution_question)
-            .setMessage(R.string.confirm_distribution_message)
-            .setView(dialogView)
-            .setPositiveButton(R.string.confirm_distribution, null)
-            .setNegativeButton(getString(R.string.cancel), null)
-            .setCancelable(true)
-            .create()
-        // set listener this way so we can avoid dismiss on click
-        alertDialog.setOnShowListener {
-            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                if (viewModel.tryConfirm()) {
-                    dismiss()
-                }
-            }
-        }
-        return alertDialog
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_confirm_beneficiary, container, false)
         (activity?.application as App).appComponent.inject(this)
         sharedViewModel = ViewModelProviders.of(activity as HumansisActivity, viewModelFactory)[SharedViewModel::class.java]
 
-        setupViews()
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        view.setupViews()
 
         viewModel.initBeneficiary(args.beneficiaryId)
 
@@ -101,40 +76,42 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
             tv_error.text = it?.let { getString(it) }
         })
 
-        return dialogView
+        return view
     }
 
-    private fun setupViews() {
-        dialogView!!.apply {
-            header_referral.setOnClickListener {
-                viewModel.toggleReferral()
+    private fun View.setupViews() {
+        header_referral.setOnClickListener {
+            viewModel.toggleReferral()
+        }
+
+        val spinnerOptions = viewModel.referralTypes
+            .map { getString(it) }
+        ArrayAdapter(context!!, android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner_referral_type.adapter = adapter
+        }
+        spinner_referral_type.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
             }
 
-            val spinnerOptions = viewModel.referralTypes
-                .map { getString(it) }
-            ArrayAdapter(context!!, android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                spinner_referral_type.adapter = adapter
-            }
-            spinner_referral_type.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                }
-
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    viewModel.referralTypeLD.value = position.toReferralType()
-                }
-            }
-            spinner_referral_type.showFloatingLabel() // needed when nothing is initially selected
-
-            tv_referral_note.addTextChangedListener {
-                viewModel.referralNoteLD.postValue(tv_referral_note.text?.toString())
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                viewModel.referralTypeLD.value = position.toReferralType()
             }
         }
-    }
+        spinner_referral_type.showFloatingLabel() // needed when nothing is initially selected
 
-    override fun onDestroyView() {
-        dialogView = null
-        super.onDestroyView()
+        tv_referral_note.addTextChangedListener {
+            viewModel.referralNoteLD.postValue(tv_referral_note.text?.toString())
+        }
+
+        btn_cancel.setOnClickListener {
+            dismiss()
+        }
+        btn_confirm.setOnClickListener {
+            if (viewModel.tryConfirm()) {
+                dismiss()
+            }
+        }
     }
 
     // +-1 for the "none" value which is not in the enum
