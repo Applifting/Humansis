@@ -36,7 +36,7 @@
                 android:layout_marginStart="8dp"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/expand_referral_information"
-                app:srcCompat="@drawable/ic_expansion_header_indicator_grey_24dp" />
+                app:srcCompat="@drawable/ic_chevron_right_grey_24dp" />
 
     </LinearLayout>
 
