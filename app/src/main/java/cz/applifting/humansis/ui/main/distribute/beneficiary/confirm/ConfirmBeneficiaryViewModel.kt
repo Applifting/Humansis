@@ -13,7 +13,8 @@ import javax.inject.Inject
 class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesRepository: BeneficiariesRepository) :
     BaseViewModel() {
 
-    private val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
+    val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
+    val isReferralVisibleLD = MutableLiveData<Boolean>()
     val referralTypeLD = MutableLiveData<ReferralType>()
     val referralNoteLD = MutableLiveData<String>()
     val errorLD = MutableLiveData<Int>()
@@ -26,10 +27,15 @@ class ConfirmBeneficiaryViewModel @Inject constructor(private val beneficiariesR
         beneficiaryLD.value ?: launch {
             beneficiaryLD.value = beneficiariesRepository.getBeneficiaryOffline(id)?.also {
                 // initialize fields
+                isReferralVisibleLD.value = false
                 referralTypeLD.value = it.referralType
                 referralNoteLD.value = it.referralNote
             }
         }
+    }
+
+    fun toggleReferral() {
+        isReferralVisibleLD.value = isReferralVisibleLD.value?.let { !it }
     }
 
     fun tryConfirm(): Boolean {

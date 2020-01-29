@@ -1,59 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp">
 
-    <fr.ganfra.materialspinner.MaterialSpinner
-            android:id="@+id/spinner_referral_type"
-            android:layout_width="0dp"
+    <LinearLayout
+            android:id="@+id/header_referral"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:ms_multiline="false"
-            app:ms_enableFloatingLabel="true"
-            app:ms_alwaysShowFloatingLabel="true"
-            app:ms_floatingLabelText="@string/referral_type_label"
-            app:ms_alignLabels="true"
-            app:ms_thickness="0.5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:orientation="horizontal"
+            android:background="?attr/selectableItemBackground"
+            android:paddingTop="8dp"
+            android:paddingStart="8dp"
+            android:paddingBottom="8dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layout_referral_note"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingStart="-4dp"
-            android:paddingEnd="-4dp"
-            android:textColorHint="?android:attr/textColorTertiary"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner_referral_type">
-
-        <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/tv_referral_note"
-                android:layout_width="match_parent"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
+        <TextView
+                android:id="@+id/tv_referral_title"
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="@string/referral_note_label" />
+                android:layout_weight="1"
+                android:text="@string/add_referral" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <ImageView
+                android:id="@+id/referral_header_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginStart="8dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/expand_referral_information"
+                app:srcCompat="@drawable/ic_expansion_header_indicator_grey_24dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/layout_referral"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:orientation="vertical">
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+                android:id="@+id/spinner_referral_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:ms_alignLabels="true"
+                app:ms_alwaysShowFloatingLabel="true"
+                app:ms_enableFloatingLabel="true"
+                app:ms_floatingLabelText="@string/referral_type_label"
+                app:ms_multiline="false"
+                app:ms_thickness="0.5dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layout_referral_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:paddingStart="-4dp"
+                android:paddingEnd="-4dp"
+                android:textColorHint="?android:attr/textColorTertiary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tv_referral_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/referral_note_label"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
 
     <TextView
             android:id="@+id/tv_error"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:textColor="@color/red"
-            tools:text="Error"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_referral_note" />
+            tools:text="Error" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

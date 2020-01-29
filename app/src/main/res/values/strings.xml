@@ -117,9 +117,14 @@
     <string name="referral_validation_error_xor">Fill in both type and note or none of them.</string>
     <string name="referral_validation_error_unset">Can\'t remove type.</string>
     <string name="cancel">Cancel</string>
-    <string name="referral_type_label">Referral type</string>
-    <string name="referral_note_label">Referral note</string>
+    <string name="referral_type_label">Type</string>
+    <string name="referral_note_label">Comment</string>
     <string name="sync_summary">Uploaded %1$d of %2$d changes.</string>
     <string name="sync_summary_nothing">No local changes were uploaded.</string>
+    <string name="expand_referral_information">Expand referral information</string>
+    <string name="add_referral">Add referral information</string>
+    <string name="edit_referral">Edit referral information</string>
+    <string name="confirm_distribution_question">Confirm?</string>
+    <string name="confirm_distribution_message">Do you want to confirm this distribution?</string>
 
 </resources>

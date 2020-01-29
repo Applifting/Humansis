@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
 import cz.applifting.humansis.R
+import cz.applifting.humansis.extensions.visible
 import cz.applifting.humansis.model.ReferralType
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.HumansisActivity
@@ -33,7 +34,7 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
     private val viewModel: ConfirmBeneficiaryViewModel by viewModels { viewModelFactory }
     private lateinit var sharedViewModel: SharedViewModel
 
-    val args: ConfirmBeneficiaryDialogArgs by navArgs()
+    private val args: ConfirmBeneficiaryDialogArgs by navArgs()
 
     private var dialogView: View? = null
 
@@ -41,8 +42,9 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialogView = activity!!.layoutInflater.inflate(R.layout.fragment_confirm_beneficiary, null)
         val alertDialog = AlertDialog.Builder(activity!!, theme)
+            .setTitle(R.string.confirm_distribution_question)
+            .setMessage(R.string.confirm_distribution_message)
             .setView(dialogView)
-            .setTitle(R.string.confirm_distribution)
             .setPositiveButton(R.string.confirm_distribution, null)
             .setNegativeButton(getString(R.string.cancel), null)
             .setCancelable(true)
@@ -65,6 +67,15 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
         setupViews()
 
         viewModel.initBeneficiary(args.beneficiaryId)
+
+        viewModel.beneficiaryLD.observe(viewLifecycleOwner, Observer {
+            tv_referral_title.text = getString(if (it.hasReferral) R.string.edit_referral else R.string.add_referral)
+        })
+
+        viewModel.isReferralVisibleLD.observe(viewLifecycleOwner, Observer {
+            layout_referral.visible(it) // animated by animateLayoutChanges="true"
+            referral_header_indicator.animate().rotation(if (it) 90f else 0f).start()
+        })
 
         viewModel.referralTypeLD.observe(viewLifecycleOwner, Observer {
             spinner_referral_type.apply {
@@ -95,6 +106,10 @@ class ConfirmBeneficiaryDialog : DialogFragment() {
 
     private fun setupViews() {
         dialogView!!.apply {
+            header_referral.setOnClickListener {
+                viewModel.toggleReferral()
+            }
+
             val spinnerOptions = viewModel.referralTypes
                 .map { getString(it) }
             ArrayAdapter(context!!, android.R.layout.simple_spinner_item, 0, spinnerOptions).also { adapter ->

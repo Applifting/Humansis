@@ -44,8 +44,11 @@ data class BeneficiaryLocal(
         get() = originalReferralType != referralType
 
     val isReferralNoteChanged
-        get() = originalReferralNote.equalsIgnoreEmpty(originalReferralNote)
+        get() = !originalReferralNote.equalsIgnoreEmpty(originalReferralNote)
 
     val isReferralChanged
         get() = isReferralTypeChanged || isReferralNoteChanged
+
+    val hasReferral
+    get() = referralType != null || !referralNote.isNullOrEmpty()
 }
