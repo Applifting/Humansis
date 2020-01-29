@@ -80,8 +80,8 @@ class LoginFragment : Fragment(), CoroutineScope {
         @Suppress("ConstantConditionIf")
         @SuppressLint("SetTextI18n")
         if (BuildConfig.FLAVOR == "demo") {
-            et_username.setText("TestProjectOfficer01@test.com")
-            et_password.setText("Reset123")
+            et_username.setText("demo@humansis.org")
+            et_password.setText("Update987")
         }
     }
 
