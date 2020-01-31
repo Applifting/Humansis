@@ -10,6 +10,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import cz.applifting.humansis.extensions.getDate
+import cz.applifting.humansis.extensions.suspendCommit
 import cz.applifting.humansis.managers.LoginManager
 import cz.applifting.humansis.managers.SP_FIRST_COUNTRY_DOWNLOAD
 import cz.applifting.humansis.misc.Logger
@@ -28,6 +29,7 @@ import javax.inject.Inject
  */
 const val LAST_DOWNLOAD_KEY = "lastDownloadKey"
 const val LAST_SYNC_FAILED_KEY = "lastSyncFailedKey"
+const val LAST_SYNC_FAILED_ID_KEY = "lastSyncFailedIdKey"
 
 class SharedViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
@@ -74,19 +76,25 @@ class SharedViewModel @Inject constructor(
             }
         }
 
-        // TODO toast is shown every time sync fails and user opens the app. I can not think of a simpler solution than saving the toast to persistent memory
         toastLD.addSource(workInfos) {
             if (it.isNullOrEmpty()) {
                 toastLD.value = null
                 return@addSource
             }
 
-            if (it.first().state == WorkInfo.State.FAILED) {
-                val errors = it.first().outputData.getStringArray(ERROR_MESSAGE_KEY)
+            val lastInfo = it.first()
+            val lastInfoId = lastInfo.id.toString()
+            val lastShownInfoId = sp.getString(LAST_SYNC_FAILED_ID_KEY, null)
+            if (lastInfo.state == WorkInfo.State.FAILED && lastInfoId != lastShownInfoId) {
+                val errors = lastInfo.outputData.getStringArray(ERROR_MESSAGE_KEY)
                 // show only first error in toast
                 val error = errors?.first()
 
                 toastLD.value = error
+                launch {
+                    // avoid showing the same error toast twice (after restarting the app)
+                    sp.edit().putString(LAST_SYNC_FAILED_ID_KEY, lastInfoId).suspendCommit()
+                }
             }
         }
 
