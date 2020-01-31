@@ -70,6 +70,7 @@
     <string name="already_assigned">هذا الرمز محدد مسبقا</string>
     <string name="last_update_failed">فشل آخر تحديث</string>
     <string name="assign">تسليم </string>
+    <string name="sort_default">تجميع</string>
     <string name="sort_az">أ-ي</string>
     <string name="sort_za">ي-أ</string>
     <string name="error_service_unavailable">الخدمة غير موفرة</string>
@@ -84,13 +85,44 @@
     <string name="error_server">خطأ في استجابة الخادم (السرفر)</string>
     <string name="error_bad_request">طلب خاطئ</string>
     <string name="error_user_not_allowed">ليس مسموح للمستخدم </string>
+    <string name="error_resource_not_found">المصدر غير موجود </string>
     <string name="error_data_conflict">هناك مشكلة في البيانات </string>
     <string name="error_server_api_changed">الخادم API تغير</string>
     <string name="error_too_many_requests">العديد من الطلبات </string>
     <string name="error_server_failure">فشل الخادم </string>
     <string name="error_parsing_response">لم يتم التعرف على صيغة الاستجابة</string>
     <string name="error_other">خطأ غير متوقع</string>
+    <string name="show_error_detail">عرض تفاصيل الخطأ</string>
+    <string name="errors_list_label">حدثت الأخطاء التالية</string>
+    <string name="detail">التفاصيل</string>
 
     <string name="KHM">كمبوديا</string>
     <string name="SYR">سوريا</string>
+    <string name="warning_country_change">تحذير: سيؤدي تغيير البلد الى محو بياناتك الحالية </string>
+    <string name="unknwon_error">حدث خطأ غير معروف </string>
+    <string name="download_error">لا يمكن / تنزيل</string>
+    <string name="auth_expiration_explanation">لقد تم تسجيل خروجك لان صلاحية جلستك قد انتهت ، لا تزال بياناتك محفوظة على الجهاز ، تسجيل الدخول الى المزامنة </string>
+    <string name="sync_error">حدث خطأ أثناء المزامنة</string>
+    <string name="dont_save">لا/ تحفظ </string>
+    <string name="confirm_scan_question">هل تريد التأكيد رمز الماسح الضوئي</string>
+    <string name="confirm_scan_title">تأكيد القسيمة</string>
+
+    <string name="referral_type_none">لا شيء</string>
+    <string name="referral_type_health">الصحة</string>
+    <string name="referral_type_protection">الحماية</string>
+    <string name="referral_type_shelter">المأوى</string>
+    <string name="referral_type_nutrition">التغذية</string>
+    <string name="referral_type_other">غير ذلك </string>
+    <string name="referral_validation_error_xor">ملء كلا النوع و التعليق او لاشيء منهم  </string>
+    <string name="referral_validation_error_unset">لا يمكن /ازالة النوع</string>
+    <string name="cancel">إلغاء</string>
+    <string name="referral_type_label">نوع</string>
+    <string name="referral_note_label">تعليق</string>
+    <string name="sync_summary">تم تحميل التغييرات</string>
+    <string name="sync_summary_nothing">لم يتم تحميل أي تغييرات محلية</string>
+    <string name="expand_referral_information">توسيع معلومات الإحالة</string>
+    <string name="add_referral">اضافة معلومات الإحالة </string>
+    <string name="edit_referral">تحرير معلومات الإحالة </string>
+    <string name="confirm_distribution_message">تأكيد لتعيين هذا العنصر للمستفيد </string>
+
 </resources>
