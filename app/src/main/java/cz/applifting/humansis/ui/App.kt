@@ -26,12 +26,14 @@ import org.acra.data.StringFormat
     reportFormat = StringFormat.JSON
 )
 @AcraMailSender(
-    mailTo = "pavel.haluza+humansis.crash@applifting.cz" // TODO some other email pls :(
+    mailTo = "info@humansis.org",
+    resSubject = R.string.acra_email_subject
 )
 @AcraNotification(
     resTitle = R.string.acra_notif_title,
     resText = R.string.acra_notif_text,
-    resChannelName = R.string.acra_notif_channel
+    resChannelName = R.string.acra_notif_channel,
+    resSendButtonText = R.string.acra_notif_send_button
 )
 class App : Application() {
     lateinit var appComponent: AppComponent
