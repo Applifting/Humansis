@@ -126,4 +126,8 @@
     <string name="edit_referral">Edit referral information</string>
     <string name="confirm_distribution_message">Confirm to assign this item to the beneficiary</string>
 
+    <string name="acra_notif_channel">Submit crash report</string>
+    <string name="acra_notif_title">Humansis crashed</string>
+    <string name="acra_notif_text">Sorry, the app crashed. Please send a report to the developers.</string>
+
 </resources>
