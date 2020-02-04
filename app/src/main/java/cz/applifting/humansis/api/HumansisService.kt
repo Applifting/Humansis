@@ -34,4 +34,14 @@ interface HumansisService {
 
     @POST("beneficiaries/{beneficiaryId}")
     suspend fun updateBeneficiaryReferral(@Path("beneficiaryId") beneficiaryId: Int, @Body beneficiary: BeneficiaryForReferralUpdate)
+
+    @GET("vulnerability_criteria")
+    suspend fun getVulnerabilityCriteria(): List<Vulnerability>
+
+    @GET("location/adm1")
+    suspend fun getProvinces(): List<Province>
+
+    // TODO HOUSE
+    //  @PUT("households") to upload HouseholdLocal (also creates household head beneficiary)
+    //  @PUT("distributions/{id}/beneficiary") to put a beneficiary (household head) into distribution
 }

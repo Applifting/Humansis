@@ -15,10 +15,7 @@ import cz.applifting.humansis.model.db.BeneficiaryLocal
 import cz.applifting.humansis.model.db.DistributionLocal
 import cz.applifting.humansis.model.db.ProjectLocal
 import cz.applifting.humansis.model.db.SyncError
-import cz.applifting.humansis.repositories.BeneficiariesRepository
-import cz.applifting.humansis.repositories.DistributionsRepository
-import cz.applifting.humansis.repositories.ErrorsRepository
-import cz.applifting.humansis.repositories.ProjectsRepository
+import cz.applifting.humansis.repositories.*
 import cz.applifting.humansis.ui.App
 import cz.applifting.humansis.ui.main.LAST_DOWNLOAD_KEY
 import cz.applifting.humansis.ui.main.LAST_SYNC_FAILED_KEY
@@ -46,6 +43,8 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
     lateinit var distributionsRepository: DistributionsRepository
     @Inject
     lateinit var beneficiariesRepository: BeneficiariesRepository
+    @Inject
+    lateinit var householdsRepository: HouseholdsRepository
     @Inject
     lateinit var sp: SharedPreferences
     @Inject
@@ -112,6 +111,7 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
 
             if (isStopped) return@supervisorScope stopWork("After initialization")
 
+            // TODO HOUSE first upload new households and put their new beneficiaries into distributions
             // Upload distributions of beneficiaries
             assignedBeneficiaries
                 .forEach {
@@ -168,6 +168,14 @@ class SyncWorker(appContext: Context, workerParams: WorkerParameters) : Coroutin
                 } catch (e: Exception) {
                     syncErrors.add(getDownloadError(e, applicationContext.getString(R.string.beneficiary)))
                     emptyList<ProjectLocal>()
+                }
+
+                if (isStopped) return@supervisorScope stopWork("Downloading beneficiaries")
+
+                try {
+                    householdsRepository.getFormDataOnline()
+                } catch (e: Exception) {
+                    syncErrors.add(getDownloadError(e, "Household form data"))
                 }
             }
 

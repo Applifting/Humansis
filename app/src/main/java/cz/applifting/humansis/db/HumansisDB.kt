@@ -38,5 +38,7 @@ abstract class HumansisDB : RoomDatabase() {
     abstract fun beneficiariesDao(): BeneficiaryDao
     abstract fun projectsDao(): ProjectsDao
     abstract fun distributionsDao(): DistributionsDao
+    abstract fun provincesDao(): ProvincesDao
+    abstract fun vulnerabilitiesDao(): VulnerabilitiesDao
     abstract fun errorsDao(): ErrorDao
 }
