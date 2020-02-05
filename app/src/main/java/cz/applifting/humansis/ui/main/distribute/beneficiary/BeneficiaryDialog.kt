@@ -68,6 +68,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         }
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+    }
+
     private fun TitledTextView.setOptionalValue(value: String?) {
         visible(!value.isNullOrEmpty())
         setValue(value)

@@ -6,6 +6,7 @@ data class PersonCount(
     val count: Int
 )
 
+// these enums are serialized to db so careful with edits
 enum class AgeCategory {
     AGE_0_TO_2,
     AGE_2_TO_5,
