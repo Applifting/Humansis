@@ -183,6 +183,10 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
             viewModel.scanQRBooklet(it)
         })
 
+        viewModel.goBackEventLD.observe(viewLifecycleOwner, Observer {
+            handleBackPressed()
+        })
+
         return view
     }
 
@@ -278,7 +282,9 @@ class BeneficiaryDialog : DialogFragment(), ZXingScannerView.ResultHandler {
         AlertDialog.Builder(context!!)
             .setTitle(R.string.confirm_scan_title)
             .setMessage(R.string.confirm_scan_question)
-            .setPositiveButton(R.string.confirm_distribution) { _, _ -> showConfirmBeneficiaryDialog(viewModel.beneficiaryLD.value!!) }
+            .setPositiveButton(R.string.confirm_distribution) { _, _ ->
+                viewModel.beneficiaryLD.value?.let { showConfirmBeneficiaryDialog(it) } ?: dismiss()
+            }
             .setNegativeButton(R.string.dont_save) { _, _ -> dismiss() }
             .create()
             .show()

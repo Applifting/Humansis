@@ -85,7 +85,7 @@ class BeneficiariesRepository @Inject constructor(val service: HumansisService, 
         return dbProvider.get().beneficiariesDao().findById(beneficiaryId)
     }
 
-    fun getBeneficiaryOfflineFlow(beneficiaryId: Int): Flow<BeneficiaryLocal> {
+    fun getBeneficiaryOfflineFlow(beneficiaryId: Int): Flow<BeneficiaryLocal?> {
         return dbProvider.get().beneficiariesDao().findByIdFlow(beneficiaryId)
     }
 

@@ -28,7 +28,7 @@ interface BeneficiaryDao {
     suspend fun findById(beneficiaryId: Int): BeneficiaryLocal?
 
     @Query("SELECT * FROM beneficiaries where id = :beneficiaryId")
-    fun findByIdFlow(beneficiaryId: Int): Flow<BeneficiaryLocal>
+    fun findByIdFlow(beneficiaryId: Int): Flow<BeneficiaryLocal?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(beneficiariesLocal: List<BeneficiaryLocal>)

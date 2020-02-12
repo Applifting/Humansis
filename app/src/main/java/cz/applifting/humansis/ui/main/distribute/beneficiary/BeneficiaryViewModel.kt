@@ -20,6 +20,7 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
 
     val beneficiaryLD = MutableLiveData<BeneficiaryLocal>()
     val scannedIdLD = MutableLiveData<String>()
+    val goBackEventLD = MutableLiveData<Unit>()
 
     var previousEditState: Boolean? = null
     var isAssignedInOtherDistribution: Boolean = false
@@ -31,8 +32,12 @@ class BeneficiaryViewModel @Inject constructor(private val beneficiariesReposito
         launch {
             beneficiariesRepository.getBeneficiaryOfflineFlow(id)
                 .collect {
-                    isAssignedInOtherDistribution = beneficiariesRepository.isAssignedInOtherDistribution(it)
-                    beneficiaryLD.value = it
+                    it?.let {
+                        isAssignedInOtherDistribution = beneficiariesRepository.isAssignedInOtherDistribution(it)
+                        beneficiaryLD.value = it
+                    } ?: run {
+                        goBackEventLD.value = Unit
+                    }
                 }
         }
     }
