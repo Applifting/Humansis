@@ -68,6 +68,14 @@ android {
             resValue "string", "app_name", "Humansis DEMO"
         }
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def flavor = variant.flavorName
+            def flavorAlias = flavor == 'demo' ? 'test' : flavor
+            outputFileName = "humansis-mission-$flavorAlias-${readVersionName()}.apk"
+        }
+    }
 }
 
 configurations {
